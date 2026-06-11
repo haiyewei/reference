@@ -1,8 +1,6 @@
 # 术语表
 
-<div class="rule" id="r-glossary.ast"><a class="rule-link" href="#r-glossary.ast" title="glossary.ast"><span>[glossary<wbr>.ast]</span></a>
-</div>
-
+r[glossary.ast]
 ### 抽象语法树
 
 “抽象语法树”，或称 “AST”，是编译器编译程序时程序结构的一种中间表示。
@@ -11,12 +9,10 @@
 
 值的对齐指定了值优先从哪些地址开始存放。它始终是 2 的幂。对值的引用必须是对齐的。[更多信息](type-layout.md#size-and-alignment)。
 
-<div class="rule" id="r-glossary.abi"><a class="rule-link" href="#r-glossary.abi" title="glossary.abi"><span>[glossary<wbr>.abi]</span></a>
-</div>
-
+r[glossary.abi]
 ### 应用二进制接口（ABI）
 
-_应用程序二进制接口_（ABI）定义编译后的代码如何与其他编译后的代码交互。对于 [`extern` 块](items/external-blocks.md#r-items.extern)和 [`extern fn`](items/functions.md#r-items.fn.extern)，\_ABI 字符串_会影响：
+_应用程序二进制接口_（ABI）定义编译后的代码如何与其他编译后的代码交互。对于 [`extern` 块](items/external-blocks.md#r-items.extern)和 [`extern fn`](items/functions.md#r-items.fn.extern)，_ABI 字符串_会影响：
 
 - **调用约定**：函数实参如何传递、值如何返回（例如在寄存器中或在栈上），以及由谁负责清理栈。
 - **展开**：是否允许栈展开。例如，`"C-unwind"` ABI 允许跨 FFI 边界展开，而 `"C"` ABI 不允许。
@@ -69,7 +65,7 @@ crate 是编译和链接的单位。crate 有不同的 [crate 类型](linkage.md
 
 ### 自由项
 
-不属于[实现](items/implementations.md)成员的[项](items.md)，例如_自由函数_或_自由 const\_。对比[关联项](#associated-item)。
+不属于[实现](items/implementations.md)成员的[项](items.md)，例如_自由函数_或_自由 const_。对比[关联项](#associated-item)。
 
 ### 基本 trait
 
@@ -111,7 +107,7 @@ crate 是编译和链接的单位。crate 有不同的 [crate 类型](linkage.md
 
 ### 名称
 
-[_名称_](names.md)是指称某个[实体](#entity)的[标识符](identifiers.md)或[生命周期或循环标签](tokens.md#lifetimes-and-loop-labels)。当实体声明引入一个与该实体关联的标识符或标签时，就形成了_名称绑定\_。[路径](paths.md)、标识符和标签用于指称实体。
+[_名称_](names.md)是指称某个[实体](#entity)的[标识符](identifiers.md)或[生命周期或循环标签](tokens.md#lifetimes-and-loop-labels)。当实体声明引入一个与该实体关联的标识符或标签时，就形成了_名称绑定_。[路径](paths.md)、标识符和标签用于指称实体。
 
 ### 名称解析
 
@@ -119,7 +115,7 @@ crate 是编译和链接的单位。crate 有不同的 [crate 类型](linkage.md
 
 ### 命名空间
 
-\_命名空间_是根据名称所指称的[实体](#entity)种类，对已声明[名称](#name)进行的逻辑分组。命名空间允许一个命名空间中出现的名称不与另一个命名空间中的同名名称冲突。
+_命名空间_是根据名称所指称的[实体](#entity)种类，对已声明[名称](#name)进行的逻辑分组。命名空间允许一个命名空间中出现的名称不与另一个命名空间中的同名名称冲突。
 
 在一个命名空间内，名称按层次结构组织，该层次结构的每一级都有自己的具名实体集合。
 
@@ -210,16 +206,12 @@ let vec = [1, 2, 3].iter().map(|n| n * 2).collect::<Vec<_>>();
 
 编译时或运行时未指定的行为。这可能导致但不限于：进程终止或损坏；不当、错误或非预期的计算；或平台特定的结果。[更多信息](behavior-considered-undefined.md)。
 
-<div class="rule" id="r-glossary.uninhabited"><a class="rule-link" href="#r-glossary.uninhabited" title="glossary.uninhabited"><span>[glossary<wbr>.uninhabited]</span></a>
-</div>
-
+r[glossary.uninhabited]
 ### 无值类型
 
 如果一个类型没有构造器，因而永远不能被实例化，则它是无值类型。无值类型在不存在该类型的任何值这一意义上是“空”的。无值类型的标准示例是 [never 类型](types/never.md) `!`，或没有变体的 enum `enum Never { }`。与[有值类型](#inhabited)相对。
 
-<div class="rule" id="r-glossary.zst"><a class="rule-link" href="#r-glossary.zst" title="glossary.zst"><span>[glossary<wbr>.zst]</span></a>
-</div>
-
+r[glossary.zst]
 ### 零大小类型 (ZST)
 
 如果某个类型的大小为 0，则它是零大小类型（ZST）。这类类型最多只有一个可能的值。例子包括：
@@ -273,3 +265,52 @@ assert_eq!(0, size_of::<[(); 10]>());
 assert_eq!(0, size_of::<[u8; 0]>());
 assert_eq!(0, size_of::<U>());
 ```
+
+[`extern` blocks]: items.extern
+[`extern fn`]: items.fn.extern
+[alignment]: type-layout.md#size-and-alignment
+[arrays]: type.array
+[associated item]: #associated-item
+[attributes]: attributes.md
+[*entity*]: names.md
+[crate]: crates-and-source-files.md
+[dyn compatibility]: items/traits.md#dyn-compatibility
+[enums]: items/enumerations.md
+[fields]: expressions/field-expr.md
+[free item]: #free-item
+[function items]: type.fn-item
+[generic parameters]: items/generics.md
+[identifier]: identifiers.md
+[identifiers]: identifiers.md
+[implementation]: items/implementations.md
+[implementations]: items/implementations.md
+[inherent implementation]: items/implementations.md#inherent-implementations
+[item]: items.md
+[items]: items.md
+[labels]: tokens.md#lifetimes-and-loop-labels
+[lifetime or loop label]: tokens.md#lifetimes-and-loop-labels
+[lifetimes]: tokens.md#lifetimes-and-loop-labels
+[lints]: attributes/diagnostics.md#lint-check-attributes
+[loop labels]: tokens.md#lifetimes-and-loop-labels
+[method]: items/associated-items.md#methods
+[modules]: items/modules.md
+[*Name resolution*]: names/name-resolution.md
+[*name*]: names.md
+[*namespace*]: names/namespaces.md
+[never type]: types/never.md
+[*path*]: paths.md
+[Paths]: paths.md
+[*scope*]: names/scopes.md
+[structs]: items/structs.md
+[tuple-like enum variants]: items.enum.constructor-namespace
+[tuple-like structs]: items.struct.tuple
+[trait object types]: types/trait-object.md
+[traits]: items/traits.md
+[turbofish test]: https://github.com/rust-lang/rust/blob/1.58.0/src/test/ui/parser/bastion-of-the-turbofish.rs
+[types of crates]: linkage.md
+[types]: types.md
+[undefined-behavior]: behavior-considered-undefined.md
+[unions]: items/unions.md
+[unit type]: type.tuple.unit
+[variable bindings]: patterns.md
+[visibility rules]: visibility-and-privacy.md

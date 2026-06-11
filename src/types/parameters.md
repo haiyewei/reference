@@ -1,6 +1,4 @@
-<div class="rule" id="r-type.generic"><a class="rule-link" href="#r-type.generic" title="type.generic"><span>[type<wbr>.generic]</span></a>
-</div>
-
+r[type.generic]
 # 类型参数
 
 在具有类型参数声明的项的主体内，其类型参数的名称就是类型：

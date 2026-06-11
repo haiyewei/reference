@@ -1,16 +1,10 @@
-<div class="rule" id="r-subtype"><a class="rule-link" href="#r-subtype" title="subtype"><span>[subtype]</span></a>
-</div>
-
+r[subtype]
 # 子类型化与型变
 
-<div class="rule" id="r-subtype.intro"><a class="rule-link" href="#r-subtype.intro" title="subtype.intro"><span>[subtype<wbr>.intro]</span></a>
-</div>
-
+r[subtype.intro]
 子类型化是隐式的，可以发生在类型检查或推断的任何阶段。
 
-<div class="rule" id="r-subtype.kinds"><a class="rule-link" href="#r-subtype.kinds" title="subtype.kinds"><span>[subtype<wbr>.kinds]</span></a>
-</div>
-
+r[subtype.kinds]
 子类型化仅限于两种情况：关于生命周期的型变，以及具有高阶生命周期的类型之间的子类型化。如果从类型中擦除生命周期，那么唯一的子类型化将来自类型相等。
 
 考虑以下示例：字符串字面量始终具有 `'static` 生命周期。尽管如此，我们仍可以将 `s` 赋给 `t`：
@@ -24,10 +18,8 @@ fn bar<'a>() {
 
 由于 `'static` 比生命周期参数 `'a` 存活得更久，`&'static str` 是 `&'a str` 的子类型。
 
-<div class="rule" id="r-subtype.higher-ranked"><a class="rule-link" href="#r-subtype.higher-ranked" title="subtype.higher-ranked"><span>[subtype<wbr>.higher-ranked]</span></a>
-</div>
-
-[高阶](../nomicon/hrtb.html)[函数指针](types/function-pointer.md)和 [trait 对象](types/trait-object.md)具有另一种子类型关系。它们是由替换高阶生命周期所给出的类型的子类型。一些示例：
+r[subtype.higher-ranked]
+[Higher-ranked]&#32;[function pointers] and [trait objects] have another subtype relation. They are subtypes of types that are given by substitutions of the higher-ranked lifetimes. Some examples:
 
 ```rust
 // 这里用 'a 替换 'static
@@ -43,71 +35,55 @@ let subtype: &(for<'a, 'b> fn(&'a i32, &'b i32)) = &((|x, y| {}) as fn(&_, &_));
 let supertype: &for<'c> fn(&'c i32, &'c i32) = subtype;
 ```
 
-<div class="rule" id="r-subtyping.variance"><a class="rule-link" href="#r-subtyping.variance" title="subtyping.variance"><span>[subtyping<wbr>.variance]</span></a>
-</div>
-
+r[subtyping.variance]
 ## 型变
 
-<div class="rule" id="r-subtyping.variance.intro"><a class="rule-link" href="#r-subtyping.variance.intro" title="subtyping.variance.intro"><span>[subtyping<wbr>.variance<wbr>.intro]</span></a>
-</div>
-
+r[subtyping.variance.intro]
 型变是泛型类型相对于其实参所具有的属性。泛型类型在某个参数上的 _型变_，表示该参数的子类型化如何影响该类型的子类型化。
 
-<div class="rule" id="r-subtyping.variance.covariant"><a class="rule-link" href="#r-subtyping.variance.covariant" title="subtyping.variance.covariant"><span>[subtyping<wbr>.variance<wbr>.covariant]</span></a>
-</div>
+r[subtyping.variance.covariant]
+* 如果 `T` 是 `U` 的子类型会推出 `F<T>` 是 `F<U>` 的子类型，则 `F<T>` 对 `T` 是_协变_ 的（子类型化“传递通过”）
 
-- 如果 `T` 是 `U` 的子类型会推出 `F<T>` 是 `F<U>` 的子类型，则 `F<T>` 对 `T` 是_协变\_ 的（子类型化“传递通过”）
+r[subtyping.variance.contravariant]
+* 如果 `T` 是 `U` 的子类型会推出 `F<U>` 是 `F<T>` 的子类型，则 `F<T>` 对 `T` 是_逆变_ 的
 
-<div class="rule" id="r-subtyping.variance.contravariant"><a class="rule-link" href="#r-subtyping.variance.contravariant" title="subtyping.variance.contravariant"><span>[subtyping<wbr>.variance<wbr>.contravariant]</span></a>
-</div>
+r[subtyping.variance.invariant]
+* 否则，`F<T>` 对 `T` 是 _不变_ 的（无法导出子类型关系）
 
-- 如果 `T` 是 `U` 的子类型会推出 `F<U>` 是 `F<T>` 的子类型，则 `F<T>` 对 `T` 是_逆变\_ 的
-
-<div class="rule" id="r-subtyping.variance.invariant"><a class="rule-link" href="#r-subtyping.variance.invariant" title="subtyping.variance.invariant"><span>[subtyping<wbr>.variance<wbr>.invariant]</span></a>
-</div>
-
-- 否则，`F<T>` 对 `T` 是 _不变_ 的（无法导出子类型关系）
-
-<div class="rule" id="r-subtyping.variance.builtin-types"><a class="rule-link" href="#r-subtyping.variance.builtin-types" title="subtyping.variance.builtin-types"><span>[subtyping<wbr>.variance<wbr>.builtin-types]</span></a>
-</div>
-
+r[subtyping.variance.builtin-types]
 类型的型变按如下方式自动确定
 
-|类型|在 `'a` 上的型变|在 `T` 上的型变|
-|--|-----------|----------|
-|`&'a T`|协变|协变|
-|`&'a mut T`|协变|不变|
-|`*const T`||协变|
-|`*mut T`||不变|
-|`[T]` 和 `[T; n]`||协变|
-|`fn() -> T`||协变|
-|`fn(T) -> ()`||逆变|
-|`std::cell::UnsafeCell<T>`||不变|
-|`std::marker::PhantomData<T>`||协变|
-|`dyn Trait<T> + 'a`|协变|不变|
+| 类型 | 在 `'a` 上的型变 | 在 `T` 上的型变 |
+|-------------------------------|-------------------|-------------------|
+| `&'a T` | 协变 | 协变 |
+| `&'a mut T` | 协变 | 不变 |
+| `*const T` |  | 协变 |
+| `*mut T` |  | 不变 |
+| `[T]` 和 `[T; n]` |  | 协变 |
+| `fn() -> T` |  | 协变 |
+| `fn(T) -> ()` |  | 逆变 |
+| `std::cell::UnsafeCell<T>` |  | 不变 |
+| `std::marker::PhantomData<T>` |  | 协变 |
+| `dyn Trait<T> + 'a` | 协变 | 不变 |
 
-<div class="rule" id="r-subtyping.variance.user-composite-types"><a class="rule-link" href="#r-subtyping.variance.user-composite-types" title="subtyping.variance.user-composite-types"><span>[subtyping<wbr>.variance<wbr>.user-composite-types]</span></a>
-</div>
-
+r[subtyping.variance.user-composite-types]
 其他 `struct`、`enum` 和 `union` 类型的型变，通过查看其字段类型的型变来决定。如果参数被用在具有不同型变的位置中，则该参数是不变的。例如，以下结构体在 `'a` 和 `T` 上是协变的，在 `'b`、`'c` 和 `U` 上是不变的。
 
 ```rust
 use std::cell::UnsafeCell;
 struct Variance<'a, 'b, 'c, T, U: 'a> {
-    x: &'a U,               // 这使 `Variance` 在 'a 上协变，并且本会使它
-                            // 在 U 上协变，但 U 稍后还会被使用
-    y: *const T,            // 在 T 上协变
-    z: UnsafeCell<&'b f64>, // 在 'b 上不变
-    w: *mut U,              // 在 U 上不变，使整个结构体不变
+    x: &'a U,               // This makes `Variance` covariant in 'a, and would
+                            // make it covariant in U, but U is used later
+    y: *const T,            // Covariant in T
+    z: UnsafeCell<&'b f64>, // Invariant in 'b
+    w: *mut U,              // Invariant in U, makes the whole struct invariant
 
-    f: fn(&'c ()) -> &'c () // 同时协变和逆变，使 'c 在该结构体中
-                            // 不变。
+    f: fn(&'c ()) -> &'c () // Both co- and contravariant, makes 'c invariant
+                            // in the struct.
 }
 ```
 
-<div class="rule" id="r-subtyping.variance.builtin-composite-types"><a class="rule-link" href="#r-subtyping.variance.builtin-composite-types" title="subtyping.variance.builtin-composite-types"><span>[subtyping<wbr>.variance<wbr>.builtin-composite-types]</span></a>
-</div>
-
+r[subtyping.variance.builtin-composite-types]
 当在 `struct`、`enum` 或 `union` 之外使用时，参数的型变会在每个位置分别检查。
 
 ```rust
@@ -116,8 +92,8 @@ fn generic_tuple<'short, 'long: 'short>(
     // 'long 在元组内同时用于协变位置和不变位置。
     x: (&'long u32, UnsafeCell<&'long u32>),
 ) {
-    // 由于这些位置上的型变是分别计算的，
-    // 我们可以在协变位置自由缩短 'long。
+    // As the variance at these positions is computed separately,
+    // we can freely shrink 'long in the covariant position.
     let _: (&'short u32, UnsafeCell<&'long u32>) = x;
 }
 
@@ -125,9 +101,13 @@ fn takes_fn_ptr<'short, 'middle: 'short>(
     // 'middle 同时用于协变位置和逆变位置。
     f: fn(&'middle ()) -> &'middle (),
 ) {
-    // 由于这些位置上的型变是分别计算的，
-    // 我们可以在协变位置自由缩短 'middle，
-    // 并在逆变位置扩展它。
+    // As the variance at these positions is computed separately,
+    // we can freely shrink 'middle in the covariant position
+    // and extend it in the contravariant position.
     let _: fn(&'static ()) -> &'short () = f;
 }
 ```
+
+[function pointers]: types/function-pointer.md
+[Higher-ranked]: ../nomicon/hrtb.html
+[trait objects]: types/trait-object.md

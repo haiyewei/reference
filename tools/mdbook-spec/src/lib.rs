@@ -171,7 +171,11 @@ impl Preprocessor for Spec {
             ch.content = grammar::grammar_link_references(&ch, &grammar);
             ch.content = self.auto_link_references(&ch, &rules);
             ch.content = self.render_rule_definitions(&ch.content, &tests, &git_ref);
-            if ch.name == "Test summary" {
+            if ch
+                .source_path
+                .as_ref()
+                .is_some_and(|path| path == std::path::Path::new("test-summary.md"))
+            {
                 ch.content = ch.content.replace("{{summary-table}}", &summary_table);
             }
             if grammar::is_summary(ch) {

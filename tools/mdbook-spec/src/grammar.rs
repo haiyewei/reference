@@ -210,7 +210,10 @@ fn render_names(
 }
 
 pub fn is_summary(chapter: &Chapter) -> bool {
-    chapter.name == "Grammar summary"
+    chapter
+        .source_path
+        .as_ref()
+        .is_some_and(|path| path == std::path::Path::new("grammar.md"))
 }
 
 /// Inserts the summary of all grammar rules into the grammar summary chapter.
