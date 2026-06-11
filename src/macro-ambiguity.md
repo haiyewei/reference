@@ -1,206 +1,278 @@
-r[macro.ambiguity]
-# Appendix: Macro follow-set ambiguity formal specification
+<div class="rule" id="r-macro.ambiguity"><a class="rule-link" href="#r-macro.ambiguity" title="macro.ambiguity"><span>[macro<wbr>.ambiguity]</span></a>
+</div>
 
-This page documents the formal specification of the follow rules for [Macros By Example]. They were originally specified in [RFC 550], from which the bulk of this text is copied, and expanded upon in subsequent RFCs.
+# 附录：宏 follow 集歧义形式化规约
 
-r[macro.ambiguity.convention]
-## Definitions & conventions
+本页记录 [Macros By Example](macros-by-example.md) 的 follow 规则的形式化规约。它们最初在 [RFC 550](https://github.com/rust-lang/rfcs/blob/master/text/0550-macro-future-proofing.md) 中规定，本文大部分内容复制自该 RFC，并在后续 RFC 中有所扩展。
 
-r[macro.ambiguity.convention.defs]
-  - `macro`: anything invocable as `foo!(...)` in source code.
-  - `MBE`: macro-by-example, a macro defined by `macro_rules`.
-  - `matcher`: the left-hand-side of a rule in a `macro_rules` invocation, or a subportion thereof.
-  - `macro parser`: the bit of code in the Rust parser that will parse the input using a grammar derived from all of the matchers.
-  - `fragment`: The class of Rust syntax that a given matcher will accept (or "match").
-  - `repetition` : a fragment that follows a regular repeating pattern
-  - `NT`: non-terminal, the various "meta-variables" or repetition matchers that can appear in a matcher, specified in MBE syntax with a leading `$` character.
-  - `simple NT`: a "meta-variable" non-terminal (further discussion below).
-  - `complex NT`: a repetition matching non-terminal, specified via repetition operators (`*`, `+`, `?`).
-  - `token`: an atomic element of a matcher; i.e. identifiers, operators, open/close delimiters, *and* simple NT's.
-  - `token tree`: a tree structure formed from tokens (the leaves), complex NT's, and finite sequences of token trees.
-  - `delimiter token`: a token that is meant to divide the end of one fragment and the start of the next fragment.
-  - `separator token`: an optional delimiter token in an complex NT that separates each pair of elements in the matched repetition.
-  - `separated complex NT`: a complex NT that has its own separator token.
-  - `delimited sequence`: a sequence of token trees with appropriate open- and close-delimiters at the start and end of the sequence.
-  - `empty fragment`: The class of invisible Rust syntax that separates tokens, i.e. whitespace, or (in some lexical contexts), the empty token sequence.
-  - `fragment specifier`: The identifier in a simple NT that specifies which fragment the NT accepts.
-  - `language`: a context-free language.
+<div class="rule" id="r-macro.ambiguity.convention"><a class="rule-link" href="#r-macro.ambiguity.convention" title="macro.ambiguity.convention"><span>[macro<wbr>.ambiguity<wbr>.convention]</span></a>
+</div>
 
-Example:
+## 定义与约定
 
-```rust,compile_fail
+<div class="rule" id="r-macro.ambiguity.convention.defs"><a class="rule-link" href="#r-macro.ambiguity.convention.defs" title="macro.ambiguity.convention.defs"><span>[macro<wbr>.ambiguity<wbr>.convention<wbr>.defs]</span></a>
+</div>
+
+- `macro`：源代码中任何可作为 `foo!(...)` 调用的东西。
+- `MBE`：macro-by-example，即由 `macro_rules` 定义的宏。
+- `matcher`：`macro_rules` 调用中某条规则的左侧，或其子部分。
+- `macro parser`：Rust 解析器中的一段代码，它会使用从所有 matcher 派生出的文法来解析输入。
+- `fragment`：给定 matcher 会接受（或“匹配”）的一类 Rust 语法。
+- `repetition`：遵循规则重复模式的 fragment
+- `NT`：非终结符，即可以出现在 matcher 中的各种“元变量”或 repetition matcher，在 MBE 语法中用前导 `$` 字符指定。
+- `simple NT`：“元变量”非终结符（下文会进一步讨论）。
+- `complex NT`：进行重复匹配的非终结符，通过 repetition operator（`*`、`+`、`?`）指定。
+- `token`：matcher 的原子元素；即标识符、运算符、开/闭分隔符，<em>以及</em> simple NT。
+- `token tree`：由 token（叶子）、complex NT 和 token tree 的有限序列形成的树结构。
+- `delimiter token`：用于分隔一个 fragment 的结尾和下一个 fragment 的开头的 token。
+- `separator token`：complex NT 中可选的 delimiter token，用于分隔匹配到的 repetition 中每一对元素。
+- `separated complex NT`：拥有自身 separator token 的 complex NT。
+- `delimited sequence`：token tree 的序列，其序列开头和结尾带有适当的开分隔符和闭分隔符。
+- `empty fragment`：分隔 token 的不可见 Rust 语法类别，即空白，或（在某些词法上下文中）空 token 序列。
+- `fragment specifier`：simple NT 中指定该 NT 接受哪种 fragment 的标识符。
+- `language`：上下文无关语言。
+
+示例：
+
+````````````````````````````````````````````````````````````````rust,compile_fail
 macro_rules! i_am_an_mbe {
     (start $foo:expr $($i:ident),* end) => ($foo)
 }
-```
+````````````````````````````````````````````````````````````````
 
-r[macro.ambiguity.convention.matcher]
-`(start $foo:expr $($i:ident),* end)` is a matcher. The whole matcher is a delimited sequence (with open- and close-delimiters `(` and `)`), and `$foo` and `$i` are simple NT's with `expr` and `ident` as their respective fragment specifiers.
+<div class="rule" id="r-macro.ambiguity.convention.matcher"><a class="rule-link" href="#r-macro.ambiguity.convention.matcher" title="macro.ambiguity.convention.matcher"><span>[macro<wbr>.ambiguity<wbr>.convention<wbr>.matcher]</span></a>
+</div>
 
-r[macro.ambiguity.convention.complex-nt]
-`$(i:ident),*` is *also* an NT; it is a complex NT that matches a comma-separated repetition of identifiers. The `,` is the separator token for the complex NT; it occurs in between each pair of elements (if any) of the matched fragment.
+`(start $foo:expr $($i:ident),* end)` 是一个 matcher。整个 matcher 是一个 delimited sequence（带有开分隔符 `(` 和闭分隔符 `)`），而 `$foo` 和 `$i` 是 simple NT，其各自的 fragment specifier 分别为 `expr` 和 `ident`。
 
-Another example of a complex NT is `$(hi $e:expr ;)+`, which matches any fragment of the form `hi <expr>; hi <expr>; ...` where `hi <expr>;` occurs at least once. Note that this complex NT does not have a dedicated separator token.
+<div class="rule" id="r-macro.ambiguity.convention.complex-nt"><a class="rule-link" href="#r-macro.ambiguity.convention.complex-nt" title="macro.ambiguity.convention.complex-nt"><span>[macro<wbr>.ambiguity<wbr>.convention<wbr>.complex-nt]</span></a>
+</div>
 
-(Note that Rust's parser ensures that delimited sequences always occur with proper nesting of token tree structure and correct matching of open- and close-delimiters.)
+`$(i:ident),*` <em>也是</em>一个 NT；它是一个 complex NT，匹配由逗号分隔的标识符 repetition。`,` 是该 complex NT 的 separator token；它出现在匹配到的 fragment 中每一对元素（如果有）之间。
 
-r[macro.ambiguity.convention.vars]
-We will tend to use the variable "M" to stand for a matcher, variables "t" and "u" for arbitrary individual tokens, and the variables "tt" and "uu" for arbitrary token trees. (The use of "tt" does present potential ambiguity with its additional role as a fragment specifier; but it will be clear from context which interpretation is meant.)
+complex NT 的另一个例子是 `$(hi $e:expr ;)+`，它匹配形式为 `hi <expr>; hi <expr>; ...` 的任何 fragment，其中 `hi <expr>;` 至少出现一次。注意，这个 complex NT 没有专用的 separator token。
 
-r[macro.ambiguity.convention.set]
-"SEP" will range over separator tokens, "OP" over the repetition operators `*`, `+`, and `?`, "OPEN"/"CLOSE" over matching token pairs surrounding a delimited sequence (e.g. `[` and `]`).
+（注意，Rust 的解析器会确保 delimited sequence 总是以 token tree 结构的正确嵌套和开/闭分隔符的正确匹配出现。）
 
-r[macro.ambiguity.convention.sequence-vars]
-Greek letters "α" "β" "γ" "δ"  stand for potentially empty token-tree sequences. (However, the Greek letter "ε" (epsilon) has a special role in the presentation and does not stand for a token-tree sequence.)
+<div class="rule" id="r-macro.ambiguity.convention.vars"><a class="rule-link" href="#r-macro.ambiguity.convention.vars" title="macro.ambiguity.convention.vars"><span>[macro<wbr>.ambiguity<wbr>.convention<wbr>.vars]</span></a>
+</div>
 
-  * This Greek letter convention is usually just employed when the presence of a sequence is a technical detail; in particular, when we wish to *emphasize* that we are operating on a sequence of token-trees, we will use the notation "tt ..." for the sequence, not a Greek letter.
+我们通常使用变量 "M" 表示 matcher，变量 "t" 和 "u" 表示任意单个 token，变量 "tt" 和 "uu" 表示任意 token tree。（"tt" 的使用确实会因其还作为 fragment specifier 而带来潜在歧义；但从上下文可以清楚看出所指的是哪种解释。）
 
-Note that a matcher is merely a token tree. A "simple NT", as mentioned above, is an meta-variable NT; thus it is a non-repetition. For example, `$foo:ty` is a simple NT but `$($foo:ty)+` is a complex NT.
+<div class="rule" id="r-macro.ambiguity.convention.set"><a class="rule-link" href="#r-macro.ambiguity.convention.set" title="macro.ambiguity.convention.set"><span>[macro<wbr>.ambiguity<wbr>.convention<wbr>.set]</span></a>
+</div>
 
-Note also that in the context of this formalism, the term "token" generally *includes* simple NTs.
+"SEP" 的取值范围是 separator token，"OP" 的取值范围是 repetition operator `*`、`+` 和 `?`，"OPEN"/"CLOSE" 的取值范围是围绕 delimited sequence 的匹配 token 对（例如 `[` 和 `]`）。
 
-Finally, it is useful for the reader to keep in mind that according to the definitions of this formalism, no simple NT matches the empty fragment, and likewise no token matches the empty fragment of Rust syntax. (Thus, the *only* NT that can match the empty fragment is a complex NT.) This is not actually true, because the `vis` matcher can match an empty fragment. Thus, for the purposes of the formalism, we will treat `$v:vis` as actually being `$($v:vis)?`, with a requirement that the matcher match an empty fragment.
+<div class="rule" id="r-macro.ambiguity.convention.sequence-vars"><a class="rule-link" href="#r-macro.ambiguity.convention.sequence-vars" title="macro.ambiguity.convention.sequence-vars"><span>[macro<wbr>.ambiguity<wbr>.convention<wbr>.sequence-vars]</span></a>
+</div>
 
-r[macro.ambiguity.invariant]
-### The matcher invariants
+希腊字母 "α" "β" "γ" "δ" 表示可能为空的 token-tree 序列。（不过，希腊字母 "ε"（epsilon）在此表述中具有特殊角色，并不表示 token-tree 序列。）
 
-r[macro.ambiguity.invariant.list]
-To be valid, a matcher must meet the following three invariants. The definitions of FIRST and FOLLOW are described later.
+- 这种希腊字母约定通常只在序列的存在属于技术细节时使用；特别是，当我们希望<em>强调</em>正在操作 token-tree 序列时，会使用 "tt ..." 这一记号表示该序列，而不是使用希腊字母。
 
-1.  For any two successive token tree sequences in a matcher `M` (i.e. `M = ... tt uu ...`) with `uu ...` nonempty, we must have FOLLOW(`... tt`) ∪ {ε} ⊇ FIRST(`uu ...`).
-1.  For any separated complex NT in a matcher, `M = ... $(tt ...) SEP OP ...`, we must have `SEP` ∈ FOLLOW(`tt ...`).
-1.  For an unseparated complex NT in a matcher, `M = ... $(tt ...) OP ...`, if OP = `*` or `+`, we must have FOLLOW(`tt ...`) ⊇ FIRST(`tt ...`).
+注意，matcher 只不过是一个 token tree。如上所述，"simple NT" 是元变量 NT；因此它不是 repetition。例如，`$foo:ty` 是 simple NT，但 `$($foo:ty)+` 是 complex NT。
 
-r[macro.ambiguity.invariant.follow-matcher]
-The first invariant says that whatever actual token that comes after a matcher, if any, must be somewhere in the predetermined follow set.  This ensures that a legal macro definition will continue to assign the same determination as to where `... tt` ends and `uu ...` begins, even as new syntactic forms are added to the language.
+还要注意，在此形式化体系的上下文中，术语 "token" 通常<em>包括</em> simple NT。
 
-r[macro.ambiguity.invariant.separated-complex-nt]
-The second invariant says that a separated complex NT must use a separator token that is part of the predetermined follow set for the internal contents of the NT. This ensures that a legal macro definition will continue to parse an input fragment into the same delimited sequence of `tt ...`'s, even as new syntactic forms are added to the language.
+最后，读者最好记住，按照此形式化体系的定义，没有 simple NT 会匹配空片段，同样也没有 token 会匹配 Rust 语法中的空片段。（因此，<em>唯一</em>能够匹配空片段的 NT 是 complex NT。）这实际上并不正确，因为 `vis` matcher 可以匹配空片段。因此，出于形式化体系的目的，我们会把 `$v:vis` 视为实际上是 `$($v:vis)?`，并要求该 matcher 匹配空片段。
 
-r[macro.ambiguity.invariant.unseparated-complex-nt]
-The third invariant says that when we have a complex NT that can match two or more copies of the same thing with no separation in between, it must be permissible for them to be placed next to each other as per the first invariant. This invariant also requires they be nonempty, which eliminates a possible ambiguity.
+<div class="rule" id="r-macro.ambiguity.invariant"><a class="rule-link" href="#r-macro.ambiguity.invariant" title="macro.ambiguity.invariant"><span>[macro<wbr>.ambiguity<wbr>.invariant]</span></a>
+</div>
 
-**NOTE: The third invariant is currently unenforced due to historical oversight and significant reliance on the behaviour. It is currently undecided what to do about this going forward. Macros that do not respect the behaviour may become invalid in a future edition of Rust. See the [tracking issue].**
+### matcher 不变式
 
-r[macro.ambiguity.sets]
-### FIRST and FOLLOW, informally
+<div class="rule" id="r-macro.ambiguity.invariant.list"><a class="rule-link" href="#r-macro.ambiguity.invariant.list" title="macro.ambiguity.invariant.list"><span>[macro<wbr>.ambiguity<wbr>.invariant<wbr>.list]</span></a>
+</div>
 
-r[macro.ambiguity.sets.intro]
-A given matcher M maps to three sets: FIRST(M), LAST(M) and FOLLOW(M).
+要成为有效 matcher，必须满足以下三个不变式。FIRST 和 FOLLOW 的定义稍后描述。
 
-Each of the three sets is made up of tokens. FIRST(M) and LAST(M) may also contain a distinguished non-token element ε ("epsilon"), which indicates that M can match the empty fragment. (But FOLLOW(M) is always just a set of tokens.)
+1. 对于 matcher `M` 中任意两个连续的 token tree 序列（即 `M = ... tt uu ...`）且 `uu ...` 非空时，必须有 FOLLOW(`... tt`) ∪ {ε} ⊇ FIRST(`uu ...`)。
+1. 对于 matcher 中的任意 separated complex NT，`M = ... $(tt ...) SEP OP ...`，必须有 `SEP` ∈ FOLLOW(`tt ...`)。
+1. 对于 matcher 中的 unseparated complex NT，`M = ... $(tt ...) OP ...`，如果 OP = `*` 或 `+`，则必须有 FOLLOW(`tt ...`) ⊇ FIRST(`tt ...`)。
 
-Informally:
+<div class="rule" id="r-macro.ambiguity.invariant.follow-matcher"><a class="rule-link" href="#r-macro.ambiguity.invariant.follow-matcher" title="macro.ambiguity.invariant.follow-matcher"><span>[macro<wbr>.ambiguity<wbr>.invariant<wbr>.follow-matcher]</span></a>
+</div>
 
-r[macro.ambiguity.sets.first]
-  * FIRST(M): collects the tokens potentially used first when matching a fragment to M.
+第一个不变式说明，matcher 之后出现的任何实际 token（如果有）都必须位于预先确定的 follow 集中。这确保合法的宏定义即使在语言加入新的语法形式之后，也会继续对 `... tt` 在何处结束以及 `uu ...` 在何处开始作出相同判断。
 
-r[macro.ambiguity.sets.last]
-  * LAST(M): collects the tokens potentially used last when matching a fragment to M.
+<div class="rule" id="r-macro.ambiguity.invariant.separated-complex-nt"><a class="rule-link" href="#r-macro.ambiguity.invariant.separated-complex-nt" title="macro.ambiguity.invariant.separated-complex-nt"><span>[macro<wbr>.ambiguity<wbr>.invariant<wbr>.separated-complex-nt]</span></a>
+</div>
 
-r[macro.ambiguity.sets.follow]
-  * FOLLOW(M): the set of tokens allowed to follow immediately after some fragment matched by M.
+第二个不变式说明，separated complex NT 必须使用一个 separator token，且该 token 是该 NT 内部内容的预定 follow 集的一部分。这确保合法的宏定义即使在语言加入新的语法形式之后，也会继续把输入 fragment 解析为相同的 `tt ...` delimited sequence。
 
-    In other words: t ∈ FOLLOW(M) if and only if there exists (potentially empty) token sequences α, β, γ, δ where:
+<div class="rule" id="r-macro.ambiguity.invariant.unseparated-complex-nt"><a class="rule-link" href="#r-macro.ambiguity.invariant.unseparated-complex-nt" title="macro.ambiguity.invariant.unseparated-complex-nt"><span>[macro<wbr>.ambiguity<wbr>.invariant<wbr>.unseparated-complex-nt]</span></a>
+</div>
 
-      * M matches β,
+第三个不变式说明，当 complex NT 可以匹配同一事物的两个或更多副本且它们之间没有分隔时，按照第一个不变式，必须允许它们彼此相邻放置。这个不变式还要求它们为非空，从而消除一种可能的歧义。
 
-      * t matches γ, and
+**注意：由于历史疏忽以及对该行为存在大量依赖，第三个不变式目前尚未强制执行。今后如何处理这一点目前尚未决定。不遵守该行为的宏可能会在 Rust 的未来 edition 中变为无效。参见 [tracking issue](https://github.com/rust-lang/rust/issues/56575)。**
 
-      * The concatenation α β γ δ is a parseable Rust program.
+<div class="rule" id="r-macro.ambiguity.sets"><a class="rule-link" href="#r-macro.ambiguity.sets" title="macro.ambiguity.sets"><span>[macro<wbr>.ambiguity<wbr>.sets]</span></a>
+</div>
 
-r[macro.ambiguity.sets.universe]
-We use the shorthand ANYTOKEN to denote the set of all tokens (including simple NTs). For example, if any token is legal after a matcher M, then FOLLOW(M) = ANYTOKEN.
+### FIRST 和 FOLLOW 的非正式说明
 
-(To review one's understanding of the above informal descriptions, the reader at this point may want to jump ahead to the [examples of FIRST/LAST](#examples-of-first-and-last) before reading their formal definitions.)
+<div class="rule" id="r-macro.ambiguity.sets.intro"><a class="rule-link" href="#r-macro.ambiguity.sets.intro" title="macro.ambiguity.sets.intro"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.intro]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def]
-### FIRST, LAST
+给定 matcher M 映射到三个集合：FIRST(M)、LAST(M) 和 FOLLOW(M)。
 
-r[macro.ambiguity.sets.def.intro]
-Below are formal inductive definitions for FIRST and LAST.
+这三个集合都由 token 组成。FIRST(M) 和 LAST(M) 还可以包含一个特殊的非 token 元素 ε（"epsilon"），表示 M 可以匹配空片段。（但 FOLLOW(M) 始终只是 token 集合。）
 
-r[macro.ambiguity.sets.def.notation]
-"A ∪ B" denotes set union, "A ∩ B" denotes set intersection, and "A \ B" denotes set difference (i.e. all elements of A that are not present in B).
+非正式地说：
 
-r[macro.ambiguity.sets.def.first]
+<div class="rule" id="r-macro.ambiguity.sets.first"><a class="rule-link" href="#r-macro.ambiguity.sets.first" title="macro.ambiguity.sets.first"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.first]</span></a>
+</div>
+
+- FIRST(M)：收集把 fragment 与 M 匹配时可能首先使用的 token。
+
+<div class="rule" id="r-macro.ambiguity.sets.last"><a class="rule-link" href="#r-macro.ambiguity.sets.last" title="macro.ambiguity.sets.last"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.last]</span></a>
+</div>
+
+- LAST(M)：收集把 fragment 与 M 匹配时可能最后使用的 token。
+
+<div class="rule" id="r-macro.ambiguity.sets.follow"><a class="rule-link" href="#r-macro.ambiguity.sets.follow" title="macro.ambiguity.sets.follow"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.follow]</span></a>
+</div>
+
+- FOLLOW(M)：允许紧跟在某个由 M 匹配的 fragment 之后的 token 集合。
+  
+  换言之：t ∈ FOLLOW(M) 当且仅当存在（可能为空的）token 序列 α、β、γ、δ，使得：
+  
+  - M 匹配 β，
+  
+  - t 匹配 γ，并且
+  
+  - 拼接结果 α β γ δ 是可解析的 Rust 程序。
+
+<div class="rule" id="r-macro.ambiguity.sets.universe"><a class="rule-link" href="#r-macro.ambiguity.sets.universe" title="macro.ambiguity.sets.universe"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.universe]</span></a>
+</div>
+
+我们使用简写 ANYTOKEN 表示所有 token（包括 simple NT）的集合。例如，如果在 matcher M 之后任何 token 都是合法的，则 FOLLOW(M) = ANYTOKEN。
+
+（为了检验对上述非正式描述的理解，读者此时可以先跳到 [FIRST/LAST 的示例](#examples-of-first-and-last)，再阅读它们的形式化定义。）
+
+<div class="rule" id="r-macro.ambiguity.sets.def"><a class="rule-link" href="#r-macro.ambiguity.sets.def" title="macro.ambiguity.sets.def"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def]</span></a>
+</div>
+
+### FIRST、LAST
+
+<div class="rule" id="r-macro.ambiguity.sets.def.intro"><a class="rule-link" href="#r-macro.ambiguity.sets.def.intro" title="macro.ambiguity.sets.def.intro"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.intro]</span></a>
+</div>
+
+下面是 FIRST 和 LAST 的形式化归纳定义。
+
+<div class="rule" id="r-macro.ambiguity.sets.def.notation"><a class="rule-link" href="#r-macro.ambiguity.sets.def.notation" title="macro.ambiguity.sets.def.notation"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.notation]</span></a>
+</div>
+
+"A ∪ B" 表示集合并集，"A ∩ B" 表示集合交集，"A \ B" 表示集合差集（即 A 中所有不在 B 中出现的元素）。
+
+<div class="rule" id="r-macro.ambiguity.sets.def.first"><a class="rule-link" href="#r-macro.ambiguity.sets.def.first" title="macro.ambiguity.sets.def.first"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.first]</span></a>
+</div>
+
 #### FIRST
 
-r[macro.ambiguity.sets.def.first.intro]
-FIRST(M) is defined by case analysis on the sequence M and the structure of its first token-tree (if any):
+<div class="rule" id="r-macro.ambiguity.sets.def.first.intro"><a class="rule-link" href="#r-macro.ambiguity.sets.def.first.intro" title="macro.ambiguity.sets.def.first.intro"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.first<wbr>.intro]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.first.epsilon]
-  * if M is the empty sequence, then FIRST(M) = { ε },
+FIRST(M) 通过对序列 M 及其第一个 token-tree（如果有）的结构分类讨论来定义：
 
-r[macro.ambiguity.sets.def.first.token]
-  * if M starts with a token t, then FIRST(M) = { t },
+<div class="rule" id="r-macro.ambiguity.sets.def.first.epsilon"><a class="rule-link" href="#r-macro.ambiguity.sets.def.first.epsilon" title="macro.ambiguity.sets.def.first.epsilon"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.first<wbr>.epsilon]</span></a>
+</div>
 
-    (Note: this covers the case where M starts with a delimited token-tree sequence, `M = OPEN tt ... CLOSE ...`, in which case `t = OPEN` and thus FIRST(M) = { `OPEN` }.)
+- 如果 M 是空序列，则 FIRST(M) = { ε }，
 
-    (Note: this critically relies on the property that no simple NT matches the empty fragment.)
+<div class="rule" id="r-macro.ambiguity.sets.def.first.token"><a class="rule-link" href="#r-macro.ambiguity.sets.def.first.token" title="macro.ambiguity.sets.def.first.token"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.first<wbr>.token]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.first.complex]
-  * Otherwise, M is a token-tree sequence starting with a complex NT: `M = $( tt ... ) OP α`, or `M = $( tt ... ) SEP OP α`, (where `α` is the (potentially empty) sequence of token trees for the rest of the matcher).
+- 如果 M 以 token t 开头，则 FIRST(M) = { t }，
+  
+  （注意：这涵盖 M 以 delimited token-tree 序列开头的情况，`M = OPEN tt ... CLOSE ...`，此时 `t = OPEN`，因此 FIRST(M) = { `OPEN` }。）
+  
+  （注意：这关键依赖于没有 simple NT 会匹配空片段这一性质。）
 
-      * Let SEP\_SET(M) = { SEP } if SEP is present and ε ∈ FIRST(`tt ...`); otherwise SEP\_SET(M) = {}.
+<div class="rule" id="r-macro.ambiguity.sets.def.first.complex"><a class="rule-link" href="#r-macro.ambiguity.sets.def.first.complex" title="macro.ambiguity.sets.def.first.complex"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.first<wbr>.complex]</span></a>
+</div>
 
-  * Let ALPHA\_SET(M) = FIRST(`α`) if OP = `*` or `?` and ALPHA\_SET(M) = {} if OP = `+`.
-  * FIRST(M) = (FIRST(`tt ...`) \\ {ε}) ∪ SEP\_SET(M) ∪ ALPHA\_SET(M).
+- 否则，M 是以 complex NT 开头的 token-tree 序列：`M = $( tt ... ) OP α`，或 `M = $( tt ... ) SEP OP α`，（其中 `α` 是 matcher 其余部分的 token tree 序列，可能为空）。
+  
+  - 令 SEP\_SET(M) = { SEP }，如果 SEP 存在且 ε ∈ FIRST(`tt ...`)；否则 SEP\_SET(M) = {}。
+- 令 ALPHA\_SET(M) = FIRST(`α`)，如果 OP = `*` 或 `?`；如果 OP = `+`，则 ALPHA\_SET(M) = {}。
 
-The definition for complex NTs deserves some justification. SEP\_SET(M) defines the possibility that the separator could be a valid first token for M, which happens when there is a separator defined and the repeated fragment could be empty. ALPHA\_SET(M) defines the possibility that the complex NT could be empty, meaning that M's valid first tokens are those of the following token-tree sequences `α`. This occurs when either `*` or `?` is used, in which case there could be zero repetitions. In theory, this could also occur if `+` was used with a potentially-empty repeating fragment, but this is forbidden by the third invariant.
+- FIRST(M) = (FIRST(`tt ...`) \\ {ε}) ∪ SEP\_SET(M) ∪ ALPHA\_SET(M)。
 
-From there, clearly FIRST(M) can include any token from SEP\_SET(M) or ALPHA\_SET(M), and if the complex NT match is nonempty, then any token starting FIRST(`tt ...`) could work too. The last piece to consider is ε. SEP\_SET(M) and FIRST(`tt ...`) \ {ε} cannot contain ε, but ALPHA\_SET(M) could. Hence, this definition allows M to accept ε if and only if ε ∈ ALPHA\_SET(M) does. This is correct because for M to accept ε in the complex NT case, both the complex NT and α must accept it. If OP = `+`, meaning that the complex NT cannot be empty, then by definition ε ∉ ALPHA\_SET(M). Otherwise, the complex NT can accept zero repetitions, and then ALPHA\_SET(M) = FOLLOW(`α`). So this definition is correct with respect to \varepsilon as well.
+complex NT 的定义值得作一些说明。SEP\_SET(M) 定义了 separator 可能是 M 的有效首 token 的可能性，这发生在定义了 separator 且重复 fragment 可能为空时。ALPHA\_SET(M) 定义了 complex NT 可能为空的可能性，意味着 M 的有效首 token 是后续 token-tree 序列 `α` 的首 token。使用 `*` 或 `?` 时会出现这种情况，因为可能存在零次重复。理论上，如果 `+` 与可能为空的 repeating fragment 一起使用，也可能出现这种情况，但第三个不变式禁止这样做。
 
-r[macro.ambiguity.sets.def.last]
+由此可见，FIRST(M) 显然可以包含 SEP\_SET(M) 或 ALPHA\_SET(M) 中的任何 token；如果 complex NT 匹配结果非空，那么 FIRST(`tt ...`) 中作为起始的任何 token 也可以起作用。最后要考虑的是 ε。SEP\_SET(M) 和 FIRST(`tt ...`) \ {ε} 不能包含 ε，但 ALPHA\_SET(M) 可以。因此，当且仅当 ε ∈ ALPHA\_SET(M) 时，此定义才允许 M 接受 ε。这是正确的，因为在 complex NT 情况下，要让 M 接受 ε，complex NT 和 α 都必须接受它。如果 OP = `+`，意味着 complex NT 不能为空，那么根据定义 ε ∉ ALPHA\_SET(M)。否则，complex NT 可以接受零次重复，于是 ALPHA\_SET(M) = FOLLOW(`α`)。所以这个定义对于 \varepsilon 也是正确的。
+
+<div class="rule" id="r-macro.ambiguity.sets.def.last"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last" title="macro.ambiguity.sets.def.last"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last]</span></a>
+</div>
+
 #### LAST
 
-r[macro.ambiguity.sets.def.last.intro]
-LAST(M), defined by case analysis on M itself (a sequence of token-trees):
+<div class="rule" id="r-macro.ambiguity.sets.def.last.intro"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.intro" title="macro.ambiguity.sets.def.last.intro"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.intro]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.last.empty]
-  * if M is the empty sequence, then LAST(M) = { ε }
+LAST(M) 通过对 M 本身（一个 token-tree 序列）分类讨论来定义：
 
-r[macro.ambiguity.sets.def.last.token]
-  * if M is a singleton token t, then LAST(M) = { t }
+<div class="rule" id="r-macro.ambiguity.sets.def.last.empty"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.empty" title="macro.ambiguity.sets.def.last.empty"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.empty]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.last.rep-star]
-  * if M is the singleton complex NT repeating zero or more times, `M = $( tt ... ) *`, or `M = $( tt ... ) SEP *`
+- 如果 M 是空序列，则 LAST(M) = { ε }
 
-      * Let sep_set = { SEP } if SEP present; otherwise sep_set = {}.
+<div class="rule" id="r-macro.ambiguity.sets.def.last.token"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.token" title="macro.ambiguity.sets.def.last.token"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.token]</span></a>
+</div>
 
-      * if ε ∈ LAST(`tt ...`) then LAST(M) = LAST(`tt ...`) ∪ sep_set
+- 如果 M 是单个 token t，则 LAST(M) = { t }
 
-      * otherwise, the sequence `tt ...` must be non-empty; LAST(M) = LAST(`tt ...`) ∪ {ε}.
+<div class="rule" id="r-macro.ambiguity.sets.def.last.rep-star"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.rep-star" title="macro.ambiguity.sets.def.last.rep-star"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.rep-star]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.last.rep-plus]
-  * if M is the singleton complex NT repeating one or more times, `M = $( tt ... ) +`, or `M = $( tt ... ) SEP +`
+- 如果 M 是重复零次或多次的单个 complex NT，`M = $( tt ... ) *`，或 `M = $( tt ... ) SEP *`
+  
+  - 如果 SEP 存在，则令 sep_set = { SEP }；否则 sep_set = {}。
+  
+  - 如果 ε ∈ LAST(`tt ...`)，则 LAST(M) = LAST(`tt ...`) ∪ sep_set
+  
+  - 否则，序列 `tt ...` 必须非空；LAST(M) = LAST(`tt ...`) ∪ {ε}。
 
-      * Let sep_set = { SEP } if SEP present; otherwise sep_set = {}.
+<div class="rule" id="r-macro.ambiguity.sets.def.last.rep-plus"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.rep-plus" title="macro.ambiguity.sets.def.last.rep-plus"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.rep-plus]</span></a>
+</div>
 
-      * if ε ∈ LAST(`tt ...`) then LAST(M) = LAST(`tt ...`) ∪ sep_set
+- 如果 M 是重复一次或多次的单个 complex NT，`M = $( tt ... ) +`，或 `M = $( tt ... ) SEP +`
+  
+  - 如果 SEP 存在，则令 sep_set = { SEP }；否则 sep_set = {}。
+  
+  - 如果 ε ∈ LAST(`tt ...`)，则 LAST(M) = LAST(`tt ...`) ∪ sep_set
+  
+  - 否则，序列 `tt ...` 必须非空；LAST(M) = LAST(`tt ...`)
 
-      * otherwise, the sequence `tt ...` must be non-empty; LAST(M) = LAST(`tt ...`)
+<div class="rule" id="r-macro.ambiguity.sets.def.last.rep-question"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.rep-question" title="macro.ambiguity.sets.def.last.rep-question"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.rep-question]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.last.rep-question]
-  * if M is the singleton complex NT repeating zero or one time, `M = $( tt ...) ?`, then LAST(M) = LAST(`tt ...`) ∪ {ε}.
+- 如果 M 是重复零次或一次的单个 complex NT，`M = $( tt ...) ?`，则 LAST(M) = LAST(`tt ...`) ∪ {ε}。
 
-r[macro.ambiguity.sets.def.last.delim]
-  * if M is a delimited token-tree sequence `OPEN tt ... CLOSE`, then LAST(M) = { `CLOSE` }.
+<div class="rule" id="r-macro.ambiguity.sets.def.last.delim"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.delim" title="macro.ambiguity.sets.def.last.delim"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.delim]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.last.sequence]
-  * if M is a non-empty sequence of token-trees `tt uu ...`,
+- 如果 M 是 delimited token-tree 序列 `OPEN tt ... CLOSE`，则 LAST(M) = { `CLOSE` }。
 
-      * If ε ∈ LAST(`uu ...`), then LAST(M) = LAST(`tt`) ∪ (LAST(`uu ...`) \ { ε }).
+<div class="rule" id="r-macro.ambiguity.sets.def.last.sequence"><a class="rule-link" href="#r-macro.ambiguity.sets.def.last.sequence" title="macro.ambiguity.sets.def.last.sequence"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.last<wbr>.sequence]</span></a>
+</div>
 
-      * Otherwise, the sequence `uu ...` must be non-empty; then LAST(M) = LAST(`uu ...`).
+- 如果 M 是非空 token-tree 序列 `tt uu ...`，
+  
+  - 如果 ε ∈ LAST(`uu ...`)，则 LAST(M) = LAST(`tt`) ∪ (LAST(`uu ...`) \ { ε })。
+  
+  - 否则，序列 `uu ...` 必须非空；此时 LAST(M) = LAST(`uu ...`)。
 
-### Examples of FIRST and LAST
+### FIRST 和 LAST 的示例
 
-Below are some examples of FIRST and LAST. (Note in particular how the special ε element is introduced and eliminated based on the interaction between the pieces of the input.)
+下面是 FIRST 和 LAST 的一些示例。（请特别注意，特殊元素 ε 是如何基于输入各部分之间的相互作用被引入和消除的。）
 
-Our first example is presented in a tree structure to elaborate on how the analysis of the matcher composes. (Some of the simpler subtrees have been elided.)
+第一个示例以树结构呈现，用来详细说明 matcher 的分析是如何组合起来的。（一些较简单的子树已被省略。）
 
-```text
+````````````````````````````````````````````````````````````````text
 INPUT:  $(  $d:ident   $e:expr   );*    $( $( h )* );*    $( f ; )+   g
             ~~~~~~~~   ~~~~~~~                ~
                 |         |                   |
@@ -222,77 +294,91 @@ INPUT:  $(  $d:ident   $e:expr   );*    $( $( h )* );*    $( f ; )+   g
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                         |
 FIRST:                       { $d:ident, h, ;,  f }
-```
+````````````````````````````````````````````````````````````````
 
-Thus:
+因此：
 
- * FIRST(`$($d:ident $e:expr );* $( $(h)* );* $( f ;)+ g`) = { `$d:ident`, `h`, `;`, `f` }
+- FIRST(`$($d:ident $e:expr );* $( $(h)* );* $( f ;)+ g`) = { `$d:ident`, `h`, `;`, `f` }
 
-Note however that:
+但请注意：
 
- * FIRST(`$($d:ident $e:expr );* $( $(h)* );* $($( f ;)+ g)*`) = { `$d:ident`, `h`, `;`, `f`, ε }
+- FIRST(`$($d:ident $e:expr );* $( $(h)* );* $($( f ;)+ g)*`) = { `$d:ident`, `h`, `;`, `f`, ε }
 
-Here are similar examples but now for LAST.
+下面是类似示例，不过这次针对 LAST。
 
- * LAST(`$d:ident $e:expr`) = { `$e:expr` }
- * LAST(`$( $d:ident $e:expr );*`) = { `$e:expr`, ε }
- * LAST(`$( $d:ident $e:expr );* $(h)*`) = { `$e:expr`, ε, `h` }
- * LAST(`$( $d:ident $e:expr );* $(h)* $( f ;)+`) = { `;` }
- * LAST(`$( $d:ident $e:expr );* $(h)* $( f ;)+ g`) = { `g` }
+- LAST(`$d:ident $e:expr`) = { `$e:expr` }
+- LAST(`$( $d:ident $e:expr );*`) = { `$e:expr`, ε }
+- LAST(`$( $d:ident $e:expr );* $(h)*`) = { `$e:expr`, ε, `h` }
+- LAST(`$( $d:ident $e:expr );* $(h)* $( f ;)+`) = { `;` }
+- LAST(`$( $d:ident $e:expr );* $(h)* $( f ;)+ g`) = { `g` }
 
-r[macro.ambiguity.sets.def.follow]
+<div class="rule" id="r-macro.ambiguity.sets.def.follow"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow" title="macro.ambiguity.sets.def.follow"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow]</span></a>
+</div>
+
 ### FOLLOW(M)
 
-r[macro.ambiguity.sets.def.follow.intro]
-Finally, the definition for FOLLOW(M) is built up as follows. pat, expr, etc. represent simple nonterminals with the given fragment specifier.
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.intro"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.intro" title="macro.ambiguity.sets.def.follow.intro"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.intro]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.follow.pat]
-  * FOLLOW(pat) = {`=>`, `,`, `=`, `|`, `if`, `in`}`.
+最后，FOLLOW(M) 的定义按如下方式构建。pat、expr 等表示带有给定 fragment specifier 的 simple nonterminal。
 
-r[macro.ambiguity.sets.def.follow.expr-stmt]
-  * FOLLOW(expr) = FOLLOW(expr_2021) = FOLLOW(stmt) =  {`=>`, `,`, `;`}`.
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.pat"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.pat" title="macro.ambiguity.sets.def.follow.pat"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.pat]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.follow.ty-path]
-  * FOLLOW(ty) = FOLLOW(path) = {`{`, `[`, `,`, `=>`, `:`, `=`, `>`, `>>`, `;`, `|`, `as`, `where`, block nonterminals}.
+- FOLLOW(pat) = {`=>`, `,`, `=`, `|`, `if`, `in`}\`。
 
-r[macro.ambiguity.sets.def.follow.vis]
-  * FOLLOW(vis) = {`,`l any keyword or identifier except a non-raw `priv`; any token that can begin a type; ident, ty, and path nonterminals}.
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.expr-stmt"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.expr-stmt" title="macro.ambiguity.sets.def.follow.expr-stmt"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.expr-stmt]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.follow.simple]
-  * FOLLOW(t) = ANYTOKEN for any other simple token, including block, ident, tt, item, lifetime, literal and meta simple nonterminals, and all terminals.
+- FOLLOW(expr) = FOLLOW(expr_2021) = FOLLOW(stmt) =  {`=>`, `,`, `;`}\`。
 
-r[macro.ambiguity.sets.def.follow.other-matcher]
-  * FOLLOW(M), for any other M, is defined as the intersection, as t ranges over (LAST(M) \ {ε}), of FOLLOW(t).
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.ty-path"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.ty-path" title="macro.ambiguity.sets.def.follow.ty-path"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.ty-path]</span></a>
+</div>
 
-r[macro.ambiguity.sets.def.follow.type-first]
-The tokens that can begin a type are, as of this writing, {`(`, `[`, `!`, `*`, `&`, `&&`, `?`, lifetimes, `>`, `>>`, `::`, any non-keyword identifier, `super`, `self`, `Self`, `extern`, `crate`, `$crate`, `_`, `for`, `impl`, `fn`, `unsafe`, `typeof`, `dyn`}, although this list may not be complete because people won't always remember to update the appendix when new ones are added.
+- FOLLOW(ty) = FOLLOW(path) = {`{`, `[`, `,`, `=>`, `:`, `=`, `>`, `>>`, `;`, `|`, `as`, `where`, block nonterminal}。
 
-Examples of FOLLOW for complex M:
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.vis"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.vis" title="macro.ambiguity.sets.def.follow.vis"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.vis]</span></a>
+</div>
 
- * FOLLOW(`$( $d:ident $e:expr )*`) = FOLLOW(`$e:expr`)
- * FOLLOW(`$( $d:ident $e:expr )* $(;)*`) = FOLLOW(`$e:expr`) ∩ ANYTOKEN = FOLLOW(`$e:expr`)
- * FOLLOW(`$( $d:ident $e:expr )* $(;)* $( f |)+`) = ANYTOKEN
+- FOLLOW(vis) = {`,`l 除一个非 raw 的 `priv` 之外的任何关键字或标识符；任何可以开始类型的 token；ident、ty 和 path nonterminal}。
 
-### Examples of valid and invalid matchers
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.simple"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.simple" title="macro.ambiguity.sets.def.follow.simple"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.simple]</span></a>
+</div>
 
-With the above specification in hand, we can present arguments for why particular matchers are legal and others are not.
+- 对于任何其他 simple token，FOLLOW(t) = ANYTOKEN，包括 block、ident、tt、item、lifetime、literal 和 meta simple nonterminal，以及所有 terminal。
 
- * `($ty:ty < foo ,)` : illegal, because FIRST(`< foo ,`) = { `<` } ⊈ FOLLOW(`ty`)
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.other-matcher"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.other-matcher" title="macro.ambiguity.sets.def.follow.other-matcher"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.other-matcher]</span></a>
+</div>
 
- * `($ty:ty , foo <)` : legal, because FIRST(`, foo <`) = { `,` }  is ⊆ FOLLOW(`ty`).
+- 对于任何其他 M，FOLLOW(M) 定义为当 t 遍历 (LAST(M) \ {ε}) 时 FOLLOW(t) 的交集。
 
- * `($pa:pat $pb:pat $ty:ty ,)` : illegal, because FIRST(`$pb:pat $ty:ty ,`) = { `$pb:pat` } ⊈ FOLLOW(`pat`), and also FIRST(`$ty:ty ,`) = { `$ty:ty` } ⊈ FOLLOW(`pat`).
+<div class="rule" id="r-macro.ambiguity.sets.def.follow.type-first"><a class="rule-link" href="#r-macro.ambiguity.sets.def.follow.type-first" title="macro.ambiguity.sets.def.follow.type-first"><span>[macro<wbr>.ambiguity<wbr>.sets<wbr>.def<wbr>.follow<wbr>.type-first]</span></a>
+</div>
 
- * `( $($a:tt $b:tt)* ; )` : legal, because FIRST(`$b:tt`) = { `$b:tt` } is ⊆ FOLLOW(`tt`) = ANYTOKEN, as is FIRST(`;`) = { `;` }.
+截至本文撰写时，可以开始一个类型的 token 包括 {`(`, `[`, `!`, `*`, `&`, `&&`, `?`, lifetime, `>`, `>>`, `::`, 任何非关键字标识符, `super`, `self`, `Self`, `extern`, `crate`, `$crate`, `_`, `for`, `impl`, `fn`, `unsafe`, `typeof`, `dyn`}，不过这个列表可能并不完整，因为新增此类 token 时人们并不总会记得更新本附录。
 
- * `( $($t:tt),* , $(t:tt),* )` : legal,  (though any attempt to actually use this macro will signal a local ambiguity error during expansion).
+complex M 的 FOLLOW 示例：
 
- * `($ty:ty $(; not sep)* -)` : illegal, because FIRST(`$(; not sep)* -`) = { `;`, `-` } is not in FOLLOW(`ty`).
+- FOLLOW(`$( $d:ident $e:expr )*`) = FOLLOW(`$e:expr`)
+- FOLLOW(`$( $d:ident $e:expr )* $(;)*`) = FOLLOW(`$e:expr`) ∩ ANYTOKEN = FOLLOW(`$e:expr`)
+- FOLLOW(`$( $d:ident $e:expr )* $(;)* $( f |)+`) = ANYTOKEN
 
- * `($($ty:ty)-+)` : illegal, because separator `-` is not in FOLLOW(`ty`).
+### 有效和无效 matcher 的示例
 
- * `($($e:expr)*)` : illegal, because expr NTs are not in FOLLOW(expr NT).
+有了上述规约，我们就可以说明为什么某些 matcher 是合法的，而另一些不是。
 
-[Macros by Example]: macros-by-example.md
-[RFC 550]: https://github.com/rust-lang/rfcs/blob/master/text/0550-macro-future-proofing.md
-[tracking issue]: https://github.com/rust-lang/rust/issues/56575
+- `($ty:ty < foo ,)`：非法，因为 FIRST(`< foo ,`) = { `<` } ⊈ FOLLOW(`ty`)
+
+- `($ty:ty , foo <)`：合法，因为 FIRST(`, foo <`) = { `,` } 是 ⊆ FOLLOW(`ty`)。
+
+- `($pa:pat $pb:pat $ty:ty ,)`：非法，因为 FIRST(`$pb:pat $ty:ty ,`) = { `$pb:pat` } ⊈ FOLLOW(`pat`)，并且 FIRST(`$ty:ty ,`) = { `$ty:ty` } 也 ⊈ FOLLOW(`pat`)。
+
+- `( $($a:tt $b:tt)* ; )`：合法，因为 FIRST(`$b:tt`) = { `$b:tt` } 是 ⊆ FOLLOW(`tt`) = ANYTOKEN，FIRST(`;`) = { `;` } 也是如此。
+
+- `( $($t:tt),* , $(t:tt),* )`：合法，（但任何实际使用此宏的尝试都会在展开期间报告局部歧义错误）。
+
+- `($ty:ty $(; not sep)* -)`：非法，因为 FIRST(`$(; not sep)* -`) = { `;`, `-` } 不在 FOLLOW(`ty`) 中。
+
+- `($($ty:ty)-+)`：非法，因为 separator `-` 不在 FOLLOW(`ty`) 中。
+
+- `($($e:expr)*)`：非法，因为 expr NT 不在 FOLLOW(expr NT) 中。

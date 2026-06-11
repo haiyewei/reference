@@ -1,26 +1,36 @@
-r[type.struct]
-# Struct types
+<div class="rule" id="r-type.struct"><a class="rule-link" href="#r-type.struct" title="type.struct"><span>[type<wbr>.struct]</span></a>
+</div>
 
-r[type.struct.intro]
-A `struct` *type* is a heterogeneous product of other types, called the *fields* of the type.[^structtype]
+# 结构体类型
 
-r[type.struct.constructor]
-New instances of a `struct` can be constructed with a [struct expression].
+<div class="rule" id="r-type.struct.intro"><a class="rule-link" href="#r-type.struct.intro" title="type.struct.intro"><span>[type<wbr>.struct<wbr>.intro]</span></a>
+</div>
 
-r[type.struct.layout]
-The memory layout of a `struct` is undefined by default to allow for compiler optimizations like field reordering, but it can be fixed with the [`repr` attribute]. In either case, fields may be given in any order in a corresponding struct *expression*; the resulting `struct` value will always have the same memory layout.
+`struct` _类型_ 是其他类型的异构积，这些其他类型称为该类型的 _字段_。[^structtype]
 
-r[type.struct.field-visibility]
-The fields of a `struct` may be qualified by [visibility modifiers], to allow access to data in a struct outside a module.
+<div class="rule" id="r-type.struct.constructor"><a class="rule-link" href="#r-type.struct.constructor" title="type.struct.constructor"><span>[type<wbr>.struct<wbr>.constructor]</span></a>
+</div>
 
-r[type.struct.tuple]
-A _tuple struct_ type is just like a struct type, except that the fields are anonymous.
+可以使用 [结构体表达式](../expressions/struct-expr.md) 构造 `struct` 的新实例。
 
-r[type.struct.unit]
-A _unit-like struct_ type is like a struct type, except that it has no fields. The one value constructed by the associated [struct expression] is the only value that inhabits such a type.
+<div class="rule" id="r-type.struct.layout"><a class="rule-link" href="#r-type.struct.layout" title="type.struct.layout"><span>[type<wbr>.struct<wbr>.layout]</span></a>
+</div>
 
-[^structtype]: `struct` types are analogous to `struct` types in C, the *record* types of the ML family, or the *struct* types of the Lisp family.
+`struct` 的内存布局默认未定义，以允许字段重排等编译器优化，但可以通过 [`repr` 属性](../type-layout.md#representations) 固定其布局。在任一情况下，都可以在相应的结构体 _表达式_ 中以任意顺序给出字段；生成的 `struct` 值始终具有相同的内存布局。
 
-[`repr` attribute]: ../type-layout.md#representations
-[struct expression]: ../expressions/struct-expr.md
-[visibility modifiers]: ../visibility-and-privacy.md
+<div class="rule" id="r-type.struct.field-visibility"><a class="rule-link" href="#r-type.struct.field-visibility" title="type.struct.field-visibility"><span>[type<wbr>.struct<wbr>.field-visibility]</span></a>
+</div>
+
+`struct` 的字段可以由 [可见性修饰符](../visibility-and-privacy.md) 限定，以允许在模块外部访问结构体中的数据。
+
+<div class="rule" id="r-type.struct.tuple"><a class="rule-link" href="#r-type.struct.tuple" title="type.struct.tuple"><span>[type<wbr>.struct<wbr>.tuple]</span></a>
+</div>
+
+_元组结构体_ 类型与结构体类型类似，只是字段是匿名的。
+
+<div class="rule" id="r-type.struct.unit"><a class="rule-link" href="#r-type.struct.unit" title="type.struct.unit"><span>[type<wbr>.struct<wbr>.unit]</span></a>
+</div>
+
+_类单元结构体_ 类型与结构体类型类似，只是它没有字段。由关联的 [结构体表达式](../expressions/struct-expr.md) 构造的那一个值，是这种类型唯一拥有的值。
+
+[^structtype]: `struct` 类型类似于 C 中的 `struct` 类型、ML 家族中的 _record_ 类型，或 Lisp 家族中的 _struct_ 类型。

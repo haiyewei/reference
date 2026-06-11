@@ -1,172 +1,308 @@
-r[type.impl-trait]
-# Impl trait
+<div class="rule" id="r-type.impl-trait"><a class="rule-link" href="#r-type.impl-trait" title="type.impl-trait"><span>[type<wbr>.impl-trait]</span></a>
+</div>
 
-r[type.impl-trait.syntax]
-```grammar,types
-ImplTraitType -> `impl` Bounds
+# impl Trait
 
-ImplTraitTypeOneBound -> `impl` TraitBound
-```
+<div class="rule" id="r-type.impl-trait.syntax"><a class="rule-link" href="#r-type.impl-trait.syntax" title="type.impl-trait.syntax"><span>[type<wbr>.impl-trait<wbr>.syntax]</span></a>
+</div>
 
-r[type.impl-trait.intro]
-`impl Trait` provides ways to specify unnamed but concrete types that implement a specific trait. It can appear in two sorts of places: argument position (where it can act as an anonymous type parameter to functions), and return position (where it can act as an abstract return type).
+<div class="grammar-container">
 
-```rust
+**<sup>语法</sup>** <br> <span class="grammar-text grammar-production" id="grammar-ImplTraitType" onclick="show_railroad()">[ImplTraitType](impl-trait.md#railroad-ImplTraitType)</span> → <span class="grammar-literal">impl</span> <span class="grammar-text">[Bounds](../trait-bounds.md#grammar-Bounds)</span>
+
+<span class="grammar-text grammar-production" id="grammar-ImplTraitTypeOneBound" onclick="show_railroad()">[ImplTraitTypeOneBound](impl-trait.md#railroad-ImplTraitTypeOneBound)</span> → <span class="grammar-literal">impl</span> <span class="grammar-text">[TraitBound](../trait-bounds.md#grammar-TraitBound)</span>
+
+<button class="grammar-toggle-railroad" type="button" title="切换铁路图显示" onclick="toggle_railroad()">显示铁路图</button>
+
+</div>
+<div class="grammar-railroad grammar-hidden">
+
+<div style="width: 200px; height: auto; max-width: 100%; max-height: 100%" class="railroad-production" id="railroad-ImplTraitType"><svg class="railroad" viewBox="0 0 200 74" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect class="railroad_canvas" height="100%" width="100%"/>
+<g class="verticalgrid">
+<a class="link" xlink:href="impl-trait.md#grammar-ImplTraitType">
+<text class="comment" x="60" y="25">
+ImplTraitType</text>
+</a>
+<g class="sequence">
+<path d=" M 10 53 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<g class="sequence">
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="52" x="35" y="42"/>
+<text x="61" y="58">
+impl</text>
+</g>
+<a class="link" xlink:href="../trait-bounds.md#railroad-Bounds">
+<g class="nonterminal">
+<rect height="22" width="68" x="97" y="42"/>
+<text x="131" y="58">
+Bounds</text>
+</g>
+</a>
+<path d=" M 87 53 h 10"/>
+</g>
+<path d=" M 175 53 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 53 h 10"/>
+<path d=" M 165 53 h 10"/>
+</g>
+</g>
+</svg>
+</div>
+<div style="width: 232px; height: auto; max-width: 100%; max-height: 100%" class="railroad-production" id="railroad-ImplTraitTypeOneBound"><svg class="railroad" viewBox="0 0 232 74" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect class="railroad_canvas" height="100%" width="100%"/>
+<g class="verticalgrid">
+<a class="link" xlink:href="impl-trait.md#grammar-ImplTraitTypeOneBound">
+<text class="comment" x="92" y="25">
+ImplTraitTypeOneBound</text>
+</a>
+<g class="sequence">
+<path d=" M 10 53 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<g class="sequence">
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="52" x="35" y="42"/>
+<text x="61" y="58">
+impl</text>
+</g>
+<a class="link" xlink:href="../trait-bounds.md#railroad-TraitBound">
+<g class="nonterminal">
+<rect height="22" width="100" x="97" y="42"/>
+<text x="147" y="58">
+TraitBound</text>
+</g>
+</a>
+<path d=" M 87 53 h 10"/>
+</g>
+<path d=" M 207 53 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 53 h 10"/>
+<path d=" M 197 53 h 10"/>
+</g>
+</g>
+</svg>
+</div>
+</div>
+
+<div class="rule" id="r-type.impl-trait.intro"><a class="rule-link" href="#r-type.impl-trait.intro" title="type.impl-trait.intro"><span>[type<wbr>.impl-trait<wbr>.intro]</span></a>
+</div>
+
+`impl Trait` 提供了指定未命名但具体、且实现某个特定 trait 的类型的方式。它可以出现在两类位置：实参位置（此时它可以充当函数的匿名类型形参）和返回位置（此时它可以充当抽象返回类型）。
+
+````````````````````````rust
 trait Trait {}
 # impl Trait for () {}
 
-// argument position: anonymous type parameter
+// 实参位置：匿名类型形参
 fn foo(arg: impl Trait) {
 }
 
-// return position: abstract return type
+// 返回位置：抽象返回类型
 fn bar() -> impl Trait {
 }
-```
-r[type.impl-trait.param]
-## Anonymous type parameters
+````````````````````````
 
-> [!NOTE]
-> This is often called "impl Trait in argument position". (The term "parameter" is more correct here, but "impl Trait in argument position" is the phrasing used during the development of this feature, and it remains in parts of the implementation.)
+<div class="rule" id="r-type.impl-trait.param"><a class="rule-link" href="#r-type.impl-trait.param" title="type.impl-trait.param"><span>[type<wbr>.impl-trait<wbr>.param]</span></a>
+</div>
 
-r[type.impl-trait.param.intro]
-Functions can use `impl` followed by a set of trait bounds to declare a parameter as having an anonymous type. The caller must provide a type that satisfies the bounds declared by the anonymous type parameter, and the function can only use the methods available through the trait bounds of the anonymous type parameter.
+## 匿名类型形参
 
-For example, these two forms are almost equivalent:
+<div class="alert alert-note">
 
-```rust
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 这通常称为“实参位置中的 impl Trait”。（这里使用“形参”这个术语更准确，但“实参位置中的 impl Trait”是此特性开发期间使用的表述，并且仍保留在部分实现中。）
+
+</div>
+
+<div class="rule" id="r-type.impl-trait.param.intro"><a class="rule-link" href="#r-type.impl-trait.param.intro" title="type.impl-trait.param.intro"><span>[type<wbr>.impl-trait<wbr>.param<wbr>.intro]</span></a>
+</div>
+
+函数可以使用 `impl` 后跟一组 trait 约束，将一个形参声明为具有匿名类型。调用者必须提供满足该匿名类型形参所声明约束的类型，而函数只能使用通过该匿名类型形参的 trait 约束可用的方法。
+
+例如，这两种形式几乎等价：
+
+````````````````````````rust
 trait Trait {}
 
-// generic type parameter
+// 泛型类型形参
 fn with_generic_type<T: Trait>(arg: T) {
 }
 
-// impl Trait in argument position
+// 实参位置中的 impl Trait
 fn with_impl_trait(arg: impl Trait) {
 }
-```
+````````````````````````
 
-r[type.impl-trait.param.generic]
-That is, `impl Trait` in argument position is syntactic sugar for a generic type parameter like `<T: Trait>`, except that the type is anonymous and doesn't appear in the [GenericParams] list.
+<div class="rule" id="r-type.impl-trait.param.generic"><a class="rule-link" href="#r-type.impl-trait.param.generic" title="type.impl-trait.param.generic"><span>[type<wbr>.impl-trait<wbr>.param<wbr>.generic]</span></a>
+</div>
 
-> [!NOTE]
-> For function parameters, generic type parameters and `impl Trait` are not exactly equivalent. With a generic parameter such as `<T: Trait>`, the caller has the option to explicitly specify the generic argument for `T` at the call site using [GenericArgs], for example, `foo::<usize>(1)`. Changing a parameter from either one to the other can constitute a breaking change for the callers of a function, since this changes the number of generic arguments.
+也就是说，实参位置中的 `impl Trait` 是类似 `<T: Trait>` 的泛型类型形参的语法糖，只不过该类型是匿名的，并且不会出现在 [GenericParams](../items/generics.md#grammar-GenericParams) 列表中。
 
-r[type.impl-trait.return]
-## Abstract return types
+<div class="alert alert-note">
 
-> [!NOTE]
-> This is often called "impl Trait in return position".
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 对于函数形参，泛型类型形参和 `impl Trait` 并不完全等价。对于像 `<T: Trait>` 这样的泛型形参，调用者可以选择在调用点使用 [GenericArgs](../paths.md#grammar-GenericArgs) 显式指定 `T` 的泛型实参，例如 `foo::<usize>(1)`。将一个形参从其中一种形式改为另一种形式，可能构成对函数调用者的破坏性变更，因为这会改变泛型实参的数量。
 
-r[type.impl-trait.return.intro]
-Functions can use `impl Trait` to return an abstract return type. These types stand in for another concrete type where the caller may only use the methods declared by the specified `Trait`.
+</div>
 
-r[type.impl-trait.return.constraint-body]
-Each possible return value from the function must resolve to the same concrete type.
+<div class="rule" id="r-type.impl-trait.return"><a class="rule-link" href="#r-type.impl-trait.return" title="type.impl-trait.return"><span>[type<wbr>.impl-trait<wbr>.return]</span></a>
+</div>
 
-`impl Trait` in return position allows a function to return an unboxed abstract type. This is particularly useful with [closures] and iterators. For example, closures have a unique, un-writable type. Previously, the only way to return a closure from a function was to use a [trait object]:
+## 抽象返回类型
 
-```rust
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 这通常称为“返回位置中的 impl Trait”。
+
+</div>
+
+<div class="rule" id="r-type.impl-trait.return.intro"><a class="rule-link" href="#r-type.impl-trait.return.intro" title="type.impl-trait.return.intro"><span>[type<wbr>.impl-trait<wbr>.return<wbr>.intro]</span></a>
+</div>
+
+函数可以使用 `impl Trait` 来返回抽象返回类型。这些类型代表另一个具体类型，而调用者只能使用由指定 `Trait` 声明的方法。
+
+<div class="rule" id="r-type.impl-trait.return.constraint-body"><a class="rule-link" href="#r-type.impl-trait.return.constraint-body" title="type.impl-trait.return.constraint-body"><span>[type<wbr>.impl-trait<wbr>.return<wbr>.constraint-body]</span></a>
+</div>
+
+函数中每一个可能的返回值都必须解析为同一个具体类型。
+
+返回位置中的 `impl Trait` 允许函数返回未装箱的抽象类型。这对[闭包](closure.md)和迭代器特别有用。例如，闭包具有唯一且无法写出的类型。以前，从函数返回闭包的唯一方式是使用 [trait 对象](trait-object.md)：
+
+````````````````````````rust
 fn returns_closure() -> Box<dyn Fn(i32) -> i32> {
     Box::new(|x| x + 1)
 }
-```
+````````````````````````
 
-This could incur performance penalties from heap allocation and dynamic dispatch. It wasn't possible to fully specify the type of the closure, only to use the `Fn` trait. That means that the trait object is necessary. However, with `impl Trait`, it is possible to write this more simply:
+这可能因堆分配和动态分派而带来性能损耗。以前无法完整指定闭包的类型，只能使用 `Fn` trait。这意味着 trait 对象是必要的。然而，使用 `impl Trait` 可以更简单地写成：
 
-```rust
+````````````````````````rust
 fn returns_closure() -> impl Fn(i32) -> i32 {
     |x| x + 1
 }
-```
+````````````````````````
 
-which also avoids the drawbacks of using a boxed trait object.
+这也避免了使用装箱 trait 对象的缺点。
 
-Similarly, the concrete types of iterators could become very complex, incorporating the types of all previous iterators in a chain. Returning `impl Iterator` means that a function only exposes the `Iterator` trait as a bound on its return type, instead of explicitly specifying all of the other iterator types involved.
+类似地，迭代器的具体类型可能变得非常复杂，包含链中所有先前迭代器的类型。返回 `impl Iterator` 意味着函数只在其返回类型上暴露 `Iterator` trait 作为约束，而不是显式指定所涉及的所有其他迭代器类型。
 
-r[type.impl-trait.return-in-trait]
-## Return-position `impl Trait` in traits and trait implementations
+<div class="rule" id="r-type.impl-trait.return-in-trait"><a class="rule-link" href="#r-type.impl-trait.return-in-trait" title="type.impl-trait.return-in-trait"><span>[type<wbr>.impl-trait<wbr>.return-in-trait]</span></a>
+</div>
 
-r[type.impl-trait.return-in-trait.intro]
-Functions in traits may also use `impl Trait` as a syntax for an anonymous associated type.
+## trait 和 trait 实现中的返回位置 `impl Trait`
 
-r[type.impl-trait.return-in-trait.desugaring]
-Every `impl Trait` in the return type of an associated function in a trait is desugared to an anonymous associated type. The return type that appears in the implementation's function signature is used to determine the value of the associated type.
+<div class="rule" id="r-type.impl-trait.return-in-trait.intro"><a class="rule-link" href="#r-type.impl-trait.return-in-trait.intro" title="type.impl-trait.return-in-trait.intro"><span>[type<wbr>.impl-trait<wbr>.return-in-trait<wbr>.intro]</span></a>
+</div>
 
-r[type.impl-trait.generic-captures]
-## Capturing
+trait 中的函数也可以使用 `impl Trait` 作为匿名关联类型的语法。
 
-Behind each return-position `impl Trait` abstract type is some hidden concrete type.  For this concrete type to use a generic parameter, that generic parameter must be *captured* by the abstract type.
+<div class="rule" id="r-type.impl-trait.return-in-trait.desugaring"><a class="rule-link" href="#r-type.impl-trait.return-in-trait.desugaring" title="type.impl-trait.return-in-trait.desugaring"><span>[type<wbr>.impl-trait<wbr>.return-in-trait<wbr>.desugaring]</span></a>
+</div>
 
-r[type.impl-trait.generic-capture.auto]
-## Automatic capturing
+trait 中关联函数的返回类型里的每个 `impl Trait` 都会被脱糖为一个匿名关联类型。实现的函数签名中出现的返回类型用于确定该关联类型的值。
 
-r[type.impl-trait.generic-capture.auto.intro]
-Return-position `impl Trait` abstract types automatically capture all in-scope generic parameters, including generic type, const, and lifetime parameters (including higher-ranked ones).
+<div class="rule" id="r-type.impl-trait.generic-captures"><a class="rule-link" href="#r-type.impl-trait.generic-captures" title="type.impl-trait.generic-captures"><span>[type<wbr>.impl-trait<wbr>.generic-captures]</span></a>
+</div>
 
-r[type.impl-trait.generic-capture.edition2024]
-> [!EDITION-2024]
-> Before the 2024 edition, on free functions and on associated functions and methods of inherent impls, generic lifetime parameters that do not appear in the bounds of the abstract return type are not automatically captured.
+## 捕获
 
-r[type.impl-trait.generic-capture.precise]
-## Precise capturing
+每个返回位置 `impl Trait` 抽象类型背后都有某个隐藏的具体类型。要让这个具体类型使用某个泛型形参，该泛型形参必须被该抽象类型_捕获\_。
 
-r[type.impl-trait.generic-capture.precise.use]
-The set of generic parameters captured by a return-position `impl Trait` abstract type may be explicitly controlled with a [`use<..>` bound].  If present, only the generic parameters listed in the `use<..>` bound will be captured.  E.g.:
+<div class="rule" id="r-type.impl-trait.generic-capture.auto"><a class="rule-link" href="#r-type.impl-trait.generic-capture.auto" title="type.impl-trait.generic-capture.auto"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.auto]</span></a>
+</div>
 
-```rust
+## 自动捕获
+
+<div class="rule" id="r-type.impl-trait.generic-capture.auto.intro"><a class="rule-link" href="#r-type.impl-trait.generic-capture.auto.intro" title="type.impl-trait.generic-capture.auto.intro"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.auto<wbr>.intro]</span></a>
+</div>
+
+返回位置 `impl Trait` 抽象类型会自动捕获所有作用域内泛型形参，包括泛型类型、const 和生命周期形参（包括高阶生命周期形参）。
+
+<div class="rule" id="r-type.impl-trait.generic-capture.edition2024"><a class="rule-link" href="#r-type.impl-trait.generic-capture.edition2024" title="type.impl-trait.generic-capture.edition2024"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.edition2024]</span></a>
+</div>
+
+<div class="alert alert-edition">
+
+ > 
+ > <p class="alert-title"><span class="alert-title-edition">2024</span> Edition differences</p>
+ > 
+ > 在 2024 edition 之前，对于自由函数以及固有 impl 的关联函数和方法，未出现在抽象返回类型约束中的泛型生命周期形参不会被自动捕获。
+
+</div>
+
+<div class="rule" id="r-type.impl-trait.generic-capture.precise"><a class="rule-link" href="#r-type.impl-trait.generic-capture.precise" title="type.impl-trait.generic-capture.precise"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.precise]</span></a>
+</div>
+
+## 精确捕获
+
+<div class="rule" id="r-type.impl-trait.generic-capture.precise.use"><a class="rule-link" href="#r-type.impl-trait.generic-capture.precise.use" title="type.impl-trait.generic-capture.precise.use"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.precise<wbr>.use]</span></a>
+</div>
+
+返回位置 `impl Trait` 抽象类型所捕获的泛型形参集合，可以通过 [`use<..>` 约束](../trait-bounds.md#use-bounds)显式控制。如果存在该约束，则只有列在 `use<..>` 约束中的泛型形参会被捕获。例如：
+
+````````````````````````rust
 fn capture<'a, 'b, T>(x: &'a (), y: T) -> impl Sized + use<'a, T> {
   //                                      ~~~~~~~~~~~~~~~~~~~~~~~
-  //                                     Captures `'a` and `T` only.
+  //                                     只捕获 `'a` 和 `T`。
   (x, y)
 }
-```
+````````````````````````
 
-r[type.impl-trait.generic-capture.precise.constraint-single]
-Currently, only one `use<..>` bound may be present in a bounds list, all in-scope type and const generic parameters must be included, and all lifetime parameters that appear in other bounds of the abstract type must be included.
+<div class="rule" id="r-type.impl-trait.generic-capture.precise.constraint-single"><a class="rule-link" href="#r-type.impl-trait.generic-capture.precise.constraint-single" title="type.impl-trait.generic-capture.precise.constraint-single"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.precise<wbr>.constraint-single]</span></a>
+</div>
 
-r[type.impl-trait.generic-capture.precise.constraint-lifetime]
-Within the `use<..>` bound, any lifetime parameters present must appear before all type and const generic parameters, and the elided lifetime (`'_`) may be present if it is otherwise allowed to appear within the `impl Trait` return type.
+目前，一个约束列表中最多只能出现一个 `use<..>` 约束，必须包含所有作用域内类型和 const 泛型形参，并且必须包含所有出现在该抽象类型其他约束中的生命周期形参。
 
-r[type.impl-trait.generic-capture.precise.constraint-param-impl-trait]
-Because all in-scope type parameters must be included by name, a `use<..>` bound may not be used in the signature of items that use argument-position `impl Trait`, as those items have anonymous type parameters in scope.
+<div class="rule" id="r-type.impl-trait.generic-capture.precise.constraint-lifetime"><a class="rule-link" href="#r-type.impl-trait.generic-capture.precise.constraint-lifetime" title="type.impl-trait.generic-capture.precise.constraint-lifetime"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.precise<wbr>.constraint-lifetime]</span></a>
+</div>
 
-r[type.impl-trait.generic-capture.precise.constraint-in-trait]
-Any `use<..>` bound that is present in an associated function in a trait definition must include all generic parameters of the trait, including the implicit `Self` generic type parameter of the trait.
+在 `use<..>` 约束内，任何出现的生命周期形参都必须位于所有类型和 const 泛型形参之前；如果省略生命周期 (`'_`) 原本允许出现在 `impl Trait` 返回类型内，那么它可以出现。
 
-## Differences between generics and `impl Trait` in return position
+<div class="rule" id="r-type.impl-trait.generic-capture.precise.constraint-param-impl-trait"><a class="rule-link" href="#r-type.impl-trait.generic-capture.precise.constraint-param-impl-trait" title="type.impl-trait.generic-capture.precise.constraint-param-impl-trait"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.precise<wbr>.constraint-param-impl-trait]</span></a>
+</div>
 
-In argument position, `impl Trait` is very similar in semantics to a generic type parameter. However, there are significant differences between the two in return position. With `impl Trait`, unlike with a generic type parameter, the function chooses the return type, and the caller cannot choose the return type.
+由于所有作用域内类型形参都必须按名称包含，`use<..>` 约束不得用于使用实参位置 `impl Trait` 的项的签名中，因为这些项的作用域内有匿名类型形参。
 
-The function:
+<div class="rule" id="r-type.impl-trait.generic-capture.precise.constraint-in-trait"><a class="rule-link" href="#r-type.impl-trait.generic-capture.precise.constraint-in-trait" title="type.impl-trait.generic-capture.precise.constraint-in-trait"><span>[type<wbr>.impl-trait<wbr>.generic-capture<wbr>.precise<wbr>.constraint-in-trait]</span></a>
+</div>
 
-```rust
+trait 定义中的关联函数里出现的任何 `use<..>` 约束，都必须包含该 trait 的所有泛型形参，包括该 trait 隐式的 `Self` 泛型类型形参。
+
+## 返回位置中泛型与 `impl Trait` 的差异
+
+在实参位置，`impl Trait` 在语义上非常类似于泛型类型形参。然而，二者在返回位置中存在显著差异。使用 `impl Trait` 时，与使用泛型类型形参不同，函数会选择返回类型，而调用者不能选择返回类型。
+
+函数：
+
+````````````````````````rust
 # trait Trait {}
 fn foo<T: Trait>() -> T {
     // ...
 # panic!()
 }
-```
+````````````````````````
 
-allows the caller to determine the return type, `T`, and the function returns that type.
+允许调用者确定返回类型 `T`，并且该函数返回该类型。
 
-The function:
+函数：
 
-```rust
+````````````````````````rust
 # trait Trait {}
 # impl Trait for () {}
 fn foo() -> impl Trait {
     // ...
 }
-```
+````````````````````````
 
-doesn't allow the caller to determine the return type. Instead, the function chooses the return type, but only promises that it will implement `Trait`.
+不允许调用者确定返回类型。相反，该函数会选择返回类型，但只承诺它会实现 `Trait`。
 
-r[type.impl-trait.constraint]
-## Limitations
+<div class="rule" id="r-type.impl-trait.constraint"><a class="rule-link" href="#r-type.impl-trait.constraint" title="type.impl-trait.constraint"><span>[type<wbr>.impl-trait<wbr>.constraint]</span></a>
+</div>
 
-`impl Trait` can only appear as a parameter or return type of a non-`extern` function. It cannot be the type of a `let` binding, field type, or appear inside a type alias.
+## 限制
 
-[`use<..>` bound]: ../trait-bounds.md#use-bounds
-[closures]: closure.md
-[trait object]: trait-object.md
+`impl Trait` 只能作为非 `extern` 函数的形参或返回类型出现。它不能作为 `let` 绑定的类型、字段类型，也不能出现在类型别名内部。

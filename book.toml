@@ -1,7 +1,8 @@
 [book]
 
-title = "The Rust Reference"
+title = "Rust 参考手册"
 authors = ["The Rust Project Developers"]
+language = "zh-CN"
 
 [output.html]
 additional-css = ["theme/reference.css"]

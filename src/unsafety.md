@@ -1,42 +1,56 @@
-r[safety]
-# Unsafety
+<div class="rule" id="r-safety"><a class="rule-link" href="#r-safety" title="safety"><span>[safety]</span></a>
+</div>
 
-r[safety.intro]
-Unsafe operations are those that can potentially violate the memory-safety guarantees of Rust's static semantics.
+# 不安全性
 
-r[safety.unsafe-ops]
-The following language level features cannot be used in the safe subset of Rust:
+<div class="rule" id="r-safety.intro"><a class="rule-link" href="#r-safety.intro" title="safety.intro"><span>[safety<wbr>.intro]</span></a>
+</div>
 
-r[safety.unsafe-deref]
-- Dereferencing a [raw pointer].
+不安全操作是那些可能违反 Rust 静态语义所提供的内存安全保证的操作。
 
-r[safety.unsafe-static]
-- Reading or writing a [mutable] or unsafe [external] static variable.
+<div class="rule" id="r-safety.unsafe-ops"><a class="rule-link" href="#r-safety.unsafe-ops" title="safety.unsafe-ops"><span>[safety<wbr>.unsafe-ops]</span></a>
+</div>
 
-r[safety.unsafe-union-access]
-- Accessing a field of a [`union`], other than to assign to it.
+以下语言级特性不能在 Rust 的安全子集中使用：
 
-r[safety.unsafe-call]
-- Calling an unsafe function.
+<div class="rule" id="r-safety.unsafe-deref"><a class="rule-link" href="#r-safety.unsafe-deref" title="safety.unsafe-deref"><span>[safety<wbr>.unsafe-deref]</span></a>
+</div>
 
-r[safety.unsafe-target-feature-call]
-- Calling a safe function marked with a [`target_feature`][attributes.codegen.target_feature] from a function that does not have a `target_feature` attribute enabling the same features (see [attributes.codegen.target_feature.safety-restrictions]).
+- 解引用[裸指针](types/pointer.md)。
 
-r[safety.unsafe-impl]
-- Implementing an [unsafe trait].
+<div class="rule" id="r-safety.unsafe-static"><a class="rule-link" href="#r-safety.unsafe-static" title="safety.unsafe-static"><span>[safety<wbr>.unsafe-static]</span></a>
+</div>
 
-r[safety.unsafe-extern]
-- Declaring an [`extern`] block[^extern-2024].
+- 读取或写入[可变](items/static-items.md#mutable-statics)静态变量，或 unsafe [外部](items/external-blocks.md)静态变量。
 
-r[safety.unsafe-attribute]
-- Applying an [unsafe attribute] to an item.
+<div class="rule" id="r-safety.unsafe-union-access"><a class="rule-link" href="#r-safety.unsafe-union-access" title="safety.unsafe-union-access"><span>[safety<wbr>.unsafe-union-access]</span></a>
+</div>
 
-[^extern-2024]: Prior to the 2024 edition, extern blocks were allowed to be declared without `unsafe`.
+- 访问 [`union`](items/unions.md) 的字段，但为其赋值除外。
 
-[`extern`]: items/external-blocks.md
-[`union`]: items/unions.md
-[mutable]: items/static-items.md#mutable-statics
-[external]: items/external-blocks.md
-[raw pointer]: types/pointer.md
-[unsafe trait]: items/traits.md#unsafe-traits
-[unsafe attribute]: attributes.md
+<div class="rule" id="r-safety.unsafe-call"><a class="rule-link" href="#r-safety.unsafe-call" title="safety.unsafe-call"><span>[safety<wbr>.unsafe-call]</span></a>
+</div>
+
+- 调用 unsafe 函数。
+
+<div class="rule" id="r-safety.unsafe-target-feature-call"><a class="rule-link" href="#r-safety.unsafe-target-feature-call" title="safety.unsafe-target-feature-call"><span>[safety<wbr>.unsafe-target-feature-call]</span></a>
+</div>
+
+- 从一个没有 `target_feature` 属性来启用相同特性的函数中，调用标记了 [`target_feature`](attributes/codegen.md#r-attributes.codegen.target_feature) 的安全函数（参见 [attributes.codegen.target_feature.safety-restrictions](attributes/codegen.md#r-attributes.codegen.target_feature.safety-restrictions)）。
+
+<div class="rule" id="r-safety.unsafe-impl"><a class="rule-link" href="#r-safety.unsafe-impl" title="safety.unsafe-impl"><span>[safety<wbr>.unsafe-impl]</span></a>
+</div>
+
+- 实现 [unsafe trait](items/traits.md#unsafe-traits)。
+
+<div class="rule" id="r-safety.unsafe-extern"><a class="rule-link" href="#r-safety.unsafe-extern" title="safety.unsafe-extern"><span>[safety<wbr>.unsafe-extern]</span></a>
+</div>
+
+- 声明 [`extern`](items/external-blocks.md) 块[^extern-2024]。
+
+<div class="rule" id="r-safety.unsafe-attribute"><a class="rule-link" href="#r-safety.unsafe-attribute" title="safety.unsafe-attribute"><span>[safety<wbr>.unsafe-attribute]</span></a>
+</div>
+
+- 将 [unsafe 属性](attributes.md)应用于项。
+
+[^extern-2024]: 在 2024 edition 之前，允许在不使用 `unsafe` 的情况下声明 extern 块。

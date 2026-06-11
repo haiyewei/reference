@@ -1,29 +1,37 @@
-r[lex.keywords]
-# Keywords
+<div class="rule" id="r-lex.keywords"><a class="rule-link" href="#r-lex.keywords" title="lex.keywords"><span>[lex<wbr>.keywords]</span></a>
+</div>
 
-Rust divides keywords into three categories:
+# 关键字
 
-* [strict](#strict-keywords)
-* [reserved](#reserved-keywords)
-* [weak](#weak-keywords)
+Rust 将关键字分为三类：
 
-r[lex.keywords.strict]
-## Strict keywords
+- [严格关键字](#strict-keywords)
+- [保留关键字](#reserved-keywords)
+- [弱关键字](#weak-keywords)
 
-r[lex.keywords.strict.intro]
-These keywords can only be used in their correct contexts. They cannot be used as the names of:
+<div class="rule" id="r-lex.keywords.strict"><a class="rule-link" href="#r-lex.keywords.strict" title="lex.keywords.strict"><span>[lex<wbr>.keywords<wbr>.strict]</span></a>
+</div>
 
-* [Items]
-* [Variables] and function parameters
-* Fields and [variants]
-* [Type parameters]
-* Lifetime parameters or [loop labels]
-* [Macros] or [attributes]
-* [Macro placeholders]
-* [Crates]
+## 严格关键字
 
-r[lex.keywords.strict.list]
-The following keywords are in all editions:
+<div class="rule" id="r-lex.keywords.strict.intro"><a class="rule-link" href="#r-lex.keywords.strict.intro" title="lex.keywords.strict.intro"><span>[lex<wbr>.keywords<wbr>.strict<wbr>.intro]</span></a>
+</div>
+
+这些关键字只能在其正确的上下文中使用。它们不能用作以下对象的名称：
+
+- [项](items.md)
+- [变量](variables.md)和函数形参
+- 字段和[变体](items/enumerations.md)
+- [类型参数](types/parameters.md)
+- 生命周期参数或[循环标签](expressions/loop-expr.md#loop-labels)
+- [宏](macros.md)或[属性](attributes.md)
+- [宏占位符](macros-by-example.md)
+- [crate](crates-and-source-files.md)
+
+<div class="rule" id="r-lex.keywords.strict.list"><a class="rule-link" href="#r-lex.keywords.strict.list" title="lex.keywords.strict.list"><span>[lex<wbr>.keywords<wbr>.strict<wbr>.list]</span></a>
+</div>
+
+以下关键字存在于所有 edition 中：
 
 - `_`
 - `as`
@@ -65,21 +73,35 @@ The following keywords are in all editions:
 - `where`
 - `while`
 
-r[lex.keywords.strict.edition2018]
-> [!EDITION-2018]
-> The following keywords were added in the 2018 edition:
->
-> - `async`
-> - `await`
-> - `dyn`
+<div class="rule" id="r-lex.keywords.strict.edition2018"><a class="rule-link" href="#r-lex.keywords.strict.edition2018" title="lex.keywords.strict.edition2018"><span>[lex<wbr>.keywords<wbr>.strict<wbr>.edition2018]</span></a>
+</div>
 
-r[lex.keywords.reserved]
-## Reserved keywords
+<div class="alert alert-edition">
 
-r[lex.keywords.reserved.intro]
-These keywords aren't used yet, but they are reserved for future use. They have the same restrictions as strict keywords. The reasoning behind this is to make current programs forward compatible with future versions of Rust by forbidding them to use these keywords.
+ > 
+ > <p class="alert-title"><span class="alert-title-edition">2018</span> Edition differences</p>
+ > 
+ > 以下关键字是在 2018 edition 中添加的：
+ > 
+ > - `async`
+ > - `await`
+ > - `dyn`
 
-r[lex.keywords.reserved.list]
+</div>
+
+<div class="rule" id="r-lex.keywords.reserved"><a class="rule-link" href="#r-lex.keywords.reserved" title="lex.keywords.reserved"><span>[lex<wbr>.keywords<wbr>.reserved]</span></a>
+</div>
+
+## 保留关键字
+
+<div class="rule" id="r-lex.keywords.reserved.intro"><a class="rule-link" href="#r-lex.keywords.reserved.intro" title="lex.keywords.reserved.intro"><span>[lex<wbr>.keywords<wbr>.reserved<wbr>.intro]</span></a>
+</div>
+
+这些关键字尚未使用，但已为将来使用而保留。它们具有与严格关键字相同的限制。这样做的理由是，通过禁止当前程序使用这些关键字，使其向前兼容 Rust 的未来版本。
+
+<div class="rule" id="r-lex.keywords.reserved.list"><a class="rule-link" href="#r-lex.keywords.reserved.list" title="lex.keywords.reserved.list"><span>[lex<wbr>.keywords<wbr>.reserved<wbr>.list]</span></a>
+</div>
+
 - `abstract`
 - `become`
 - `box`
@@ -95,19 +117,39 @@ r[lex.keywords.reserved.list]
 - `virtual`
 - `yield`
 
-r[lex.keywords.reserved.edition2018]
-> [!EDITION-2018]
-> The `try` keyword was added as a reserved keyword in the 2018 edition.
+<div class="rule" id="r-lex.keywords.reserved.edition2018"><a class="rule-link" href="#r-lex.keywords.reserved.edition2018" title="lex.keywords.reserved.edition2018"><span>[lex<wbr>.keywords<wbr>.reserved<wbr>.edition2018]</span></a>
+</div>
 
-r[lex.keywords.reserved.edition2024]
-> [!EDITION-2024]
-> The `gen` keyword was added as a reserved keyword in the 2024 edition.
+<div class="alert alert-edition">
 
-r[lex.keywords.weak]
-## Weak keywords
+ > 
+ > <p class="alert-title"><span class="alert-title-edition">2018</span> Edition differences</p>
+ > 
+ > `try` 关键字是在 2018 edition 中作为保留关键字添加的。
 
-r[lex.keywords.weak.intro]
-These keywords have special meaning only in certain contexts. For example, it is possible to declare a variable or method with the name `union`.
+</div>
+
+<div class="rule" id="r-lex.keywords.reserved.edition2024"><a class="rule-link" href="#r-lex.keywords.reserved.edition2024" title="lex.keywords.reserved.edition2024"><span>[lex<wbr>.keywords<wbr>.reserved<wbr>.edition2024]</span></a>
+</div>
+
+<div class="alert alert-edition">
+
+ > 
+ > <p class="alert-title"><span class="alert-title-edition">2024</span> Edition differences</p>
+ > 
+ > `gen` 关键字是在 2024 edition 中作为保留关键字添加的。
+
+</div>
+
+<div class="rule" id="r-lex.keywords.weak"><a class="rule-link" href="#r-lex.keywords.weak" title="lex.keywords.weak"><span>[lex<wbr>.keywords<wbr>.weak]</span></a>
+</div>
+
+## 弱关键字
+
+<div class="rule" id="r-lex.keywords.weak.intro"><a class="rule-link" href="#r-lex.keywords.weak.intro" title="lex.keywords.weak.intro"><span>[lex<wbr>.keywords<wbr>.weak<wbr>.intro]</span></a>
+</div>
+
+这些关键字只在特定上下文中具有特殊含义。例如，可以声明名为 `union` 的变量或方法。
 
 - `'static`
 - `macro_rules`
@@ -115,44 +157,46 @@ These keywords have special meaning only in certain contexts. For example, it is
 - `safe`
 - `union`
 
-r[lex.keywords.weak.macro_rules]
-* `macro_rules` is used to create custom [macros].
+<div class="rule" id="r-lex.keywords.weak.macro_rules"><a class="rule-link" href="#r-lex.keywords.weak.macro_rules" title="lex.keywords.weak.macro_rules"><span>[lex<wbr>.keywords<wbr>.weak<wbr>.macro_rules]</span></a>
+</div>
 
-r[lex.keywords.weak.union]
-* `union` is used to declare a [union] and is only a keyword when used in a union declaration.
+- `macro_rules` 用于创建自定义[宏](macros.md)。
 
-r[lex.keywords.weak.lifetime-static]
-* `'static` is used for the static lifetime and cannot be used as a [generic lifetime parameter] or [loop label]
+<div class="rule" id="r-lex.keywords.weak.union"><a class="rule-link" href="#r-lex.keywords.weak.union" title="lex.keywords.weak.union"><span>[lex<wbr>.keywords<wbr>.weak<wbr>.union]</span></a>
+</div>
 
+- `union` 用于声明 [union](items/unions.md)，并且只有在 union 声明中使用时才是关键字。
+
+<div class="rule" id="r-lex.keywords.weak.lifetime-static"><a class="rule-link" href="#r-lex.keywords.weak.lifetime-static" title="lex.keywords.weak.lifetime-static"><span>[lex<wbr>.keywords<wbr>.weak<wbr>.lifetime-static]</span></a>
+</div>
+
+- `'static` 用于表示静态生命周期，不能用作[泛型生命周期参数](items/generics.md)或[循环标签](expressions/loop-expr.md#loop-labels)
+  
   ```compile_fail
   // error[E0262]: invalid lifetime parameter name: `'static`
   fn invalid_lifetime_parameter<'static>(s: &'static str) -> &'static str { s }
   ```
 
-r[lex.keywords.weak.safe]
-* `safe` is used for functions and statics, which has meaning in [external blocks].
+<div class="rule" id="r-lex.keywords.weak.safe"><a class="rule-link" href="#r-lex.keywords.weak.safe" title="lex.keywords.weak.safe"><span>[lex<wbr>.keywords<wbr>.weak<wbr>.safe]</span></a>
+</div>
 
-r[lex.keywords.weak.raw]
-* `raw` is used for [raw borrow operators], and is only a keyword when matching a raw borrow operator form (such as `&raw const expr` or `&raw mut expr`).
+- `safe` 用于函数和静态项，在[外部块](items/external-blocks.md)中具有含义。
 
-r[lex.keywords.weak.dyn.edition2018]
-> [!EDITION-2018]
-> In the 2015 edition, [`dyn`] is a keyword when used in a type position followed by a path that does not start with `::` or `<`, a lifetime, a question mark, a `for` keyword or an opening parenthesis.
->
-> Beginning in the 2018 edition, `dyn` has been promoted to a strict keyword.
+<div class="rule" id="r-lex.keywords.weak.raw"><a class="rule-link" href="#r-lex.keywords.weak.raw" title="lex.keywords.weak.raw"><span>[lex<wbr>.keywords<wbr>.weak<wbr>.raw]</span></a>
+</div>
 
-[items]: items.md
-[Variables]: variables.md
-[Type parameters]: types/parameters.md
-[loop labels]: expressions/loop-expr.md#loop-labels
-[Macros]: macros.md
-[attributes]: attributes.md
-[Macro placeholders]: macros-by-example.md
-[Crates]: crates-and-source-files.md
-[union]: items/unions.md
-[variants]: items/enumerations.md
-[`dyn`]: types/trait-object.md
-[loop label]: expressions/loop-expr.md#loop-labels
-[generic lifetime parameter]: items/generics.md
-[external blocks]: items/external-blocks.md
-[raw borrow operators]: expressions/operator-expr.md#raw-borrow-operators
+- `raw` 用于[原始借用运算符](expressions/operator-expr.md#raw-borrow-operators)，并且只有在匹配原始借用运算符形式（如 `&raw const expr` 或 `&raw mut expr`）时才是关键字。
+
+<div class="rule" id="r-lex.keywords.weak.dyn.edition2018"><a class="rule-link" href="#r-lex.keywords.weak.dyn.edition2018" title="lex.keywords.weak.dyn.edition2018"><span>[lex<wbr>.keywords<wbr>.weak<wbr>.dyn<wbr>.edition2018]</span></a>
+</div>
+
+<div class="alert alert-edition">
+
+ > 
+ > <p class="alert-title"><span class="alert-title-edition">2018</span> Edition differences</p>
+ > 
+ > 在 2015 edition 中，当 [`dyn`](types/trait-object.md) 用于类型位置，并后跟一个不以 `::` 或 `<` 开头的路径、生命周期、问号、`for` 关键字或左括号时，它是一个关键字。
+ > 
+ > 自 2018 edition 起，`dyn` 已提升为严格关键字。
+
+</div>

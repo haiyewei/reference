@@ -1,233 +1,493 @@
-r[attributes.codegen]
-# Code generation attributes
+<div class="rule" id="r-attributes.codegen"><a class="rule-link" href="#r-attributes.codegen" title="attributes.codegen"><span>[attributes<wbr>.codegen]</span></a>
+</div>
 
-The following [attributes] are used for controlling code generation.
+# 代码生成属性
 
-<!-- template:attributes -->
-r[attributes.codegen.inline]
-### The `inline` attribute
-
-r[attributes.codegen.inline.intro]
-The *`inline` [attribute]* suggests whether a copy of the attributed function's code should be placed in the caller rather than generating a call to the function.
-
-> [!EXAMPLE]
-> ```rust
-> #[inline]
-> pub fn example1() {}
->
-> #[inline(always)]
-> pub fn example2() {}
->
-> #[inline(never)]
-> pub fn example3() {}
-> ```
-
-> [!NOTE]
-> `rustc` automatically inlines functions when doing so seems worthwhile. Use this attribute carefully as poor decisions about what to inline can slow down programs.
-
-r[attributes.codegen.inline.syntax]
-The syntax for the `inline` attribute is:
-
-```grammar,attributes
-@root InlineAttribute ->
-      `inline` `(` `always` `)`
-    | `inline` `(` `never` `)`
-    | `inline`
-```
-
-r[attributes.codegen.inline.allowed-positions]
-The `inline` attribute may only be applied to functions with [bodies] --- [closures], [async blocks], [free functions], [associated functions] in an [inherent impl] or [trait impl], and associated functions in a [trait definition] when those functions have a [default definition] .
-
-> [!NOTE]
-> `rustc` ignores use in other positions but lints against it. This may become an error in the future.
-
-> [!NOTE]
-> Though the attribute can be applied to [closures] and [async blocks], the usefulness of this is limited as we do not yet support attributes on expressions.
->
-> ```rust
-> // We allow attributes on statements.
-> #[inline] || (); // OK
-> #[inline] async {}; // OK
-> ```
->
-> ```rust,compile_fail,E0658
-> // We don't yet allow attributes on expressions.
-> let f = #[inline] || (); // ERROR
-> ```
-
-r[attributes.codegen.inline.duplicates]
-Only the first use of `inline` on a function has effect.
-
-> [!NOTE]
-> `rustc` lints against any use following the first. This may become an error in the future.
-
-r[attributes.codegen.inline.modes]
-The `inline` attribute supports these modes:
-
-- `#[inline]` *suggests* performing inline expansion.
-- `#[inline(always)]` *suggests* that inline expansion should always be performed.
-- `#[inline(never)]` *suggests* that inline expansion should never be performed.
-
-> [!NOTE]
-> In every form the attribute is a hint. The compiler may ignore it.
-
-r[attributes.codegen.inline.trait]
-When `inline` is applied to a function in a [trait], it applies only to the code of the [default definition].
-
-r[attributes.codegen.inline.async]
-When `inline` is applied to an [async function] or [async closure], it applies only to the code of the generated `poll` function.
-
-> [!NOTE]
-> For more details, see [Rust issue #129347](https://github.com/rust-lang/rust/issues/129347).
-
-r[attributes.codegen.inline.externally-exported]
-The `inline` attribute is ignored if the function is externally exported with [`no_mangle`] or [`export_name`].
+以下[属性](../attributes.md)用于控制代码生成。
 
 <!-- template:attributes -->
-r[attributes.codegen.cold]
-### The `cold` attribute
 
-r[attributes.codegen.cold.intro]
-The *`cold` [attribute]* suggests that the attributed function is unlikely to be called which may help the compiler produce better code.
+<div class="rule" id="r-attributes.codegen.inline"><a class="rule-link" href="#r-attributes.codegen.inline" title="attributes.codegen.inline"><span>[attributes<wbr>.codegen<wbr>.inline]</span></a>
+</div>
 
-> [!EXAMPLE]
-> ```rust
-> #[cold]
-> pub fn example() {}
-> ```
+### `inline` 属性
 
-r[attributes.codegen.cold.syntax]
-The `cold` attribute uses the [MetaWord] syntax.
+<div class="rule" id="r-attributes.codegen.inline.intro"><a class="rule-link" href="#r-attributes.codegen.inline.intro" title="attributes.codegen.inline.intro"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.intro]</span></a>
+</div>
 
-r[attributes.codegen.cold.allowed-positions]
-The `cold` attribute may only be applied to functions with [bodies] --- [closures], [async blocks], [free functions], [associated functions] in an [inherent impl] or [trait impl], and associated functions in a [trait definition] when those functions have a [default definition] .
+_`inline` [属性](../attributes.md)_ 建议是否应将带属性函数的代码副本放置到调用者中，而不是生成对该函数的调用。
 
-> [!NOTE]
-> `rustc` ignores use in other positions but lints against it. This may become an error in the future.
+<div class="alert alert-example">
 
-> [!NOTE]
-> Though the attribute can be applied to [closures] and [async blocks], the usefulness of this is limited as we do not yet support attributes on expressions.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg>Example</p>
+ > 
+ > ```rust
+ > #[inline]
+ > pub fn example1() {}
+ > 
+ > #[inline(always)]
+ > pub fn example2() {}
+ > 
+ > #[inline(never)]
+ > pub fn example3() {}
+ > ```
+
+</div>
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会在认为值得时自动内联函数。请谨慎使用此属性，因为对内联内容作出不佳决策可能会让程序变慢。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.inline.syntax"><a class="rule-link" href="#r-attributes.codegen.inline.syntax" title="attributes.codegen.inline.syntax"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.syntax]</span></a>
+</div>
+
+`inline` 属性的语法为：
+
+<div class="grammar-container">
+
+**<sup>语法</sup>** <br> <span class="grammar-text grammar-production" id="grammar-InlineAttribute" onclick="show_railroad()">[InlineAttribute](codegen.md#railroad-InlineAttribute)</span> →  
+      <span class="grammar-literal">inline</span> <span class="grammar-literal">(</span> <span class="grammar-literal">always</span> <span class="grammar-literal">)</span>  
+    \| <span class="grammar-literal">inline</span> <span class="grammar-literal">(</span> <span class="grammar-literal">never</span> <span class="grammar-literal">)</span>  
+    \| <span class="grammar-literal">inline</span>
+
+<button class="grammar-toggle-railroad" type="button" title="切换铁路图显示" onclick="toggle_railroad()">显示铁路图</button>
+
+</div>
+<div class="grammar-railroad grammar-hidden">
+
+<div style="width: 340px; height: auto; max-width: 100%; max-height: 100%" class="railroad-production" id="railroad-InlineAttribute"><svg class="railroad" viewBox="0 0 340 140" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect class="railroad_canvas" height="100%" width="100%"/>
+<g class="verticalgrid">
+<a class="link" xlink:href="codegen.md#grammar-InlineAttribute">
+<text class="comment" x="67" y="25">
+InlineAttribute</text>
+</a>
+<g class="sequence">
+<path d=" M 10 53 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<g class="choice">
+<path d=" M 35 53 h 24 m 222 0 h 24"/>
+<g class="sequence">
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="68" x="59" y="42"/>
+<text x="93" y="58">
+inline</text>
+</g>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="28" x="137" y="42"/>
+<text x="151" y="58">
+(</text>
+</g>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="68" x="175" y="42"/>
+<text x="209" y="58">
+always</text>
+</g>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="28" x="253" y="42"/>
+<text x="267" y="58">
+)</text>
+</g>
+<path d=" M 127 53 h 10"/>
+<path d=" M 165 53 h 10"/>
+<path d=" M 243 53 h 10"/>
+</g>
+<path d=" M 35 53 a 12 12 0 0 1 12 12 v 9 m 246 0 v -9 a 12 12 0 0 1 12 -12"/>
+<path d=" M 47 74 v 33 m 246 0 v -33"/>
+<path d=" M 47 74 v 0 a 12 12 0 0 0 12 12 m 214 0 h 8 a 12 12 0 0 0 12 -12 v 0"/>
+<g class="sequence">
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="68" x="59" y="75"/>
+<text x="93" y="91">
+inline</text>
+</g>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="28" x="137" y="75"/>
+<text x="151" y="91">
+(</text>
+</g>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="60" x="175" y="75"/>
+<text x="205" y="91">
+never</text>
+</g>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="28" x="245" y="75"/>
+<text x="259" y="91">
+)</text>
+</g>
+<path d=" M 127 86 h 10"/>
+<path d=" M 165 86 h 10"/>
+<path d=" M 235 86 h 10"/>
+</g>
+<path d=" M 47 107 v 0 a 12 12 0 0 0 12 12 m 68 0 h 154 m -74 0 l -5 -5 m 0 10 l 5 -5 m 74 0 a 12 12 0 0 0 12 -12 v 0"/>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="68" x="59" y="108"/>
+<text x="93" y="124">
+inline</text>
+</g>
+</g>
+<path d=" M 315 53 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 53 h 10"/>
+<path d=" M 305 53 h 10"/>
+</g>
+</g>
+</svg>
+</div>
+</div>
+
+<div class="rule" id="r-attributes.codegen.inline.allowed-positions"><a class="rule-link" href="#r-attributes.codegen.inline.allowed-positions" title="attributes.codegen.inline.allowed-positions"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.allowed-positions]</span></a>
+</div>
+
+`inline` 属性只能应用于具有[函数体](../items/functions.md#r-items.fn.body)的函数 --- [闭包](../expressions/closure-expr.md#r-expr.closure)、[async 块](../expressions/block-expr.md#r-expr.block.async)、[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent)或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及 [trait 定义](../items/traits.md#r-items.traits)中那些具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的关联函数。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会忽略在其他位置的使用，但会对此发出 lint。将来这可能会变成错误。
+
+</div>
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 尽管该属性可以应用于[闭包](../expressions/closure-expr.md#r-expr.closure)和[async 块](../expressions/block-expr.md#r-expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
+ > 
+ > ```rust
+ > // 我们允许语句上有属性。
+ > #[inline] || (); // OK
+ > #[inline] async {}; // OK
+ > ```
+ > 
+ > ```rust,compile_fail,E0658
+ > // 我们尚不允许表达式上有属性。
+ > let f = #[inline] || (); // ERROR
+ > ```
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.inline.duplicates"><a class="rule-link" href="#r-attributes.codegen.inline.duplicates" title="attributes.codegen.inline.duplicates"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.duplicates]</span></a>
+</div>
+
+在一个函数上，只有第一次使用 `inline` 会产生效果。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会对第一次使用之后的任何使用发出 lint。这在将来可能会变成错误。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.inline.modes"><a class="rule-link" href="#r-attributes.codegen.inline.modes" title="attributes.codegen.inline.modes"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.modes]</span></a>
+</div>
+
+`inline` 属性支持以下模式：
+
+- `#[inline]` \_建议_执行内联展开。
+- `#[inline(always)]` \_建议_始终执行内联展开。
+- `#[inline(never)]` \_建议_永不执行内联展开。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 无论是哪种形式，该属性都是一种提示。编译器可以忽略它。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.inline.trait"><a class="rule-link" href="#r-attributes.codegen.inline.trait" title="attributes.codegen.inline.trait"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.trait]</span></a>
+</div>
+
+当 `inline` 应用于 [trait](../items/traits.md#r-items.traits) 中的函数时，它只应用于[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的代码。
+
+<div class="rule" id="r-attributes.codegen.inline.async"><a class="rule-link" href="#r-attributes.codegen.inline.async" title="attributes.codegen.inline.async"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.async]</span></a>
+</div>
+
+当 `inline` 应用于 [async 函数](../items/functions.md#r-items.fn.async)或 [async 闭包](../expressions/closure-expr.md#r-expr.closure.async)时，它只应用于生成的 `poll` 函数的代码。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 更多细节见 [Rust issue #129347](https://github.com/rust-lang/rust/issues/129347)。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.inline.externally-exported"><a class="rule-link" href="#r-attributes.codegen.inline.externally-exported" title="attributes.codegen.inline.externally-exported"><span>[attributes<wbr>.codegen<wbr>.inline<wbr>.externally-exported]</span></a>
+</div>
+
+如果函数通过 [`no_mangle`](../abi.md#r-abi.no_mangle) 或 [`export_name`](../abi.md#r-abi.export_name) 对外导出，则 `inline` 属性会被忽略。
+
+<!-- template:attributes -->
+
+<div class="rule" id="r-attributes.codegen.cold"><a class="rule-link" href="#r-attributes.codegen.cold" title="attributes.codegen.cold"><span>[attributes<wbr>.codegen<wbr>.cold]</span></a>
+</div>
+
+### `cold` 属性
+
+<div class="rule" id="r-attributes.codegen.cold.intro"><a class="rule-link" href="#r-attributes.codegen.cold.intro" title="attributes.codegen.cold.intro"><span>[attributes<wbr>.codegen<wbr>.cold<wbr>.intro]</span></a>
+</div>
+
+_`cold` [属性](../attributes.md)_ 建议带属性函数不太可能被调用，这可以帮助编译器生成更好的代码。
+
+<div class="alert alert-example">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg>Example</p>
+ > 
+ > ```rust
+ > #[cold]
+ > pub fn example() {}
+ > ```
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.cold.syntax"><a class="rule-link" href="#r-attributes.codegen.cold.syntax" title="attributes.codegen.cold.syntax"><span>[attributes<wbr>.codegen<wbr>.cold<wbr>.syntax]</span></a>
+</div>
+
+`cold` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法。
+
+<div class="rule" id="r-attributes.codegen.cold.allowed-positions"><a class="rule-link" href="#r-attributes.codegen.cold.allowed-positions" title="attributes.codegen.cold.allowed-positions"><span>[attributes<wbr>.codegen<wbr>.cold<wbr>.allowed-positions]</span></a>
+</div>
+
+`cold` 属性只能应用于具有[函数体](../items/functions.md#r-items.fn.body)的函数 --- [闭包](../expressions/closure-expr.md#r-expr.closure)、[async 块](../expressions/block-expr.md#r-expr.block.async)、[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent)或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及 [trait 定义](../items/traits.md#r-items.traits)中那些具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的关联函数。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会忽略在其他位置的使用，但会对此发出 lint。将来这可能会变成错误。
+
+</div>
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 尽管该属性可以应用于[闭包](../expressions/closure-expr.md#r-expr.closure)和[async 块](../expressions/block-expr.md#r-expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
+
+</div>
 
 <!-- TODO: rustc currently seems to allow cold on a trait function without a body, but it appears to be ignored. I think that may be a bug, and it should at least warn if not reject (like inline does). -->
 
-r[attributes.codegen.cold.duplicates]
-Only the first use of `cold` on a function has effect.
+<div class="rule" id="r-attributes.codegen.cold.duplicates"><a class="rule-link" href="#r-attributes.codegen.cold.duplicates" title="attributes.codegen.cold.duplicates"><span>[attributes<wbr>.codegen<wbr>.cold<wbr>.duplicates]</span></a>
+</div>
 
-> [!NOTE]
-> `rustc` lints against any use following the first. This may become an error in the future.
+在一个函数上，只有第一次使用 `cold` 会产生效果。
 
-r[attributes.codegen.cold.trait]
-When `cold` is applied to a function in a [trait], it applies only to the code of the [default definition].
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会对第一次使用之后的任何使用发出 lint。这在将来可能会变成错误。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.cold.trait"><a class="rule-link" href="#r-attributes.codegen.cold.trait" title="attributes.codegen.cold.trait"><span>[attributes<wbr>.codegen<wbr>.cold<wbr>.trait]</span></a>
+</div>
+
+当 `cold` 应用于 [trait](../items/traits.md#r-items.traits) 中的函数时，它只应用于[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的代码。
 
 <!-- template:attributes -->
-r[attributes.codegen.naked]
-## The `naked` attribute
 
-r[attributes.codegen.naked.intro]
-The *`naked` [attribute]* prevents the compiler from emitting a function prologue and epilogue for the attributed function --- a *naked function*.
+<div class="rule" id="r-attributes.codegen.naked"><a class="rule-link" href="#r-attributes.codegen.naked" title="attributes.codegen.naked"><span>[attributes<wbr>.codegen<wbr>.naked]</span></a>
+</div>
 
-> [!EXAMPLE]
-> ```rust
-> # #[cfg(target_arch = "x86_64")] {
-> /// Adds 3 to the given number.
-> // SAFETY: The body respects the "sysv64" calling convention,
-> // upholds the signature, and does not fall through.
-> #[unsafe(naked)]
-> pub extern "sysv64" fn add_n(number: u64) -> u64 {
->     core::arch::naked_asm!(
->         "add rdi, {}",
->         "mov rax, rdi",
->         "ret",
->         const 3,
->     )
-> }
-> # }
-> ```
+## `naked` 属性
 
-r[attributes.codegen.naked.syntax]
-The `naked` attribute uses the [MetaWord] syntax.
+<div class="rule" id="r-attributes.codegen.naked.intro"><a class="rule-link" href="#r-attributes.codegen.naked.intro" title="attributes.codegen.naked.intro"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.intro]</span></a>
+</div>
 
-r[attributes.codegen.naked.allowed-positions]
-The `naked` attribute may only be applied to [free functions], [associated functions] in an [inherent impl] or [trait impl], and associated functions in a [trait definition] when those functions have a [default definition].
+_`naked` [属性](../attributes.md)_ 会阻止编译器为带属性函数发出函数序言和尾声 --- 这样的函数称为 _naked function_。
 
-r[attributes.codegen.naked.duplicates]
-Only the first use of `naked` on a function has effect.
+<div class="alert alert-example">
 
-> [!NOTE]
-> `rustc` lints against any use following the first.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg>Example</p>
+ > 
+ > ```rust
+ > # #[cfg(target_arch = "x86_64")] {
+ > /// 将给定的数加 3。
+ > // SAFETY: 函数体遵循 "sysv64" 调用约定，
+ > // 满足该签名的要求，并且不会直通执行。
+ > #[unsafe(naked)]
+ > pub extern "sysv64" fn add_n(number: u64) -> u64 {
+ >     core::arch::naked_asm!(
+ >         "add rdi, {}",
+ >         "mov rax, rdi",
+ >         "ret",
+ >         const 3,
+ >     )
+ > }
+ > # }
+ > ```
 
-r[attributes.codegen.naked.unsafe]
-The `naked` attribute must be marked with [`unsafe`][attributes.safety] because the body must respect the function's calling convention, uphold its signature, and either return or diverge (i.e., not fall through past the end of the assembly code).
+</div>
 
-r[attributes.codegen.naked.body]
-The [function body] must consist of exactly one [`naked_asm!`] macro invocation.
+<div class="rule" id="r-attributes.codegen.naked.syntax"><a class="rule-link" href="#r-attributes.codegen.naked.syntax" title="attributes.codegen.naked.syntax"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.syntax]</span></a>
+</div>
 
-r[attributes.codegen.naked.prologue-epilogue]
-The compiler emits no prologue or epilogue for a naked function: the assembly code in the [`naked_asm!`] invocation constitutes its entire body.
+`naked` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法。
 
-r[attributes.codegen.naked.call-stack]
-On entry the assembly code may assume that the call stack and register state are valid per the function's signature and calling convention.
+<div class="rule" id="r-attributes.codegen.naked.allowed-positions"><a class="rule-link" href="#r-attributes.codegen.naked.allowed-positions" title="attributes.codegen.naked.allowed-positions"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.allowed-positions]</span></a>
+</div>
 
-r[attributes.codegen.naked.no-duplication]
-The compiler may not duplicate the assembly code except when monomorphizing a polymorphic function.
+`naked` 属性只能应用于[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent)或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及 [trait 定义](../items/traits.md#r-items.traits)中那些具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的关联函数。
 
-> [!NOTE]
-> This guarantee matters for naked functions that define symbols.
+<div class="rule" id="r-attributes.codegen.naked.duplicates"><a class="rule-link" href="#r-attributes.codegen.naked.duplicates" title="attributes.codegen.naked.duplicates"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.duplicates]</span></a>
+</div>
 
-r[attributes.codegen.naked.unused-variables]
-The [`unused_variables` lint] is suppressed in naked functions.
+在一个函数上，只有第一次使用 `naked` 会产生效果。
 
-r[attributes.codegen.naked.inline]
-The [`inline` attribute] cannot be applied to a naked function.
+<div class="alert alert-note">
 
-r[attributes.codegen.naked.track_caller]
-The [`track_caller` attribute] cannot be applied to a naked function.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会对第一次之后的任何使用发出 lint。
 
-r[attributes.codegen.naked.testing]
-The [testing attributes] cannot be applied to a naked function.
+</div>
 
-r[attributes.codegen.naked.target_feature]
-The [`target_feature` attribute] cannot be applied to a naked function.
+<div class="rule" id="r-attributes.codegen.naked.unsafe"><a class="rule-link" href="#r-attributes.codegen.naked.unsafe" title="attributes.codegen.naked.unsafe"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.unsafe]</span></a>
+</div>
+
+`naked` 属性必须标记为 [`unsafe`](../attributes.md#r-attributes.safety)，因为函数体必须遵守函数的调用约定、满足其签名，并且要么返回，要么发散（即不会直通执行到汇编代码末尾之后）。
+
+<div class="rule" id="r-attributes.codegen.naked.body"><a class="rule-link" href="#r-attributes.codegen.naked.body" title="attributes.codegen.naked.body"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.body]</span></a>
+</div>
+
+[函数体](../items/functions.md#r-items.fn.body)必须正好由一个 [`naked_asm!`](../inline-assembly.md#r-asm) 宏调用组成。
+
+<div class="rule" id="r-attributes.codegen.naked.prologue-epilogue"><a class="rule-link" href="#r-attributes.codegen.naked.prologue-epilogue" title="attributes.codegen.naked.prologue-epilogue"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.prologue-epilogue]</span></a>
+</div>
+
+编译器不会为 naked function 发出序言或尾声：[`naked_asm!`](../inline-assembly.md#r-asm) 调用中的汇编代码构成其整个函数体。
+
+<div class="rule" id="r-attributes.codegen.naked.call-stack"><a class="rule-link" href="#r-attributes.codegen.naked.call-stack" title="attributes.codegen.naked.call-stack"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.call-stack]</span></a>
+</div>
+
+进入时，汇编代码可以假定调用栈和寄存器状态按照该函数的签名和调用约定是有效的。
+
+<div class="rule" id="r-attributes.codegen.naked.no-duplication"><a class="rule-link" href="#r-attributes.codegen.naked.no-duplication" title="attributes.codegen.naked.no-duplication"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.no-duplication]</span></a>
+</div>
+
+除非在单态化多态函数时，否则编译器不得复制该汇编代码。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 这一保证对于定义符号的 naked function 很重要。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.naked.unused-variables"><a class="rule-link" href="#r-attributes.codegen.naked.unused-variables" title="attributes.codegen.naked.unused-variables"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.unused-variables]</span></a>
+</div>
+
+naked function 中会抑制 [`unused_variables` lint](../../rustc/lints/listing/warn-by-default.html#unused-variables)。
+
+<div class="rule" id="r-attributes.codegen.naked.inline"><a class="rule-link" href="#r-attributes.codegen.naked.inline" title="attributes.codegen.naked.inline"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.inline]</span></a>
+</div>
+
+[`inline` 属性](codegen.md#r-attributes.codegen.inline)不能应用于 naked function。
+
+<div class="rule" id="r-attributes.codegen.naked.track_caller"><a class="rule-link" href="#r-attributes.codegen.naked.track_caller" title="attributes.codegen.naked.track_caller"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.track_caller]</span></a>
+</div>
+
+[`track_caller` 属性](codegen.md#r-attributes.codegen.track_caller)不能应用于 naked function。
+
+<div class="rule" id="r-attributes.codegen.naked.testing"><a class="rule-link" href="#r-attributes.codegen.naked.testing" title="attributes.codegen.naked.testing"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.testing]</span></a>
+</div>
+
+[测试属性](testing.md#r-attributes.testing)不能应用于 naked function。
+
+<div class="rule" id="r-attributes.codegen.naked.target_feature"><a class="rule-link" href="#r-attributes.codegen.naked.target_feature" title="attributes.codegen.naked.target_feature"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.target_feature]</span></a>
+</div>
+
+[`target_feature` 属性](codegen.md#r-attributes.codegen.target_feature)不能应用于 naked function。
 
 <!-- TODO: Reflexive rules? -->
 
-r[attributes.codegen.naked.abi]
-A naked function cannot use the ["Rust" ABI].
+<div class="rule" id="r-attributes.codegen.naked.abi"><a class="rule-link" href="#r-attributes.codegen.naked.abi" title="attributes.codegen.naked.abi"><span>[attributes<wbr>.codegen<wbr>.naked<wbr>.abi]</span></a>
+</div>
+
+naked function 不能使用 ["Rust" ABI](../items/external-blocks.md#r-items.extern.abi.rust)。
 
 <!-- template:attributes -->
-r[attributes.codegen.no_builtins]
-## The `no_builtins` attribute
 
-r[attributes.codegen.no_builtins.intro]
-The *`no_builtins` [attribute]* disables optimization of certain code patterns related to calls to library functions that are assumed to exist.
+<div class="rule" id="r-attributes.codegen.no_builtins"><a class="rule-link" href="#r-attributes.codegen.no_builtins" title="attributes.codegen.no_builtins"><span>[attributes<wbr>.codegen<wbr>.no_builtins]</span></a>
+</div>
+
+## `no_builtins` 属性
+
+<div class="rule" id="r-attributes.codegen.no_builtins.intro"><a class="rule-link" href="#r-attributes.codegen.no_builtins.intro" title="attributes.codegen.no_builtins.intro"><span>[attributes<wbr>.codegen<wbr>.no_builtins<wbr>.intro]</span></a>
+</div>
+
+_`no_builtins` [属性](../attributes.md)_ 会禁用某些代码模式的优化，这些代码模式与调用被假定存在的库函数有关。
 
 <!-- TODO: This needs expanding, see <https://github.com/rust-lang/reference/issues/542>. -->
 
-> [!EXAMPLE]
-> ```rust
-> #![no_builtins]
-> ```
+<div class="alert alert-example">
 
-r[attributes.codegen.no_builtins.syntax]
-The `no_builtins` attribute uses the [MetaWord] syntax.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg>Example</p>
+ > 
+ > ```rust
+ > #![no_builtins]
+ > ```
 
-r[attributes.codegen.no_builtins.allowed-positions]
-The `no_builtins` attribute can only be applied to the crate root.
+</div>
 
-r[attributes.codegen.no_builtins.duplicates]
-Only the first use of the `no_builtins` attribute has effect.
+<div class="rule" id="r-attributes.codegen.no_builtins.syntax"><a class="rule-link" href="#r-attributes.codegen.no_builtins.syntax" title="attributes.codegen.no_builtins.syntax"><span>[attributes<wbr>.codegen<wbr>.no_builtins<wbr>.syntax]</span></a>
+</div>
 
-> [!NOTE]
-> `rustc` lints against any use following the first.
+`no_builtins` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法。
 
-r[attributes.codegen.target_feature]
-## The `target_feature` attribute
+<div class="rule" id="r-attributes.codegen.no_builtins.allowed-positions"><a class="rule-link" href="#r-attributes.codegen.no_builtins.allowed-positions" title="attributes.codegen.no_builtins.allowed-positions"><span>[attributes<wbr>.codegen<wbr>.no_builtins<wbr>.allowed-positions]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.intro]
-The *`target_feature` [attribute]* may be applied to a function to
-enable code generation of that function for specific platform architecture
-features. It uses the [MetaListNameValueStr] syntax with a single key of
-`enable` whose value is a string of comma-separated feature names to enable.
+`no_builtins` 属性只能应用于 crate 根。
+
+<div class="rule" id="r-attributes.codegen.no_builtins.duplicates"><a class="rule-link" href="#r-attributes.codegen.no_builtins.duplicates" title="attributes.codegen.no_builtins.duplicates"><span>[attributes<wbr>.codegen<wbr>.no_builtins<wbr>.duplicates]</span></a>
+</div>
+
+只有第一次使用 `no_builtins` 属性会产生效果。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会对第一次之后的任何使用发出 lint。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.target_feature"><a class="rule-link" href="#r-attributes.codegen.target_feature" title="attributes.codegen.target_feature"><span>[attributes<wbr>.codegen<wbr>.target_feature]</span></a>
+</div>
+
+## `target_feature` 属性
+
+<div class="rule" id="r-attributes.codegen.target_feature.intro"><a class="rule-link" href="#r-attributes.codegen.target_feature.intro" title="attributes.codegen.target_feature.intro"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.intro]</span></a>
+</div>
+
+_`target_feature` [属性](../attributes.md)_ 可以应用于函数，以便为特定平台架构特性启用该函数的代码生成。它使用 [MetaListNameValueStr](../attributes.md#grammar-MetaListNameValueStr) 语法，带有单个 `enable` 键，其值是一个由逗号分隔的、要启用的特性名称字符串。
 
 ```rust
 # #[cfg(target_feature = "avx2")]
@@ -235,29 +495,30 @@ features. It uses the [MetaListNameValueStr] syntax with a single key of
 fn foo_avx2() {}
 ```
 
-r[attributes.codegen.target_feature.arch]
-Each [target architecture] has a set of features that may be enabled. It is an
-error to specify a feature for a target architecture that the crate is not
-being compiled for.
+<div class="rule" id="r-attributes.codegen.target_feature.arch"><a class="rule-link" href="#r-attributes.codegen.target_feature.arch" title="attributes.codegen.target_feature.arch"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.arch]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.closures]
-Closures defined within a `target_feature`-annotated function inherit the
-attribute from the enclosing function.
+每个[目标架构](../conditional-compilation.md#target_arch)都有一组可以启用的特性。为 crate 并未针对其编译的目标架构指定特性是错误。
 
-r[attributes.codegen.target_feature.target-ub]
-It is [undefined behavior] to call a function that is compiled with a feature
-that is not supported on the current platform the code is running on, *except*
-if the platform explicitly documents this to be safe.
+<div class="rule" id="r-attributes.codegen.target_feature.closures"><a class="rule-link" href="#r-attributes.codegen.target_feature.closures" title="attributes.codegen.target_feature.closures"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.closures]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.safety-restrictions]
-The following restrictions apply unless otherwise specified by the platform rules below:
+在带有 `target_feature` 注解的函数内定义的闭包，会从外围函数继承该属性。
 
-- Safe `#[target_feature]` functions (and closures that inherit the attribute) can only be safely called within a caller that enables all the `target_feature`s that the callee enables.
-  This restriction does not apply in an `unsafe` context.
-- Safe `#[target_feature]` functions (and closures that inherit the attribute) can only be coerced to *safe* function pointers in contexts that enable all the `target_feature`s that the coercee enables.
-  This restriction does not apply to `unsafe` function pointers.
+<div class="rule" id="r-attributes.codegen.target_feature.target-ub"><a class="rule-link" href="#r-attributes.codegen.target_feature.target-ub" title="attributes.codegen.target_feature.target-ub"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.target-ub]</span></a>
+</div>
 
-Implicitly enabled features are included in this rule. For example an `sse2` function can call ones marked with `sse`.
+调用一个使用当前代码运行平台不支持的特性编译的函数是[未定义行为](../behavior-considered-undefined.md)，\_除非_该平台明确将这种情况记录为安全。
+
+<div class="rule" id="r-attributes.codegen.target_feature.safety-restrictions"><a class="rule-link" href="#r-attributes.codegen.target_feature.safety-restrictions" title="attributes.codegen.target_feature.safety-restrictions"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.safety-restrictions]</span></a>
+</div>
+
+除非下文平台规则另有规定，否则适用以下限制：
+
+- 安全的 `#[target_feature]` 函数（以及继承该属性的闭包）只能在启用了被调用方所启用的全部 `target_feature` 的调用方中安全调用。此限制不适用于 `unsafe` 上下文。
+- 安全的 `#[target_feature]` 函数（以及继承该属性的闭包）只能在启用了被强制转换对象所启用的全部 `target_feature` 的上下文中，被强制转换为_安全_函数指针。此限制不适用于 `unsafe` 函数指针。
+
+隐式启用的特性也包含在此规则内。例如，`sse2` 函数可以调用标记为 `sse` 的函数。
 
 ```rust
 # #[cfg(target_feature = "sse2")] {
@@ -265,9 +526,9 @@ Implicitly enabled features are included in this rule. For example an `sse2` fun
 fn foo_sse() {}
 
 fn bar() {
-    // Calling `foo_sse` here is unsafe, as we must ensure that SSE is
-    // available first, even if `sse` is enabled by default on the target
-    // platform or manually enabled as compiler flags.
+    // 在这里调用 `foo_sse` 是 unsafe 的，因为我们必须先确保
+    // SSE 可用，即使 `sse` 在目标平台上默认启用，
+    // 或者作为编译器标志手动启用。
     unsafe {
         foo_sse();
     }
@@ -275,488 +536,370 @@ fn bar() {
 
 #[target_feature(enable = "sse")]
 fn bar_sse() {
-    // Calling `foo_sse` here is safe.
+    // 在这里调用 `foo_sse` 是安全的。
     foo_sse();
     || foo_sse();
 }
 
 #[target_feature(enable = "sse2")]
 fn bar_sse2() {
-    // Calling `foo_sse` here is safe because `sse2` implies `sse`.
+    // 在这里调用 `foo_sse` 是安全的，因为 `sse2` 蕴含 `sse`。
     foo_sse();
 }
 # }
 ```
 
-r[attributes.codegen.target_feature.fn-traits]
-A function with a `#[target_feature]` attribute *never* implements the `Fn` family of traits, although closures inheriting features from the enclosing function do.
+<div class="rule" id="r-attributes.codegen.target_feature.fn-traits"><a class="rule-link" href="#r-attributes.codegen.target_feature.fn-traits" title="attributes.codegen.target_feature.fn-traits"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.fn-traits]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.allowed-positions]
-The `#[target_feature]` attribute is not allowed on the following places:
+带有 `#[target_feature]` 属性的函数_永远不会_实现 `Fn` trait 家族，但从外围函数继承特性的闭包会实现。
 
-- [the `main` function][crate.main]
-- a [`panic_handler` function][panic.panic_handler]
-- safe trait methods
-- safe default functions in traits
+<div class="rule" id="r-attributes.codegen.target_feature.allowed-positions"><a class="rule-link" href="#r-attributes.codegen.target_feature.allowed-positions" title="attributes.codegen.target_feature.allowed-positions"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.allowed-positions]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.inline]
-Functions marked with `target_feature` are not inlined into a context that
-does not support the given features. The `#[inline(always)]` attribute may not
-be used with a `target_feature` attribute.
+`#[target_feature]` 属性不允许用于以下位置：
 
-r[attributes.codegen.target_feature.availability]
-### Available features
+- [`main` 函数](../crates-and-source-files.md#r-crate.main)
+- [`panic_handler` 函数](../panic.md#r-panic.panic_handler)
+- 安全 trait 方法
+- trait 中的安全默认函数
 
-The following is a list of the available feature names.
+<div class="rule" id="r-attributes.codegen.target_feature.inline"><a class="rule-link" href="#r-attributes.codegen.target_feature.inline" title="attributes.codegen.target_feature.inline"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.inline]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.cfg-only]
-Target feature names marked as "(cfg only)" in this list may only be used with the [`target_feature`][cfg.target_feature] conditional compilation option, not with the `target_feature` attribute.
+标记有 `target_feature` 的函数不会被内联到不支持给定特性的上下文中。`#[inline(always)]` 属性不得与 `target_feature` 属性一起使用。
 
-r[attributes.codegen.target_feature.x86]
-#### `x86` or `x86_64`
+<div class="rule" id="r-attributes.codegen.target_feature.availability"><a class="rule-link" href="#r-attributes.codegen.target_feature.availability" title="attributes.codegen.target_feature.availability"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.availability]</span></a>
+</div>
 
-Executing code with unsupported features is undefined behavior on this platform.
-Hence on this platform use of `#[target_feature]` functions follows the
-[above restrictions][attributes.codegen.target_feature.safety-restrictions].
+### 可用特性
 
-Feature     | Implicitly Enables | Description
-------------|--------------------|-------------------
-`adx`       |          | [ADX] --- Multi-Precision Add-Carry Instruction Extensions
-`aes`       | `sse2`   | [AES] --- Advanced Encryption Standard
-`avx`       | `sse4.2` | [AVX] --- Advanced Vector Extensions
-`avx2`      | `avx`    | [AVX2] --- Advanced Vector Extensions 2
-`avx512bf16`        | `avx512bw`           | [AVX512-BF16] --- Advanced Vector Extensions 512-bit - Bfloat16 Extensions
-`avx512bitalg`      | `avx512bw`           | [AVX512-BITALG] --- Advanced Vector Extensions 512-bit - Bit Algorithms
-`avx512bw`          | `avx512f`            | [AVX512-BW] --- Advanced Vector Extensions 512-bit - Byte and Word Instructions
-`avx512cd`          | `avx512f`            | [AVX512-CD] --- Advanced Vector Extensions 512-bit - Conflict Detection Instructions
-`avx512dq`          | `avx512f`            | [AVX512-DQ] --- Advanced Vector Extensions 512-bit - Doubleword and Quadword Instructions
-`avx512f`           | `avx2`, `fma`, `f16c`| [AVX512-F] --- Advanced Vector Extensions 512-bit - Foundation
-`avx512fp16`        | `avx512bw`           | [AVX512-FP16] --- Advanced Vector Extensions 512-bit - Float16 Extensions
-`avx512ifma`        | `avx512f`            | [AVX512-IFMA] --- Advanced Vector Extensions 512-bit - Integer Fused Multiply Add
-`avx512vbmi`        | `avx512bw`           | [AVX512-VBMI] --- Advanced Vector Extensions 512-bit - Vector Byte Manipulation Instructions
-`avx512vbmi2`       | `avx512bw`           | [AVX512-VBMI2] --- Advanced Vector Extensions 512-bit - Vector Byte Manipulation Instructions 2
-`avx512vl`          | `avx512f`            | [AVX512-VL] --- Advanced Vector Extensions 512-bit - Vector Length Extensions
-`avx512vnni`        | `avx512f`            | [AVX512-VNNI] --- Advanced Vector Extensions 512-bit - Vector Neural Network Instructions
-`avx512vp2intersect`| `avx512f`            | [AVX512-VP2INTERSECT] --- Advanced Vector Extensions 512-bit - Vector Pair Intersection to a Pair of Mask Registers
-`avx512vpopcntdq`   | `avx512f`            | [AVX512-VPOPCNTDQ] --- Advanced Vector Extensions 512-bit - Vector Population Count Instruction
-`avxifma`           | `avx2`               | [AVX-IFMA] --- Advanced Vector Extensions - Integer Fused Multiply Add
-`avxneconvert`      | `avx2`               | [AVX-NE-CONVERT] --- Advanced Vector Extensions - No-Exception Floating-Point conversion Instructions
-`avxvnni`           | `avx2`               | [AVX-VNNI] --- Advanced Vector Extensions - Vector Neural Network Instructions
-`avxvnniint16`      | `avx2`               | [AVX-VNNI-INT16] --- Advanced Vector Extensions - Vector Neural Network Instructions with 16-bit Integers
-`avxvnniint8`       | `avx2`               | [AVX-VNNI-INT8] --- Advanced Vector Extensions - Vector Neural Network Instructions with 8-bit Integers
-`bmi1`      |          | [BMI1] --- Bit Manipulation Instruction Sets
-`bmi2`      |          | [BMI2] --- Bit Manipulation Instruction Sets 2
-`cmpxchg16b`|          | [`cmpxchg16b`] --- Compares and exchange 16 bytes (128 bits) of data atomically
-`f16c`      | `avx`    | [F16C] --- 16-bit floating point conversion instructions
-`fma`       | `avx`    | [FMA3] --- Three-operand fused multiply-add
-`fxsr`      |          | [`fxsave`] and [`fxrstor`] --- Save and restore x87 FPU, MMX Technology, and SSE State
-`gfni`      | `sse2`   | [GFNI] --- Galois Field New Instructions
-`kl`        | `sse2`   | [KEYLOCKER] --- Intel Key Locker Instructions
-`lzcnt`     |          | [`lzcnt`] --- Leading zeros count
-`movbe`     |          | [`movbe`] --- Move data after swapping bytes
-`pclmulqdq` | `sse2`   | [`pclmulqdq`] --- Packed carry-less multiplication quadword
-`popcnt`    |          | [`popcnt`] --- Count of bits set to 1
-`rdrand`    |          | [`rdrand`] --- Read random number
-`rdseed`    |          | [`rdseed`] --- Read random seed
-`sha`       | `sse2`   | [SHA] --- Secure Hash Algorithm
-`sha512`    | `avx2`   | [SHA512] --- Secure Hash Algorithm with 512-bit digest
-`sm3`       | `avx`    | [SM3] --- ShangMi 3 Hash Algorithm
-`sm4`       | `avx2`   | [SM4] --- ShangMi 4 Cipher Algorithm
-`sse`       |          | [SSE] --- Streaming <abbr title="Single Instruction Multiple Data">SIMD</abbr> Extensions
-`sse2`      | `sse`    | [SSE2] --- Streaming SIMD Extensions 2
-`sse3`      | `sse2`   | [SSE3] --- Streaming SIMD Extensions 3
-`sse4.1`    | `ssse3`  | [SSE4.1] --- Streaming SIMD Extensions 4.1
-`sse4.2`    | `sse4.1` | [SSE4.2] --- Streaming SIMD Extensions 4.2
-`sse4a`     | `sse3`   | [SSE4a] --- Streaming SIMD Extensions 4a
-`ssse3`     | `sse3`   | [SSSE3] --- Supplemental Streaming SIMD Extensions 3
-`tbm`       |          | [TBM] --- Trailing Bit Manipulation
-`vaes`      | `avx2`, `aes`     | [VAES] --- Vector AES Instructions
-`vpclmulqdq`| `avx`, `pclmulqdq`| [VPCLMULQDQ] --- Vector Carry-less multiplication of Quadwords
-`widekl`    | `kl`     | [KEYLOCKER_WIDE] --- Intel Wide Keylocker Instructions
-`xsave`     |          | [`xsave`] --- Save processor extended states
-`xsavec`    |          | [`xsavec`] --- Save processor extended states with compaction
-`xsaveopt`  |          | [`xsaveopt`] --- Save processor extended states optimized
-`xsaves`    |          | [`xsaves`] --- Save processor extended states supervisor
+以下是可用特性名称列表。
+
+<div class="rule" id="r-attributes.codegen.target_feature.cfg-only"><a class="rule-link" href="#r-attributes.codegen.target_feature.cfg-only" title="attributes.codegen.target_feature.cfg-only"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.cfg-only]</span></a>
+</div>
+
+此列表中标记为 "(cfg only)" 的目标特性名称只能与 [`target_feature`](../conditional-compilation.md#r-cfg.target_feature) 条件编译选项一起使用，不能与 `target_feature` 属性一起使用。
+
+<div class="rule" id="r-attributes.codegen.target_feature.x86"><a class="rule-link" href="#r-attributes.codegen.target_feature.x86" title="attributes.codegen.target_feature.x86"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.x86]</span></a>
+</div>
+
+#### `x86` 或 `x86_64`
+
+在此平台上，执行带有不受支持特性的代码是未定义行为。因此，在此平台上使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
+
+|特性|隐式启用|说明|
+|--|----|--|
+|`adx`||[ADX](https://en.wikipedia.org/wiki/Intel_ADX) --- 多精度带进位加法指令扩展|
+|`aes`|`sse2`|[AES](https://en.wikipedia.org/wiki/AES_instruction_set) --- 高级加密标准|
+|`avx`|`sse4.2`|[AVX](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions) --- 高级向量扩展|
+|`avx2`|`avx`|[AVX2](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX2) --- 高级向量扩展 2|
+|`avx512bf16`|`avx512bw`|[AVX512-BF16](https://en.wikipedia.org/wiki/AVX-512#BF16) --- 高级向量扩展 512 位 - Bfloat16 扩展|
+|`avx512bitalg`|`avx512bw`|[AVX512-BITALG](https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG) --- 高级向量扩展 512 位 - 位算法|
+|`avx512bw`|`avx512f`|[AVX512-BW](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 字节和字指令|
+|`avx512cd`|`avx512f`|[AVX512-CD](https://en.wikipedia.org/wiki/AVX-512#Conflict_detection) --- 高级向量扩展 512 位 - 冲突检测指令|
+|`avx512dq`|`avx512f`|[AVX512-DQ](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 双字和四字指令|
+|`avx512f`|`avx2`, `fma`, `f16c`|[AVX512-F](https://en.wikipedia.org/wiki/AVX-512) --- 高级向量扩展 512 位 - 基础|
+|`avx512fp16`|`avx512bw`|[AVX512-FP16](https://en.wikipedia.org/wiki/AVX-512#FP16) --- 高级向量扩展 512 位 - Float16 扩展|
+|`avx512ifma`|`avx512f`|[AVX512-IFMA](https://en.wikipedia.org/wiki/AVX-512#IFMA) --- 高级向量扩展 512 位 - 整数融合乘加|
+|`avx512vbmi`|`avx512bw`|[AVX512-VBMI](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 向量字节操作指令|
+|`avx512vbmi2`|`avx512bw`|[AVX512-VBMI2](https://en.wikipedia.org/wiki/AVX-512#VBMI2) --- 高级向量扩展 512 位 - 向量字节操作指令 2|
+|`avx512vl`|`avx512f`|[AVX512-VL](https://en.wikipedia.org/wiki/AVX-512) --- 高级向量扩展 512 位 - 向量长度扩展|
+|`avx512vnni`|`avx512f`|[AVX512-VNNI](https://en.wikipedia.org/wiki/AVX-512#VNNI) --- 高级向量扩展 512 位 - 向量神经网络指令|
+|`avx512vp2intersect`|`avx512f`|[AVX512-VP2INTERSECT](https://en.wikipedia.org/wiki/AVX-512#VP2INTERSECT) --- 高级向量扩展 512 位 - 向量对求交到一对掩码寄存器|
+|`avx512vpopcntdq`|`avx512f`|[AVX512-VPOPCNTDQ](https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG) --- 高级向量扩展 512 位 - 向量置位计数指令|
+|`avxifma`|`avx2`|[AVX-IFMA](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 整数融合乘加|
+|`avxneconvert`|`avx2`|[AVX-NE-CONVERT](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 无异常浮点转换指令|
+|`avxvnni`|`avx2`|[AVX-VNNI](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 向量神经网络指令|
+|`avxvnniint16`|`avx2`|[AVX-VNNI-INT16](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 使用 16 位整数的向量神经网络指令|
+|`avxvnniint8`|`avx2`|[AVX-VNNI-INT8](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 使用 8 位整数的向量神经网络指令|
+|`bmi1`||[BMI1](https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets) --- 位操作指令集|
+|`bmi2`||[BMI2](https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets#BMI2) --- 位操作指令集 2|
+|`cmpxchg16b`||[`cmpxchg16b`](https://www.felixcloutier.com/x86/cmpxchg8b:cmpxchg16b) --- 以原子方式比较并交换 16 字节（128 位）数据|
+|`f16c`|`avx`|[F16C](https://en.wikipedia.org/wiki/F16C) --- 16 位浮点转换指令|
+|`fma`|`avx`|[FMA3](https://en.wikipedia.org/wiki/FMA_instruction_set) --- 三操作数融合乘加|
+|`fxsr`||[`fxsave`](https://www.felixcloutier.com/x86/fxsave) and [`fxrstor`](https://www.felixcloutier.com/x86/fxrstor) --- 保存和恢复 x87 FPU、MMX 技术和 SSE 状态|
+|`gfni`|`sse2`|[GFNI](https://en.wikipedia.org/wiki/AVX-512#GFNI) --- 伽罗瓦域新指令|
+|`kl`|`sse2`|[KEYLOCKER](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions) --- Intel Key Locker 指令|
+|`lzcnt`||[`lzcnt`](https://www.felixcloutier.com/x86/lzcnt) --- 前导零计数|
+|`movbe`||[`movbe`](https://www.felixcloutier.com/x86/movbe) --- 交换字节后移动数据|
+|`pclmulqdq`|`sse2`|[`pclmulqdq`](https://www.felixcloutier.com/x86/pclmulqdq) --- 打包四字无进位乘法|
+|`popcnt`||[`popcnt`](https://www.felixcloutier.com/x86/popcnt) --- 置位为 1 的位数|
+|`rdrand`||[`rdrand`](https://en.wikipedia.org/wiki/RdRand) --- 读取随机数|
+|`rdseed`||[`rdseed`](https://en.wikipedia.org/wiki/RdRand) --- 读取随机种子|
+|`sha`|`sse2`|[SHA](https://en.wikipedia.org/wiki/Intel_SHA_extensions) --- 安全散列算法|
+|`sha512`|`avx2`|[SHA512](https://en.wikipedia.org/wiki/Intel_SHA_extensions) --- 使用 512 位摘要的安全散列算法|
+|`sm3`|`avx`|[SM3](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions) --- 商密 3 散列算法|
+|`sm4`|`avx2`|[SM4](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions) --- 商密 4 密码算法|
+|`sse`||[SSE](https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions) --- 流式 <abbr title="Single Instruction Multiple Data">SIMD</abbr> 扩展|
+|`sse2`|`sse`|[SSE2](https://en.wikipedia.org/wiki/SSE2) --- 流式 SIMD 扩展 2|
+|`sse3`|`sse2`|[SSE3](https://en.wikipedia.org/wiki/SSE3) --- 流式 SIMD 扩展 3|
+|`sse4.1`|`ssse3`|[SSE4.1](https://en.wikipedia.org/wiki/SSE4#SSE4.1) --- 流式 SIMD 扩展 4.1|
+|`sse4.2`|`sse4.1`|[SSE4.2](https://en.wikipedia.org/wiki/SSE4#SSE4.2) --- 流式 SIMD 扩展 4.2|
+|`sse4a`|`sse3`|[SSE4a](https://en.wikipedia.org/wiki/SSE4#SSE4a) --- 流式 SIMD 扩展 4a|
+|`ssse3`|`sse3`|[SSSE3](https://en.wikipedia.org/wiki/SSSE3) --- 补充流式 SIMD 扩展 3|
+|`tbm`||[TBM](https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set#TBM_(Trailing_Bit_Manipulation)) --- 尾随位操作|
+|`vaes`|`avx2`, `aes`|[VAES](https://en.wikipedia.org/wiki/AVX-512#VAES) --- 向量 AES 指令|
+|`vpclmulqdq`|`avx`, `pclmulqdq`|[VPCLMULQDQ](https://en.wikipedia.org/wiki/AVX-512#VPCLMULQDQ) --- 向量四字无进位乘法|
+|`widekl`|`kl`|[KEYLOCKER_WIDE](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions) --- Intel Wide Keylocker 指令|
+|`xsave`||[`xsave`](https://www.felixcloutier.com/x86/xsave) --- 保存处理器扩展状态|
+|`xsavec`||[`xsavec`](https://www.felixcloutier.com/x86/xsavec) --- 以压缩形式保存处理器扩展状态|
+|`xsaveopt`||[`xsaveopt`](https://www.felixcloutier.com/x86/xsaveopt) --- 优化地保存处理器扩展状态|
+|`xsaves`||[`xsaves`](https://www.felixcloutier.com/x86/xsaves) --- 保存处理器 supervisor 扩展状态|
 
 <!-- Keep links near each table to make it easier to move and update. -->
 
-[ADX]: https://en.wikipedia.org/wiki/Intel_ADX
-[AES]: https://en.wikipedia.org/wiki/AES_instruction_set
-[AVX]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions
-[AVX2]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX2
-[AVX512-BF16]: https://en.wikipedia.org/wiki/AVX-512#BF16
-[AVX512-BITALG]: https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG
-[AVX512-BW]: https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI
-[AVX512-CD]: https://en.wikipedia.org/wiki/AVX-512#Conflict_detection
-[AVX512-DQ]: https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI
-[AVX512-F]: https://en.wikipedia.org/wiki/AVX-512
-[AVX512-FP16]: https://en.wikipedia.org/wiki/AVX-512#FP16
-[AVX512-IFMA]: https://en.wikipedia.org/wiki/AVX-512#IFMA
-[AVX512-VBMI]: https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI
-[AVX512-VBMI2]: https://en.wikipedia.org/wiki/AVX-512#VBMI2
-[AVX512-VL]: https://en.wikipedia.org/wiki/AVX-512
-[AVX512-VNNI]: https://en.wikipedia.org/wiki/AVX-512#VNNI
-[AVX512-VP2INTERSECT]: https://en.wikipedia.org/wiki/AVX-512#VP2INTERSECT
-[AVX512-VPOPCNTDQ]:https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG
-[AVX-IFMA]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA
-[AVX-NE-CONVERT]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA
-[AVX-VNNI]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA
-[AVX-VNNI-INT16]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA
-[AVX-VNNI-INT8]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA
-[BMI1]: https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets
-[BMI2]: https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets#BMI2
-[`cmpxchg16b`]: https://www.felixcloutier.com/x86/cmpxchg8b:cmpxchg16b
-[F16C]: https://en.wikipedia.org/wiki/F16C
-[FMA3]: https://en.wikipedia.org/wiki/FMA_instruction_set
-[`fxsave`]: https://www.felixcloutier.com/x86/fxsave
-[`fxrstor`]: https://www.felixcloutier.com/x86/fxrstor
-[GFNI]: https://en.wikipedia.org/wiki/AVX-512#GFNI
-[KEYLOCKER]: https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions
-[KEYLOCKER_WIDE]: https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions
-[`lzcnt`]: https://www.felixcloutier.com/x86/lzcnt
-[`movbe`]: https://www.felixcloutier.com/x86/movbe
-[`pclmulqdq`]: https://www.felixcloutier.com/x86/pclmulqdq
-[`popcnt`]: https://www.felixcloutier.com/x86/popcnt
-[`rdrand`]: https://en.wikipedia.org/wiki/RdRand
-[`rdseed`]: https://en.wikipedia.org/wiki/RdRand
-[SHA]: https://en.wikipedia.org/wiki/Intel_SHA_extensions
-[SHA512]: https://en.wikipedia.org/wiki/Intel_SHA_extensions
-[SM3]: https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions
-[SM4]: https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions
-[SSE]: https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions
-[SSE2]: https://en.wikipedia.org/wiki/SSE2
-[SSE3]: https://en.wikipedia.org/wiki/SSE3
-[SSE4.1]: https://en.wikipedia.org/wiki/SSE4#SSE4.1
-[SSE4.2]: https://en.wikipedia.org/wiki/SSE4#SSE4.2
-[SSE4a]: https://en.wikipedia.org/wiki/SSE4#SSE4a
-[SSSE3]: https://en.wikipedia.org/wiki/SSSE3
-[TBM]: https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set#TBM_(Trailing_Bit_Manipulation)
-[VAES]: https://en.wikipedia.org/wiki/AVX-512#VAES
-[VPCLMULQDQ]: https://en.wikipedia.org/wiki/AVX-512#VPCLMULQDQ
-[`xsave`]: https://www.felixcloutier.com/x86/xsave
-[`xsavec`]: https://www.felixcloutier.com/x86/xsavec
-[`xsaveopt`]: https://www.felixcloutier.com/x86/xsaveopt
-[`xsaves`]: https://www.felixcloutier.com/x86/xsaves
+<div class="rule" id="r-attributes.codegen.target_feature.aarch64"><a class="rule-link" href="#r-attributes.codegen.target_feature.aarch64" title="attributes.codegen.target_feature.aarch64"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.aarch64]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.aarch64]
 #### `aarch64`
 
-On this platform the use of `#[target_feature]` functions follows the
-[above restrictions][attributes.codegen.target_feature.safety-restrictions].
+在此平台上，使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
 
-Further documentation on these features can be found in the [ARM Architecture
-Reference Manual], or elsewhere on [developer.arm.com].
+关于这些特性的更多文档可在 [ARM 架构参考手册](https://developer.arm.com/documentation/ddi0487/latest) 中找到，或在 [developer.arm.com](https://developer.arm.com) 上的其他位置找到。
 
-[ARM Architecture Reference Manual]: https://developer.arm.com/documentation/ddi0487/latest
-[developer.arm.com]: https://developer.arm.com
+<div class="alert alert-note">
 
-> [!NOTE]
-> The following pairs of features should both be marked as enabled or disabled together if used:
-> - `paca` and `pacg`, which LLVM currently implements as one feature.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 如果使用以下成对特性，应将它们同时标记为启用或禁用：
+ > 
+ > - `paca` 和 `pacg`，LLVM 目前将它们作为一个特性实现。
 
-Feature        | Implicitly Enables | Feature Name
--------        | ------------------ | ------------
-`aes`          | `neon`             | FEAT_AES & FEAT_PMULL --- Advanced <abbr title="Single Instruction Multiple Data">SIMD</abbr> AES & PMULL instructions
-`bf16`         |                    | FEAT_BF16 --- BFloat16 instructions
-`bti`          |                    | FEAT_BTI --- Branch Target Identification
-`crc`          |                    | FEAT_CRC --- CRC32 checksum instructions
-`dit`          |                    | FEAT_DIT  --- Data Independent Timing instructions
-`dotprod`      | `neon`             | FEAT_DotProd --- Advanced SIMD Int8 dot product instructions
-`dpb`          |                    | FEAT_DPB --- Data cache clean to point of persistence
-`dpb2`         | `dpb`              | FEAT_DPB2 --- Data cache clean to point of deep persistence
-`f32mm`        | `sve`              | FEAT_F32MM --- SVE single-precision FP matrix multiply instruction
-`f64mm`        | `sve`              | FEAT_F64MM --- SVE double-precision FP matrix multiply instruction
-`fcma`         | `neon`             | FEAT_FCMA --- Floating point complex number support
-`fhm`          | `fp16`             | FEAT_FHM --- Half-precision FP FMLAL instructions
-`flagm`        |                    | FEAT_FLAGM --- Conditional flag manipulation
-`fp16`         | `neon`             | FEAT_FP16 --- Half-precision FP data processing
-`frintts`      |                    | FEAT_FRINTTS --- Floating-point to int helper instructions
-`i8mm`         |                    | FEAT_I8MM --- Int8 Matrix Multiplication
-`jsconv`       | `neon`             | FEAT_JSCVT --- JavaScript conversion instruction
-`lor`          |                    | FEAT_LOR --- Limited Ordering Regions extension
-`lse`          |                    | FEAT_LSE --- Large System Extensions
-`mte`          |                    | FEAT_MTE & FEAT_MTE2 --- Memory Tagging Extension
-`neon`         |                    | FEAT_AdvSimd & FEAT_FP --- Floating Point and Advanced SIMD extension
-`paca`         |                    | FEAT_PAUTH --- Pointer Authentication (address authentication)
-`pacg`         |                    | FEAT_PAUTH --- Pointer Authentication (generic authentication)
-`pan`          |                    | FEAT_PAN --- Privileged Access-Never extension
-`pmuv3`        |                    | FEAT_PMUv3 --- Performance Monitors extension (v3)
-`rand`         |                    | FEAT_RNG --- Random Number Generator
-`ras`          |                    | FEAT_RAS & FEAT_RASv1p1 --- Reliability, Availability and Serviceability extension
-`rcpc`         |                    | FEAT_LRCPC --- Release consistent Processor Consistent
-`rcpc2`        | `rcpc`             | FEAT_LRCPC2 --- RcPc with immediate offsets
-`rdm`          | `neon`             | FEAT_RDM --- Rounding Double Multiply accumulate
-`sb`           |                    | FEAT_SB --- Speculation Barrier
-`sha2`         | `neon`             | FEAT_SHA1 & FEAT_SHA256 --- Advanced SIMD SHA instructions
-`sha3`         | `sha2`             | FEAT_SHA512 & FEAT_SHA3 --- Advanced SIMD SHA instructions
-`sm4`          | `neon`             | FEAT_SM3 & FEAT_SM4 --- Advanced SIMD SM3/4 instructions
-`spe`          |                    | FEAT_SPE --- Statistical Profiling Extension
-`ssbs`         |                    | FEAT_SSBS & FEAT_SSBS2 --- Speculative Store Bypass Safe
-`sve`          | `neon`             | FEAT_SVE --- Scalable Vector Extension
-`sve2`         | `sve`              | FEAT_SVE2 --- Scalable Vector Extension 2
-`sve2-aes`     | `sve2`, `aes`      | FEAT_SVE_AES & FEAT_SVE_PMULL128 --- SVE AES instructions
-`sve2-bitperm` | `sve2`             | FEAT_SVE2_BitPerm --- SVE Bit Permute
-`sve2-sha3`    | `sve2`, `sha3`     | FEAT_SVE2_SHA3 --- SVE SHA3 instructions
-`sve2-sm4`     | `sve2`, `sm4`      | FEAT_SVE2_SM4 --- SVE SM4 instructions
-`tme`          |                    | FEAT_TME --- Transactional Memory Extension
-`vh`           |                    | FEAT_VHE --- Virtualization Host Extensions
+</div>
 
-r[attributes.codegen.target_feature.loongarch]
+|特性|隐式启用|特性名称|
+|--|----|----|
+|`aes`|`neon`|FEAT_AES & FEAT_PMULL --- 高级 <abbr title="Single Instruction Multiple Data">SIMD</abbr> AES 和 PMULL 指令|
+|`bf16`||FEAT_BF16 --- BFloat16 指令|
+|`bti`||FEAT_BTI --- 分支目标标识|
+|`crc`||FEAT_CRC --- CRC32 校验和指令|
+|`dit`||FEAT_DIT  --- 数据无关时序指令|
+|`dotprod`|`neon`|FEAT_DotProd --- 高级 SIMD Int8 点积指令|
+|`dpb`||FEAT_DPB --- 将数据缓存清理到持久点|
+|`dpb2`|`dpb`|FEAT_DPB2 --- 将数据缓存清理到深度持久点|
+|`f32mm`|`sve`|FEAT_F32MM --- SVE 单精度浮点矩阵乘法指令|
+|`f64mm`|`sve`|FEAT_F64MM --- SVE 双精度浮点矩阵乘法指令|
+|`fcma`|`neon`|FEAT_FCMA --- 浮点复数支持|
+|`fhm`|`fp16`|FEAT_FHM --- 半精度浮点 FMLAL 指令|
+|`flagm`||FEAT_FLAGM --- 条件标志操作|
+|`fp16`|`neon`|FEAT_FP16 --- 半精度浮点数据处理|
+|`frintts`||FEAT_FRINTTS --- 浮点到整数辅助指令|
+|`i8mm`||FEAT_I8MM --- Int8 矩阵乘法|
+|`jsconv`|`neon`|FEAT_JSCVT --- JavaScript 转换指令|
+|`lor`||FEAT_LOR --- 有限排序区域扩展|
+|`lse`||FEAT_LSE --- 大系统扩展|
+|`mte`||FEAT_MTE & FEAT_MTE2 --- 内存标记扩展|
+|`neon`||FEAT_AdvSimd & FEAT_FP --- 浮点和高级 SIMD 扩展|
+|`paca`||FEAT_PAUTH --- 指针认证（地址认证）|
+|`pacg`||FEAT_PAUTH --- 指针认证（通用认证）|
+|`pan`||FEAT_PAN --- 特权访问禁止扩展|
+|`pmuv3`||FEAT_PMUv3 --- 性能监视器扩展（v3）|
+|`rand`||FEAT_RNG --- 随机数生成器|
+|`ras`||FEAT_RAS & FEAT_RASv1p1 --- 可靠性、可用性和可服务性扩展|
+|`rcpc`||FEAT_LRCPC --- 释放一致的处理器一致性|
+|`rcpc2`|`rcpc`|FEAT_LRCPC2 --- 带立即数偏移的 RcPc|
+|`rdm`|`neon`|FEAT_RDM --- 舍入双倍乘法累加|
+|`sb`||FEAT_SB --- 推测屏障|
+|`sha2`|`neon`|FEAT_SHA1 & FEAT_SHA256 --- 高级 SIMD SHA 指令|
+|`sha3`|`sha2`|FEAT_SHA512 & FEAT_SHA3 --- 高级 SIMD SHA 指令|
+|`sm4`|`neon`|FEAT_SM3 & FEAT_SM4 --- 高级 SIMD SM3/4 指令|
+|`spe`||FEAT_SPE --- 统计剖析扩展|
+|`ssbs`||FEAT_SSBS & FEAT_SSBS2 --- 推测性存储绕过安全|
+|`sve`|`neon`|FEAT_SVE --- 可伸缩向量扩展|
+|`sve2`|`sve`|FEAT_SVE2 --- 可伸缩向量扩展 2|
+|`sve2-aes`|`sve2`, `aes`|FEAT_SVE_AES & FEAT_SVE_PMULL128 --- SVE AES 指令|
+|`sve2-bitperm`|`sve2`|FEAT_SVE2_BitPerm --- SVE 位排列|
+|`sve2-sha3`|`sve2`, `sha3`|FEAT_SVE2_SHA3 --- SVE SHA3 指令|
+|`sve2-sm4`|`sve2`, `sm4`|FEAT_SVE2_SM4 --- SVE SM4 指令|
+|`tme`||FEAT_TME --- 事务内存扩展|
+|`vh`||FEAT_VHE --- 虚拟化主机扩展|
+
+<div class="rule" id="r-attributes.codegen.target_feature.loongarch"><a class="rule-link" href="#r-attributes.codegen.target_feature.loongarch" title="attributes.codegen.target_feature.loongarch"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.loongarch]</span></a>
+</div>
+
 #### `loongarch`
 
-On this platform the use of `#[target_feature]` functions follows the
-[above restrictions][attributes.codegen.target_feature.safety-restrictions].
+在此平台上，使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
 
-Feature     | Implicitly Enables  | Description
-------------|---------------------|-------------------
-`f`         |                     | [F][la-f] --- Single-precision float-point instructions
-`d`         | `f`                 | [D][la-d] --- Double-precision float-point instructions
-`frecipe`   |                     | [FRECIPE][la-frecipe] --- Reciprocal approximation instructions
-`lasx`      | `lsx`               | [LASX][la-lasx] --- 256-bit vector instructions
-`lbt`       |                     | [LBT][la-lbt] --- Binary translation instructions
-`lsx`       | `d`                 | [LSX][la-lsx] --- 128-bit vector instructions
-`lvz`       |                     | [LVZ][la-lvz] --- Virtualization instructions
-`div32`     |                     | [DIV32][la-div32] --- Division instructions accepting non-sign-extended 32-bit operands
-`lam-bh`    |                     | [LAM-BH][la-lam-bh] --- Atomic swap and add instructions for byte and halfword
-`lamcas`    |                     | [LAMCAS][la-lamcas] --- Atomic compare-and-swap instructions for byte, halfword, word, and doubleword
-`ld-seq-sa` |                     | [LD-SEQ-SA][la-ld-seq-sa] --- Sequential ordering of load operations to the same address
-`scq`       |                     | [SCQ][la-scq] --- Store-conditional quadword instructions
-
-<!-- Keep links near each table to make it easier to move and update. -->
-
-[la-f]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_sp
-[la-d]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_dp
-[la-frecipe]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-frecipe
-[la-lasx]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lasx
-[la-lbt]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lbt_x86
-[la-lsx]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lsx
-[la-lvz]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lvz
-[la-div32]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-div32
-[la-lam-bh]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lam_bh
-[la-lamcas]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lamcas
-[la-ld-seq-sa]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-ld_seq_sa
-[la-scq]: https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-scq
-
-r[attributes.codegen.target_feature.riscv]
-#### `riscv32` or `riscv64`
-
-On this platform the use of `#[target_feature]` functions follows the
-[above restrictions][attributes.codegen.target_feature.safety-restrictions].
-
-Further documentation on these features can be found in their respective
-specification. Many specifications are described in the [RISC-V ISA Manual],
-[version 20250508], or in another manual hosted on the [RISC-V GitHub Account].
-
-[RISC-V ISA Manual]: https://github.com/riscv/riscv-isa-manual
-[version 20250508]: https://github.com/riscv/riscv-isa-manual/tree/20250508
-[RISC-V GitHub Account]: https://github.com/riscv
-
-Feature     | Implicitly Enables  | Description
-------------|---------------------|-------------------
-`a`         | `zaamo`, `zalrsc`   | [A][rv-a] --- Atomic instructions
-`b`         | `zba`, `zbc`, `zbs` | [B][rv-b] --- Bit Manipulation instructions
-`c`         | `zca`               | [C][rv-c] --- Compressed instructions
-`d`         | `f`                 | [D][rv-d] --- [(cfg only)] Double-Precision Floating-Point
-`e`         |                     | [E][rv-e] --- [(cfg only)] Embedded Instruction Set with 16 GPRs
-`f`         | `zicsr`             | [F][rv-f] --- [(cfg only)] Single-Precision Floating-Point
-`m`         |                     | [M][rv-m] --- Integer Multiplication and Division instructions
-`za64rs`    | `za128rs`           | [Za64rs][rv-za64rs] --- Platform Behavior: Naturally aligned Reservation sets with ≦ 64 Bytes
-`za128rs`   |                     | [Za128rs][rv-za128rs] --- Platform Behavior: Naturally aligned Reservation sets with ≦ 128 Bytes
-`zaamo`     |                     | [Zaamo][rv-zaamo] --- Atomic Memory Operation instructions
-`zabha`     | `zaamo`             | [Zabha][rv-zabha] --- Byte and Halfword Atomic Memory Operation instructions
-`zacas`     | `zaamo`             | [Zacas][rv-zacas] --- Atomic Compare-and-Swap (CAS) instructions
-`zalrsc`    |                     | [Zalrsc][rv-zalrsc] --- Load-Reserved/Store-Conditional instructions
-`zama16b`   |                     | [Zama16b][rv-zama16b] --- Platform Behavior: Misaligned loads, stores, and AMOs to main memory regions that do not cross a naturally aligned 16-byte boundary are atomic
-`zawrs`     |                     | [Zawrs][rv-zawrs] --- Wait-on-Reservation-Set instructions
-`zba`       |                     | [Zba][rv-zba] --- Address Generation instructions
-`zbb`       |                     | [Zbb][rv-zbb] --- Basic bit-manipulation
-`zbc`       | `zbkc`              | [Zbc][rv-zbc] --- Carry-less multiplication
-`zbkb`      |                     | [Zbkb][rv-zbkb] --- Bit Manipulation Instructions for Cryptography
-`zbkc`      |                     | [Zbkc][rv-zbkc] --- Carry-less multiplication for Cryptography
-`zbkx`      |                     | [Zbkx][rv-zbkx] --- Crossbar permutations
-`zbs`       |                     | [Zbs][rv-zbs] --- Single-bit instructions
-`zca`       |                     | [Zca][rv-zca] --- Compressed instructions: integer part subset
-`zcb`       | `zca`               | [Zcb][rv-zcb] --- Simple Code-size Saving Compressed instructions
-`zcmop`     | `zca`               | [Zcmop][rv-zcmop] --- Compressed May-Be-Operations
-`zic64b`    |                     | [Zic64b][rv-zic64b] --- Platform Behavior: Naturally aligned 64 byte Cache blocks
-`zicbom`    |                     | [Zicbom][rv-zicbom] --- Cache-Block Management instructions
-`zicbop`    |                     | [Zicbop][rv-zicbop] --- Cache-Block Prefetch Hint instructions
-`zicboz`    |                     | [Zicboz][rv-zicboz] --- Cache-Block Zero instruction
-`ziccamoa`  |                     | [Ziccamoa][rv-ziccamoa] --- Platform Behavior: Cacheable and Coherent Main memory supports all basic atomic operations
-`ziccif`    |                     | [Ziccif][rv-ziccif] --- Platform Behavior: Cacheable and Coherent Main memory supports instruction fetch and fetches of naturally aligned power-of-2 sizes up to `min(ILEN,XLEN)` are atomic
-`zicclsm`   |                     | [Zicclsm][rv-zicclsm] --- Platform Behavior: Cacheable and Coherent Main memory supports misaligned load/store accesses
-`ziccrse`   |                     | [Ziccrse][rv-ziccrse] --- Platform Behavior: Cacheable and Coherent Main memory guarantees eventual success on LR/SC sequences
-`zicntr`    | `zicsr`             | [Zicntr][rv-zicntr] --- Base Counters and Timers
-`zicond`    |                     | [Zicond][rv-zicond] --- Integer Conditional Operation instructions
-`zicsr`     |                     | [Zicsr][rv-zicsr] --- Control and Status Register (CSR) instructions
-`zifencei`  |                     | [Zifencei][rv-zifencei] --- Instruction-Fetch Fence instruction
-`zihintntl`   |                   | [Zihintntl][rv-zihintntl] --- Non-Temporal Locality Hint instructions
-`zihintpause` |                   | [Zihintpause][rv-zihintpause] --- Pause Hint instruction
-`zihpm`     | `zicsr`             | [Zihpm][rv-zihpm] --- Hardware Performance Counters
-`zimop`     |                     | [Zimop][rv-zimop] --- May-Be-Operations
-`zk`        | `zkn`, `zkr`, `zks`, `zkt`, `zbkb`, `zbkc`, `zkbx` | [Zk][rv-zk] --- Scalar Cryptography
-`zkn`       | `zknd`, `zkne`, `zknh`, `zbkb`, `zbkc`, `zkbx`     | [Zkn][rv-zkn] --- NIST Algorithm suite extension
-`zknd`      |                                                    | [Zknd][rv-zknd] --- NIST Suite: AES Decryption
-`zkne`      |                                                    | [Zkne][rv-zkne] --- NIST Suite: AES Encryption
-`zknh`      |                                                    | [Zknh][rv-zknh] --- NIST Suite: Hash Function Instructions
-`zkr`       |                                                    | [Zkr][rv-zkr] --- Entropy Source Extension
-`zks`       | `zksed`, `zksh`, `zbkb`, `zbkc`, `zkbx`            | [Zks][rv-zks] --- ShangMi Algorithm Suite
-`zksed`     |                                                    | [Zksed][rv-zksed] --- ShangMi Suite: SM4 Block Cipher Instructions
-`zksh`      |                                                    | [Zksh][rv-zksh] --- ShangMi Suite: SM3 Hash Function Instructions
-`zkt`       |                                                    | [Zkt][rv-zkt] --- Data Independent Execution Latency Subset
-`ztso`      |                     | [Ztso][rv-ztso] --- Total Store Ordering
+|特性|隐式启用|说明|
+|--|----|--|
+|`f`||[F](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_sp) --- 单精度浮点指令|
+|`d`|`f`|[D](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_dp) --- 双精度浮点指令|
+|`frecipe`||[FRECIPE](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-frecipe) --- 倒数近似指令|
+|`lasx`|`lsx`|[LASX](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lasx) --- 256 位向量指令|
+|`lbt`||[LBT](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lbt_x86) --- 二进制翻译指令|
+|`lsx`|`d`|[LSX](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lsx) --- 128 位向量指令|
+|`lvz`||[LVZ](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lvz) --- 虚拟化指令|
+|`div32`||[DIV32](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-div32) --- 接受非符号扩展 32 位操作数的除法指令|
+|`lam-bh`||[LAM-BH](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lam_bh) --- 面向字节和半字的原子交换与加法指令|
+|`lamcas`||[LAMCAS](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lamcas) --- 面向字节、半字、字和双字的原子比较并交换指令|
+|`ld-seq-sa`||[LD-SEQ-SA](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-ld_seq_sa) --- 对同一地址的加载操作进行顺序排序|
+|`scq`||[SCQ](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-scq) --- 条件存储四字指令|
 
 <!-- Keep links near each table to make it easier to move and update. -->
 
-[rv-a]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc
-[rv-b]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-c]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/c-st-ext.adoc
-[rv-d]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/d-st-ext.adoc
-[rv-e]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/rv32e.adoc
-[rv-f]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/f-st-ext.adoc
-[rv-m]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/m-st-ext.adoc
-[rv-za64rs]: https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc
-[rv-za128rs]: https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc
-[rv-zaamo]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc
-[rv-zabha]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zabha.adoc
-[rv-zacas]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zacas.adoc
-[rv-zalrsc]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc
-[rv-zama16b]: https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc
-[rv-zawrs]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zawrs.adoc
-[rv-zba]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-zbb]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-zbc]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-zbkb]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-zbkc]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-zbkx]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-zbs]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc
-[rv-zca]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc
-[rv-zcb]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc
-[rv-zcmop]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zimop.adoc
-[rv-zic64b]: https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc
-[rv-zicbom]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc
-[rv-zicbop]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc
-[rv-zicboz]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc
-[rv-ziccamoa]: https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc
-[rv-ziccif]: https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc
-[rv-zicclsm]: https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc
-[rv-ziccrse]: https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc
-[rv-zicntr]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc
-[rv-zicond]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicond.adoc
-[rv-zicsr]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicsr.adoc
-[rv-zifencei]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zifencei.adoc
-[rv-zihintntl]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintntl.adoc
-[rv-zihintpause]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintpause.adoc
-[rv-zihpm]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc
-[rv-zimop]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zimop.adoc
-[rv-zk]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zkn]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zkne]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zknd]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zknh]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zkr]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zks]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zksed]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zksh]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-zkt]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc
-[rv-ztso]: https://github.com/riscv/riscv-isa-manual/blob/20250508/src/ztso-st-ext.adoc
+<div class="rule" id="r-attributes.codegen.target_feature.riscv"><a class="rule-link" href="#r-attributes.codegen.target_feature.riscv" title="attributes.codegen.target_feature.riscv"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.riscv]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.wasm]
-#### `wasm32` or `wasm64`
+#### `riscv32` 或 `riscv64`
 
-Safe `#[target_feature]` functions may always be used in safe contexts on Wasm
-platforms. It is impossible to cause undefined behavior via the
-`#[target_feature]` attribute because attempting to use instructions
-unsupported by the Wasm engine will fail at load time without the risk of being
-interpreted in a way different from what the compiler expected.
+在此平台上，使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
 
-Feature               | Implicitly Enables  | Description
-----------------------|---------------------|-------------------
-`bulk-memory`         |                     | [WebAssembly bulk memory operations proposal][bulk-memory]
-`extended-const`      |                     | [WebAssembly extended const expressions proposal][extended-const]
-`mutable-globals`     |                     | [WebAssembly mutable global proposal][mutable-globals]
-`nontrapping-fptoint` |                     | [WebAssembly non-trapping float-to-int conversion proposal][nontrapping-fptoint]
-`relaxed-simd`        | `simd128`           | [WebAssembly relaxed simd proposal][relaxed-simd]
-`sign-ext`            |                     | [WebAssembly sign extension operators Proposal][sign-ext]
-`simd128`             |                     | [WebAssembly simd proposal][simd128]
-`multivalue`          |                     | [WebAssembly multivalue proposal][multivalue]
-`reference-types`     |                     | [WebAssembly reference-types proposal][reference-types]
-`tail-call`           |                     | [WebAssembly tail-call proposal][tail-call]
+关于这些特性的更多文档可在其各自的规范中找到。许多规范在 [RISC-V ISA 手册](https://github.com/riscv/riscv-isa-manual)、[版本 20250508](https://github.com/riscv/riscv-isa-manual/tree/20250508) 中说明，或在 [RISC-V GitHub 账户](https://github.com/riscv) 托管的其他手册中说明。
 
-[bulk-memory]: https://github.com/WebAssembly/bulk-memory-operations
-[extended-const]: https://github.com/WebAssembly/extended-const
-[mutable-globals]: https://github.com/WebAssembly/mutable-global
-[nontrapping-fptoint]: https://github.com/WebAssembly/nontrapping-float-to-int-conversions
-[relaxed-simd]: https://github.com/WebAssembly/relaxed-simd
-[sign-ext]: https://github.com/WebAssembly/sign-extension-ops
-[simd128]: https://github.com/webassembly/simd
-[reference-types]: https://github.com/webassembly/reference-types
-[tail-call]: https://github.com/webassembly/tail-call
-[multivalue]: https://github.com/webassembly/multi-value
+|特性|隐式启用|说明|
+|--|----|--|
+|`a`|`zaamo`, `zalrsc`|[A](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 原子指令|
+|`b`|`zba`, `zbc`, `zbs`|[B](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 位操作指令|
+|`c`|`zca`|[C](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/c-st-ext.adoc) --- 压缩指令|
+|`d`|`f`|[D](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/d-st-ext.adoc) --- [仅 cfg](codegen.md#r-attributes.codegen.target_feature.cfg-only) 双精度浮点|
+|`e`||[E](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/rv32e.adoc) --- [仅 cfg](codegen.md#r-attributes.codegen.target_feature.cfg-only) 具有 16 个 GPR 的嵌入式指令集|
+|`f`|`zicsr`|[F](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/f-st-ext.adoc) --- [仅 cfg](codegen.md#r-attributes.codegen.target_feature.cfg-only) 单精度浮点|
+|`m`||[M](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/m-st-ext.adoc) --- 整数乘法和除法指令|
+|`za64rs`|`za128rs`|[Za64rs](https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc) --- 平台行为：自然对齐的保留集，大小 ≦ 64 字节|
+|`za128rs`||[Za128rs](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：自然对齐的保留集，大小 ≦ 128 字节|
+|`zaamo`||[Zaamo](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 原子内存操作指令|
+|`zabha`|`zaamo`|[Zabha](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zabha.adoc) --- 字节和半字原子内存操作指令|
+|`zacas`|`zaamo`|[Zacas](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zacas.adoc) --- 原子比较并交换（CAS）指令|
+|`zalrsc`||[Zalrsc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 加载保留/条件存储指令|
+|`zama16b`||[Zama16b](https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc) --- 平台行为：对未跨越自然对齐 16 字节边界的主内存区域执行的未对齐加载、存储和 AMO 是原子的|
+|`zawrs`||[Zawrs](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zawrs.adoc) --- 等待保留集指令|
+|`zba`||[Zba](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 地址生成指令|
+|`zbb`||[Zbb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 基本位操作|
+|`zbc`|`zbkc`|[Zbc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 无进位乘法|
+|`zbkb`||[Zbkb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 密码学位操作指令|
+|`zbkc`||[Zbkc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 用于密码学的无进位乘法|
+|`zbkx`||[Zbkx](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 交叉开关置换|
+|`zbs`||[Zbs](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 单比特指令|
+|`zca`||[Zca](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc) --- 压缩指令：整数部分子集|
+|`zcb`|`zca`|[Zcb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc) --- 简单节省代码大小的压缩指令|
+|`zcmop`|`zca`|[Zcmop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zimop.adoc) --- 压缩 May-Be-Operations|
+|`zic64b`||[Zic64b](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：自然对齐的 64 字节缓存块|
+|`zicbom`||[Zicbom](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块管理指令|
+|`zicbop`||[Zicbop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块预取提示指令|
+|`zicboz`||[Zicboz](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块清零指令|
+|`ziccamoa`||[Ziccamoa](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持所有基本原子操作|
+|`ziccif`||[Ziccif](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持取指，且最大为 `min(ILEN,XLEN)` 的自然对齐 2 的幂大小获取是原子的|
+|`zicclsm`||[Zicclsm](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持未对齐加载/存储访问|
+|`ziccrse`||[Ziccrse](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存保证 LR/SC 序列最终成功|
+|`zicntr`|`zicsr`|[Zicntr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc) --- 基础计数器和定时器|
+|`zicond`||[Zicond](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicond.adoc) --- 整数条件操作指令|
+|`zicsr`||[Zicsr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicsr.adoc) --- 控制与状态寄存器（CSR）指令|
+|`zifencei`||[Zifencei](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zifencei.adoc) --- 取指栅栏指令|
+|`zihintntl`||[Zihintntl](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintntl.adoc) --- 非时序局部性提示指令|
+|`zihintpause`||[Zihintpause](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintpause.adoc) --- 暂停提示指令|
+|`zihpm`|`zicsr`|[Zihpm](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc) --- 硬件性能计数器|
+|`zimop`||[Zimop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zimop.adoc) --- May-Be-Operations|
+|`zk`|`zkn`, `zkr`, `zks`, `zkt`, `zbkb`, `zbkc`, `zkbx`|[Zk](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 标量密码学|
+|`zkn`|`zknd`, `zkne`, `zknh`, `zbkb`, `zbkc`, `zkbx`|[Zkn](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 算法套件扩展|
+|`zknd`||[Zknd](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：AES 解密|
+|`zkne`||[Zkne](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：AES 加密|
+|`zknh`||[Zknh](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：哈希函数指令|
+|`zkr`||[Zkr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 熵源扩展|
+|`zks`|`zksed`, `zksh`, `zbkb`, `zbkc`, `zkbx`|[Zks](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密算法套件|
+|`zksed`||[Zksed](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密套件：SM4 分组密码指令|
+|`zksh`||[Zksh](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密套件：SM3 哈希函数指令|
+|`zkt`||[Zkt](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 数据无关执行延迟子集|
+|`ztso`||[Ztso](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/ztso-st-ext.adoc) --- 总存储排序|
 
-r[attributes.codegen.target_feature.s390x]
+<!-- Keep links near each table to make it easier to move and update. -->
+
+<div class="rule" id="r-attributes.codegen.target_feature.wasm"><a class="rule-link" href="#r-attributes.codegen.target_feature.wasm" title="attributes.codegen.target_feature.wasm"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.wasm]</span></a>
+</div>
+
+#### `wasm32` 或 `wasm64`
+
+在 Wasm 平台上，安全的 `#[target_feature]` 函数始终可以在安全上下文中使用。无法通过 `#[target_feature]` 属性导致未定义行为，因为尝试使用 Wasm 引擎不支持的指令会在加载时失败，不会有被解释为与编译器预期不同方式的风险。
+
+|特性|隐式启用|说明|
+|--|----|--|
+|`bulk-memory`||[WebAssembly 批量内存操作提案](https://github.com/WebAssembly/bulk-memory-operations)|
+|`extended-const`||[WebAssembly 扩展 const 表达式提案](https://github.com/WebAssembly/extended-const)|
+|`mutable-globals`||[WebAssembly 可变全局提案](https://github.com/WebAssembly/mutable-global)|
+|`nontrapping-fptoint`||[WebAssembly 非陷入式浮点到整数转换提案](https://github.com/WebAssembly/nontrapping-float-to-int-conversions)|
+|`relaxed-simd`|`simd128`|[WebAssembly 宽松 simd 提案](https://github.com/WebAssembly/relaxed-simd)|
+|`sign-ext`||[WebAssembly 符号扩展运算符提案](https://github.com/WebAssembly/sign-extension-ops)|
+|`simd128`||[WebAssembly simd 提案](https://github.com/webassembly/simd)|
+|`multivalue`||[WebAssembly 多值提案](https://github.com/webassembly/multi-value)|
+|`reference-types`||[WebAssembly 引用类型提案](https://github.com/webassembly/reference-types)|
+|`tail-call`||[WebAssembly 尾调用提案](https://github.com/webassembly/tail-call)|
+
+<div class="rule" id="r-attributes.codegen.target_feature.s390x"><a class="rule-link" href="#r-attributes.codegen.target_feature.s390x" title="attributes.codegen.target_feature.s390x"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.s390x]</span></a>
+</div>
+
 #### `s390x`
 
-On `s390x` targets, use of functions with the `#[target_feature]` attribute follows the [above restrictions][attributes.codegen.target_feature.safety-restrictions].
+在 `s390x` 目标上，使用带有 `#[target_feature]` 属性的函数时，需遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
 
-Further documentation on these features can be found in the "Additions to z/Architecture" section of Chapter 1 of the *[z/Architecture Principles of Operation]*.
+关于这些特性的更多文档，可参见 _[z/Architecture Principles of Operation](https://publibfp.dhe.ibm.com/epubs/pdf/a227832d.pdf)_ 第一章中的 “Additions to z/Architecture” 一节。
 
-Feature                                | Implicitly Enables                    | Description
----------------------------------------|---------------------------------------|---------------------
-`vector`                               |                                       | 128-bit vector instructions
-`vector-enhancements-1`                | `vector`                              | vector enhancements 1
-`vector-enhancements-2`                | `vector-enhancements-1`               | vector enhancements 2
-`vector-enhancements-3`                | `vector-enhancements-2`               | vector enhancements 3
-`vector-packed-decimal`                | `vector`                              | vector packed-decimal
-`vector-packed-decimal-enhancement`    | `vector-packed-decimal`               | vector packed-decimal enhancement
-`vector-packed-decimal-enhancement-2`  | `vector-packed-decimal-enhancement-2` | vector packed-decimal enhancement 2
-`vector-packed-decimal-enhancement-3`  | `vector-packed-decimal-enhancement-3` | vector packed-decimal enhancement 3
-`nnp-assist`                           | `vector`                              | nnp assist
-`miscellaneous-extensions-2`           |                                       | miscellaneous extensions 2
-`miscellaneous-extensions-3`           |                                       | miscellaneous extensions 3
-`miscellaneous-extensions-4`           |                                       | miscellaneous extensions 4
+|特性|隐式启用|说明|
+|--|----|--|
+|`vector`||128 位向量指令|
+|`vector-enhancements-1`|`vector`|向量增强 1|
+|`vector-enhancements-2`|`vector-enhancements-1`|向量增强 2|
+|`vector-enhancements-3`|`vector-enhancements-2`|向量增强 3|
+|`vector-packed-decimal`|`vector`|向量密集十进制|
+|`vector-packed-decimal-enhancement`|`vector-packed-decimal`|向量密集十进制增强|
+|`vector-packed-decimal-enhancement-2`|`vector-packed-decimal-enhancement-2`|向量密集十进制增强 2|
+|`vector-packed-decimal-enhancement-3`|`vector-packed-decimal-enhancement-3`|向量密集十进制增强 3|
+|`nnp-assist`|`vector`|nnp 辅助|
+|`miscellaneous-extensions-2`||杂项扩展 2|
+|`miscellaneous-extensions-3`||杂项扩展 3|
+|`miscellaneous-extensions-4`||杂项扩展 4|
 
-[z/Architecture Principles of Operation]: https://publibfp.dhe.ibm.com/epubs/pdf/a227832d.pdf
+<div class="rule" id="r-attributes.codegen.target_feature.info"><a class="rule-link" href="#r-attributes.codegen.target_feature.info" title="attributes.codegen.target_feature.info"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.info]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.info]
-### Additional information
+### 附加信息
 
-r[attributes.codegen.target_feature.remark-cfg]
-See the [`target_feature` conditional compilation option] for selectively
-enabling or disabling compilation of code based on compile-time settings. Note
-that this option is not affected by the `target_feature` attribute, and is
-only driven by the features enabled for the entire crate.
+<div class="rule" id="r-attributes.codegen.target_feature.remark-cfg"><a class="rule-link" href="#r-attributes.codegen.target_feature.remark-cfg" title="attributes.codegen.target_feature.remark-cfg"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.remark-cfg]</span></a>
+</div>
 
-r[attributes.codegen.target_feature.remark-rt]
-Whether a feature is enabled can be checked at runtime using a platform-specific macro from the standard library, for instance [`is_x86_feature_detected`] or [`is_aarch64_feature_detected`].
+有关基于编译时设置选择性启用或禁用代码编译，请参见[`target_feature` 条件编译选项](../conditional-compilation.md#target_feature)。请注意，该选项不受 `target_feature` 属性影响，而仅由为整个 crate 启用的特性驱动。
 
-> [!NOTE]
-> `rustc` has a default set of features enabled for each target and CPU. The CPU may be chosen with the [`-C target-cpu`] flag. Individual features may be enabled or disabled for an entire crate with the [`-C target-feature`] flag.
+<div class="rule" id="r-attributes.codegen.target_feature.remark-rt"><a class="rule-link" href="#r-attributes.codegen.target_feature.remark-rt" title="attributes.codegen.target_feature.remark-rt"><span>[attributes<wbr>.codegen<wbr>.target_feature<wbr>.remark-rt]</span></a>
+</div>
 
-r[attributes.codegen.track_caller]
-## The `track_caller` attribute
+是否启用了某项特性，可以在运行时使用标准库中平台特定的宏进行检查，例如 [`is_x86_feature_detected`](../../std/arch/macro.is_x86_feature_detected.html) 或 [`is_aarch64_feature_detected`](../../std/arch/macro.is_aarch64_feature_detected.html)。
 
-r[attributes.codegen.track_caller.allowed-positions]
-The `track_caller` attribute may be applied to any function with [`"Rust"` ABI][rust-abi]
-with the exception of the entry point `fn main`.
+<div class="alert alert-note">
 
-r[attributes.codegen.track_caller.traits]
-When applied to functions and methods in trait declarations, the attribute applies to all implementations. If the trait provides a
-default implementation with the attribute, then the attribute also applies to override implementations.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会为每个目标和 CPU 默认启用一组特性。可以使用 [`-C target-cpu`](../../rustc/codegen-options/index.html#target-cpu) 标志选择 CPU。还可以使用 [`-C target-feature`](../../rustc/codegen-options/index.html#target-feature) 标志为整个 crate 启用或禁用单独的特性。
 
-r[attributes.codegen.track_caller.extern]
-When applied to a function in an `extern` block the attribute must also be applied to any linked
-implementations, otherwise undefined behavior results. When applied to a function which is made
-available to an `extern` block, the declaration in the `extern` block must also have the attribute,
-otherwise undefined behavior results.
+</div>
 
-r[attributes.codegen.track_caller.behavior]
-### Behavior
+<div class="rule" id="r-attributes.codegen.track_caller"><a class="rule-link" href="#r-attributes.codegen.track_caller" title="attributes.codegen.track_caller"><span>[attributes<wbr>.codegen<wbr>.track_caller]</span></a>
+</div>
 
-Applying the attribute to a function `f` allows code within `f` to get a hint of the [`Location`] of
-the "topmost" tracked call that led to `f`'s invocation. At the point of observation, an
-implementation behaves as if it walks up the stack from `f`'s frame to find the nearest frame of an
-*unattributed* function `outer`, and it returns the [`Location`] of the tracked call in `outer`.
+## `track_caller` 属性
+
+<div class="rule" id="r-attributes.codegen.track_caller.allowed-positions"><a class="rule-link" href="#r-attributes.codegen.track_caller.allowed-positions" title="attributes.codegen.track_caller.allowed-positions"><span>[attributes<wbr>.codegen<wbr>.track_caller<wbr>.allowed-positions]</span></a>
+</div>
+
+`track_caller` 属性可以应用于任何具有 [`"Rust"` ABI](../items/external-blocks.md#abi) 的函数，但入口点 `fn main` 除外。
+
+<div class="rule" id="r-attributes.codegen.track_caller.traits"><a class="rule-link" href="#r-attributes.codegen.track_caller.traits" title="attributes.codegen.track_caller.traits"><span>[attributes<wbr>.codegen<wbr>.track_caller<wbr>.traits]</span></a>
+</div>
+
+当该属性应用于 trait 声明中的函数和方法时，它会适用于所有实现。如果该 trait 提供了带有该属性的默认实现，那么该属性也适用于覆盖实现。
+
+<div class="rule" id="r-attributes.codegen.track_caller.extern"><a class="rule-link" href="#r-attributes.codegen.track_caller.extern" title="attributes.codegen.track_caller.extern"><span>[attributes<wbr>.codegen<wbr>.track_caller<wbr>.extern]</span></a>
+</div>
+
+当该属性应用于 `extern` 块中的函数时，任何链接到的实现也必须应用该属性，否则会导致未定义行为。当该属性应用于某个向 `extern` 块提供的函数时，`extern` 块中的声明也必须带有该属性，否则会导致未定义行为。
+
+<div class="rule" id="r-attributes.codegen.track_caller.behavior"><a class="rule-link" href="#r-attributes.codegen.track_caller.behavior" title="attributes.codegen.track_caller.behavior"><span>[attributes<wbr>.codegen<wbr>.track_caller<wbr>.behavior]</span></a>
+</div>
+
+### 行为
+
+将该属性应用于函数 `f` 后，`f` 内部的代码便可以获得导致调用 `f` 的“最顶层”已追踪调用的 [`Location`](../../core/panic/location/struct.Location.html) 提示。在观察点上，某个实现的行为如同它从 `f` 的栈帧向上遍历调用栈，找到最近的未带属性函数 `outer` 的栈帧，并返回 `outer` 中该已追踪调用的 [`Location`](../../core/panic/location/struct.Location.html)。
 
 ```rust
 #[track_caller]
@@ -765,15 +908,27 @@ fn f() {
 }
 ```
 
-> [!NOTE]
-> `core` provides [`core::panic::Location::caller`] for observing caller locations. It wraps the [`core::intrinsics::caller_location`] intrinsic implemented by `rustc`.
+<div class="alert alert-note">
 
-> [!NOTE]
-> Because the resulting `Location` is a hint, an implementation may halt its walk up the stack early. See [Limitations](#limitations) for important caveats.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `core` 提供了 [`core::panic::Location::caller`](../../core/panic/location/struct.Location.html#method.caller) 用于观测调用者位置。它封装了由 `rustc` 实现的 [`core::intrinsics::caller_location`](../../core/intrinsics/fn.caller_location.html) 内在函数。
 
-#### Examples
+</div>
 
-When `f` is called directly by `calls_f`, code in `f` observes its callsite within `calls_f`:
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 由于得到的 `Location` 只是一个提示，实现可以提前停止向上遍历调用栈。重要注意事项请参见[局限性](#limitations)。
+
+</div>
+
+#### 示例
+
+`calls_f` 直接调用 `f` 时，`f` 中的代码会观测到它在 `calls_f` 中的调用位置：
 
 ```rust
 # #[track_caller]
@@ -785,8 +940,7 @@ fn calls_f() {
 }
 ```
 
-When `f` is called by another attributed function `g` which is in turn called by `calls_g`, code in
-both `f` and `g` observes `g`'s callsite within `calls_g`:
+当 `f` 由另一个带属性的函数 `g` 调用，而 `g` 又由 `calls_g` 调用时，`f` 和 `g` 中的代码都会观测到 `g` 在 `calls_g` 中的调用位置：
 
 ```rust
 # #[track_caller]
@@ -804,8 +958,7 @@ fn calls_g() {
 }
 ```
 
-When `g` is called by another attributed function `h` which is in turn called by `calls_h`, all code
-in `f`, `g`, and `h` observes `h`'s callsite within `calls_h`:
+当 `g` 由另一个带属性的函数 `h` 调用，而 `h` 又由 `calls_h` 调用时，`f`、`g` 和 `h` 中的所有代码都会观测到 `h` 在 `calls_h` 中的调用位置：
 
 ```rust
 # #[track_caller]
@@ -828,107 +981,115 @@ fn calls_h() {
 }
 ```
 
-And so on.
+以此类推。
 
-r[attributes.codegen.track_caller.limits]
-### Limitations
+<div class="rule" id="r-attributes.codegen.track_caller.limits"><a class="rule-link" href="#r-attributes.codegen.track_caller.limits" title="attributes.codegen.track_caller.limits"><span>[attributes<wbr>.codegen<wbr>.track_caller<wbr>.limits]</span></a>
+</div>
 
-r[attributes.codegen.track_caller.hint]
-This information is a hint and implementations are not required to preserve it.
+### 限制
 
-r[attributes.codegen.track_caller.decay]
-In particular, coercing a function with `#[track_caller]` to a function pointer creates a shim which
-appears to observers to have been called at the attributed function's definition site, losing actual
-caller information across virtual calls. A common example of this coercion is the creation of a
-trait object whose methods are attributed.
+<div class="rule" id="r-attributes.codegen.track_caller.hint"><a class="rule-link" href="#r-attributes.codegen.track_caller.hint" title="attributes.codegen.track_caller.hint"><span>[attributes<wbr>.codegen<wbr>.track_caller<wbr>.hint]</span></a>
+</div>
 
-> [!NOTE]
-> The aforementioned shim for function pointers is necessary because `rustc` implements `track_caller` in a codegen context by appending an implicit parameter to the function ABI, but this would be unsound for an indirect call because the parameter is not a part of the function's type and a given function pointer type may or may not refer to a function with the attribute. The creation of a shim hides the implicit parameter from callers of the function pointer, preserving soundness.
+该信息只是提示，实现不必保留它。
+
+<div class="rule" id="r-attributes.codegen.track_caller.decay"><a class="rule-link" href="#r-attributes.codegen.track_caller.decay" title="attributes.codegen.track_caller.decay"><span>[attributes<wbr>.codegen<wbr>.track_caller<wbr>.decay]</span></a>
+</div>
+
+尤其是，将带有 `#[track_caller]` 的函数强制转换为函数指针时，会创建一个 shim；对观察者来说，它似乎是在该带属性函数的定义位置被调用的，从而在虚调用间丢失实际的调用者信息。这种强制转换的一个常见例子，是创建其方法带有该属性的 trait 对象。
+
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 上述用于函数指针的 shim 是必要的，因为 `rustc` 在代码生成上下文中通过向函数 ABI 追加一个隐式参数来实现 `track_caller`，但这对于间接调用来说是不健全的，因为该参数不是函数类型的一部分，而给定的函数指针类型既可能引用带有该属性的函数，也可能不引用。创建 shim 会向函数指针的调用者隐藏这个隐式参数，从而保持健全性。
+
+</div>
 
 <!-- template:attributes -->
-r[attributes.codegen.instruction_set]
-## The `instruction_set` attribute
 
-r[attributes.codegen.instruction_set.intro]
-The *`instruction_set` [attribute]* specifies the instruction set that a function will use during code generation. This allows mixing more than one instruction set in a single program.
+<div class="rule" id="r-attributes.codegen.instruction_set"><a class="rule-link" href="#r-attributes.codegen.instruction_set" title="attributes.codegen.instruction_set"><span>[attributes<wbr>.codegen<wbr>.instruction_set]</span></a>
+</div>
 
-> [!EXAMPLE]
-> <!-- ignore: arm-only -->
-> ```rust,ignore
-> #[instruction_set(arm::a32)]
-> fn arm_code() {}
->
-> #[instruction_set(arm::t32)]
-> fn thumb_code() {}
-> ```
+## `instruction_set` 属性
 
-r[attributes.codegen.instruction_set.syntax]
-The `instruction_set` attribute uses the [MetaListPaths] syntax to specify a single path consisting of the architecture family name and instruction set name.
+<div class="rule" id="r-attributes.codegen.instruction_set.intro"><a class="rule-link" href="#r-attributes.codegen.instruction_set.intro" title="attributes.codegen.instruction_set.intro"><span>[attributes<wbr>.codegen<wbr>.instruction_set<wbr>.intro]</span></a>
+</div>
 
-r[attributes.codegen.instruction_set.allowed-positions]
-The `instruction_set` attribute may only be applied to functions with [bodies] --- [closures], [async blocks], [free functions], [associated functions] in an [inherent impl] or [trait impl], and associated functions in a [trait definition] when those functions have a [default definition] .
+_`instruction_set` [属性](../attributes.md)_ 指定函数在代码生成期间将使用的指令集。这允许在单个程序中混用多种指令集。
 
-> [!NOTE]
-> `rustc` ignores use in other positions but lints against it. This may become an error in the future.
+<div class="alert alert-example">
 
-> [!NOTE]
-> Though the attribute can be applied to [closures] and [async blocks], the usefulness of this is limited as we do not yet support attributes on expressions.
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg>Example</p>
+ > 
+ > <!-- ignore: arm-only -->
+ > 
+ > ```rust,ignore
+ > #[instruction_set(arm::a32)]
+ > fn arm_code() {}
+ > 
+ > #[instruction_set(arm::t32)]
+ > fn thumb_code() {}
+ > ```
 
-r[attributes.codegen.instruction_set.duplicates]
-The `instruction_set` attribute may be used only once on a function.
+</div>
 
-r[attributes.codegen.instruction_set.target-limits]
-The `instruction_set` attribute may only be used with a target that supports the given value.
+<div class="rule" id="r-attributes.codegen.instruction_set.syntax"><a class="rule-link" href="#r-attributes.codegen.instruction_set.syntax" title="attributes.codegen.instruction_set.syntax"><span>[attributes<wbr>.codegen<wbr>.instruction_set<wbr>.syntax]</span></a>
+</div>
 
-r[attributes.codegen.instruction_set.inline-asm]
-When the `instruction_set` attribute is used, any inline assembly in the function must use the specified instruction set instead of the target default.
+`instruction_set` 属性使用 [MetaListPaths](../attributes.md#grammar-MetaListPaths) 语法来指定单一路径，该路径由架构族名称和指令集名称组成。
 
-r[attributes.codegen.instruction_set.arm]
-### `instruction_set` on ARM
+<div class="rule" id="r-attributes.codegen.instruction_set.allowed-positions"><a class="rule-link" href="#r-attributes.codegen.instruction_set.allowed-positions" title="attributes.codegen.instruction_set.allowed-positions"><span>[attributes<wbr>.codegen<wbr>.instruction_set<wbr>.allowed-positions]</span></a>
+</div>
 
-When targeting the `ARMv4T` and `ARMv5te` architectures, the supported values for `instruction_set` are:
+`instruction_set` 属性只能应用于具有[函数体](../items/functions.md#r-items.fn.body)的函数，包括[闭包](../expressions/closure-expr.md#r-expr.closure)、[async 块](../expressions/block-expr.md#r-expr.block.async)、[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent) 或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及在这些函数具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)时，[trait 定义](../items/traits.md#r-items.traits)中的关联函数。
 
-- `arm::a32` --- Generate the function as A32 "ARM" code.
-- `arm::t32` --- Generate the function as T32 "Thumb" code.
+<div class="alert alert-note">
 
-If the address of the function is taken as a function pointer, the low bit of the address will depend on the selected instruction set:
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > `rustc` 会忽略在其他位置的使用，但会对此发出 lint。将来这可能会变成错误。
 
-- For `arm::a32` ("ARM"), it will be 0.
-- For `arm::t32` ("Thumb"), it will be 1.
+</div>
 
-[(cfg only)]: attributes.codegen.target_feature.cfg-only
-[`-C target-cpu`]: ../../rustc/codegen-options/index.html#target-cpu
-[`-C target-feature`]: ../../rustc/codegen-options/index.html#target-feature
-[`export_name`]: abi.export_name
-[`inline` attribute]: attributes.codegen.inline
-[`is_aarch64_feature_detected`]: ../../std/arch/macro.is_aarch64_feature_detected.html
-[`is_x86_feature_detected`]: ../../std/arch/macro.is_x86_feature_detected.html
-[`Location`]: core::panic::Location
-[`naked_asm!`]: asm
-[`no_mangle`]: abi.no_mangle
-[`target_feature` attribute]: attributes.codegen.target_feature
-[`target_feature` conditional compilation option]: ../conditional-compilation.md#target_feature
-[`track_caller` attribute]: attributes.codegen.track_caller
-[`unused_variables` lint]: ../../rustc/lints/listing/warn-by-default.html#unused-variables
-[associated functions]: items.associated.fn
-[async blocks]: expr.block.async
-[async closure]: expr.closure.async
-[async function]: items.fn.async
-[attribute]: ../attributes.md
-[attributes]: ../attributes.md
-[bodies]: items.fn.body
-[closures]: expr.closure
-[default definition]: items.traits.associated-item-decls
-[free functions]: items.fn
-[function body]: items.fn.body
-[functions]: ../items/functions.md
-[inherent impl]: items.impl.inherent
-["Rust" ABI]: items.extern.abi.rust
-[rust-abi]: ../items/external-blocks.md#abi
-[target architecture]: ../conditional-compilation.md#target_arch
-[testing attributes]: attributes.testing
-[trait]: items.traits
-[trait definition]: items.traits
-[trait impl]: items.impl.trait
-[undefined behavior]: ../behavior-considered-undefined.md
-[unsafe attribute]: ../attributes.md#r-attributes.safety
+<div class="alert alert-note">
+
+ > 
+ > <p class="alert-title"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
+ > 
+ > 尽管该属性可以应用于[闭包](../expressions/closure-expr.md#r-expr.closure)和[async 块](../expressions/block-expr.md#r-expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
+
+</div>
+
+<div class="rule" id="r-attributes.codegen.instruction_set.duplicates"><a class="rule-link" href="#r-attributes.codegen.instruction_set.duplicates" title="attributes.codegen.instruction_set.duplicates"><span>[attributes<wbr>.codegen<wbr>.instruction_set<wbr>.duplicates]</span></a>
+</div>
+
+`instruction_set` 属性在一个函数上只能使用一次。
+
+<div class="rule" id="r-attributes.codegen.instruction_set.target-limits"><a class="rule-link" href="#r-attributes.codegen.instruction_set.target-limits" title="attributes.codegen.instruction_set.target-limits"><span>[attributes<wbr>.codegen<wbr>.instruction_set<wbr>.target-limits]</span></a>
+</div>
+
+`instruction_set` 属性只能用于支持给定值的目标。
+
+<div class="rule" id="r-attributes.codegen.instruction_set.inline-asm"><a class="rule-link" href="#r-attributes.codegen.instruction_set.inline-asm" title="attributes.codegen.instruction_set.inline-asm"><span>[attributes<wbr>.codegen<wbr>.instruction_set<wbr>.inline-asm]</span></a>
+</div>
+
+当使用 `instruction_set` 属性时，函数中的任何内联汇编都必须使用指定的指令集，而不是目标默认指令集。
+
+<div class="rule" id="r-attributes.codegen.instruction_set.arm"><a class="rule-link" href="#r-attributes.codegen.instruction_set.arm" title="attributes.codegen.instruction_set.arm"><span>[attributes<wbr>.codegen<wbr>.instruction_set<wbr>.arm]</span></a>
+</div>
+
+### ARM 上的 `instruction_set`
+
+以 `ARMv4T` 和 `ARMv5te` 架构为目标时，`instruction_set` 支持的值为：
+
+- `arm::a32` --- 将函数生成为 A32 “ARM” 代码。
+- `arm::t32` --- 将函数生成为 T32 “Thumb” 代码。
+
+如果取出该函数的地址作为函数指针，则地址的最低位将取决于所选的指令集：
+
+- 对于 `arm::a32`（“ARM”），它将为 0。
+- 对于 `arm::t32`（“Thumb”），它将为 1。

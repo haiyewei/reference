@@ -1,24 +1,34 @@
-r[attributes.type-system]
-# Type system attributes
+<div class="rule" id="r-attributes.type-system"><a class="rule-link" href="#r-attributes.type-system" title="attributes.type-system"><span>[attributes<wbr>.type-system]</span></a>
+</div>
 
-The following [attributes] are used for changing how a type can be used.
+# 类型系统属性
 
-r[attributes.type-system.non_exhaustive]
-## The `non_exhaustive` attribute
+以下[属性](../attributes.md)用于改变类型可以如何被使用。
 
-r[attributes.type-system.non_exhaustive.intro]
-The *`non_exhaustive` attribute* indicates that a type or variant may have
-more fields or variants added in the future.
+<div class="rule" id="r-attributes.type-system.non_exhaustive"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive" title="attributes.type-system.non_exhaustive"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive]</span></a>
+</div>
 
-r[attributes.type-system.non_exhaustive.allowed-positions]
-It can be applied to [`struct`s][struct], [`enum`s][enum], and `enum` variants.
+## `non_exhaustive` 属性
 
-r[attributes.type-system.non_exhaustive.syntax]
-The `non_exhaustive` attribute uses the [MetaWord] syntax and thus does not
-take any inputs.
+<div class="rule" id="r-attributes.type-system.non_exhaustive.intro"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive.intro" title="attributes.type-system.non_exhaustive.intro"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive<wbr>.intro]</span></a>
+</div>
 
-r[attributes.type-system.non_exhaustive.same-crate]
-Within the defining crate, `non_exhaustive` has no effect.
+\_`non_exhaustive` 属性_表示一个类型或变体将来可能会添加更多字段或变体。
+
+<div class="rule" id="r-attributes.type-system.non_exhaustive.allowed-positions"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive.allowed-positions" title="attributes.type-system.non_exhaustive.allowed-positions"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive<wbr>.allowed-positions]</span></a>
+</div>
+
+它可以应用于 [`struct`](../items/structs.md)、[`enum`](../items/enumerations.md) 和 `enum` 变体。
+
+<div class="rule" id="r-attributes.type-system.non_exhaustive.syntax"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive.syntax" title="attributes.type-system.non_exhaustive.syntax"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive<wbr>.syntax]</span></a>
+</div>
+
+`non_exhaustive` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法，因此不接受任何输入。
+
+<div class="rule" id="r-attributes.type-system.non_exhaustive.same-crate"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive.same-crate" title="attributes.type-system.non_exhaustive.same-crate"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive<wbr>.same-crate]</span></a>
+</div>
+
+在定义它的 crate 内，`non_exhaustive` 没有效果。
 
 ```rust
 #[non_exhaustive]
@@ -72,26 +82,24 @@ match message {
 }
 ```
 
-r[attributes.type-system.non_exhaustive.external-crate]
-Outside of the defining crate, types annotated with `non_exhaustive` have limitations that
-preserve backwards compatibility when new fields or variants are added.
+<div class="rule" id="r-attributes.type-system.non_exhaustive.external-crate"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive.external-crate" title="attributes.type-system.non_exhaustive.external-crate"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive<wbr>.external-crate]</span></a>
+</div>
 
-r[attributes.type-system.non_exhaustive.construction]
-Non-exhaustive types cannot be constructed outside of the defining crate:
+在定义它的 crate 之外，带有 `non_exhaustive` 标注的类型会受到一些限制，以便在添加新字段或变体时保持向后兼容性。
 
-- Non-exhaustive variants ([`struct`][struct] or [`enum` variant][enum]) cannot be constructed
-  with a [StructExpression] \(including with [functional update syntax]).
-- The implicitly defined same-named constant of a [unit-like struct][struct],
-  or the same-named constructor function of a [tuple struct][struct],
-  has a [visibility] no greater than `pub(crate)`.
-  That is, if the struct’s visibility is `pub`, then the constant or constructor’s visibility
-  is `pub(crate)`, and otherwise the visibility of the two items is the same
-  (as is the case without `#[non_exhaustive]`).
-- [`enum`][enum] instances can be constructed.
+<div class="rule" id="r-attributes.type-system.non_exhaustive.construction"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive.construction" title="attributes.type-system.non_exhaustive.construction"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive<wbr>.construction]</span></a>
+</div>
 
-The following examples of construction do not compile when outside the defining crate:
+非穷尽类型不能在定义它的 crate 之外构造：
+
+- 非穷尽变体（[`struct`](../items/structs.md) 或 [`enum` 变体](../items/enumerations.md)）不能用 [StructExpression](../expressions/struct-expr.md#grammar-StructExpression) 构造（包括使用[函数式更新语法](../expressions/struct-expr.md#functional-update-syntax)）。
+- 隐式定义的 [unit-like struct](../items/structs.md) 的同名常量，或者 [tuple struct](../items/structs.md) 的同名构造函数，具有不大于 `pub(crate)` 的[可见性](../visibility-and-privacy.md)。也就是说，如果该 struct 的可见性是 `pub`，那么该常量或构造函数的可见性就是 `pub(crate)`；否则这两个项的可见性相同（与没有 `#[non_exhaustive]` 时一样）。
+- 可以构造 [`enum`](../items/enumerations.md) 实例。
+
+以下构造示例在定义它们的 crate 之外无法编译：
 
 <!-- ignore: requires external crates -->
+
 ```rust,ignore
 // These are types defined in an upstream crate that have been annotated as
 // `#[non_exhaustive]`.
@@ -128,13 +136,16 @@ let message = Message::Reaction(0);
 let message = Message::Quit;
 ```
 
-r[attributes.type-system.non_exhaustive.match]
-There are limitations when matching on non-exhaustive types outside of the defining crate:
+<div class="rule" id="r-attributes.type-system.non_exhaustive.match"><a class="rule-link" href="#r-attributes.type-system.non_exhaustive.match" title="attributes.type-system.non_exhaustive.match"><span>[attributes<wbr>.type-system<wbr>.non_exhaustive<wbr>.match]</span></a>
+</div>
 
-- When pattern matching on a non-exhaustive variant ([`struct`][struct] or [`enum` variant][enum]), a [StructPattern] must be used which must include a `..`. A tuple enum variant's constructor's [visibility] is reduced to be no greater than `pub(crate)`.
-- When pattern matching on a non-exhaustive [`enum`][enum], matching on a variant does not contribute towards the exhaustiveness of the arms. The following examples of matching do not compile when outside the defining crate:
+在定义它们的 crate 之外对非穷尽类型进行匹配时存在一些限制：
+
+- 对非穷尽变体（[`struct`](../items/structs.md) 或 [`enum` 变体](../items/enumerations.md)）进行模式匹配时，必须使用包含 `..` 的 [StructPattern](../patterns.md#grammar-StructPattern)。元组 enum 变体的构造函数的[可见性](../visibility-and-privacy.md)会降低到不大于 `pub(crate)`。
+- 对非穷尽 [`enum`](../items/enumerations.md) 进行模式匹配时，匹配某个变体不会有助于分支的穷尽性。以下匹配示例在定义它们的 crate 之外无法编译：
 
 <!-- ignore: requires external crates -->
+
 ```rust, ignore
 // These are types defined in an upstream crate that have been annotated as
 // `#[non_exhaustive]`.
@@ -168,9 +179,9 @@ match message {
 }
 ```
 
-It's also not allowed to use numeric casts (`as`) on enums that contain any non-exhaustive variants.
+也不允许对包含任何非穷尽变体的 enum 使用数值转换（`as`）。
 
-For example, the following enum can be cast because it doesn't contain any non-exhaustive variants:
+例如，以下 enum 可以转换，因为它不包含任何非穷尽变体：
 
 ```rust
 #[non_exhaustive]
@@ -180,7 +191,7 @@ pub enum Example {
 }
 ```
 
-However, if the enum contains even a single non-exhaustive variant, casting will result in an error. Consider this modified version of the same enum:
+但是，如果 enum 中哪怕只包含一个非穷尽变体，转换也会导致错误。请看同一 enum 的这个修改版本：
 
 ```rust
 #[non_exhaustive]
@@ -192,6 +203,7 @@ pub enum EnumWithNonExhaustiveVariants {
 ```
 
 <!-- ignore: needs multiple crates -->
+
 ```rust,ignore
 use othercrate::EnumWithNonExhaustiveVariants;
 
@@ -199,11 +211,4 @@ use othercrate::EnumWithNonExhaustiveVariants;
 let _ = EnumWithNonExhaustiveVariants::First as u8;
 ```
 
-Non-exhaustive types are always considered inhabited in downstream crates.
-
-[`match`]: ../expressions/match-expr.md
-[attributes]: ../attributes.md
-[enum]: ../items/enumerations.md
-[functional update syntax]: ../expressions/struct-expr.md#functional-update-syntax
-[struct]: ../items/structs.md
-[visibility]: ../visibility-and-privacy.md
+在下游 crate 中，非穷尽类型始终被视为有值。

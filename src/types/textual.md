@@ -1,30 +1,48 @@
-r[type.text]
-# Textual types
+<div class="rule" id="r-type.text"><a class="rule-link" href="#r-type.text" title="type.text"><span>[type<wbr>.text]</span></a>
+</div>
 
-r[type.text.intro]
-The types `char` and `str` hold textual data.
+# 文本类型
 
-r[type.text.char-value]
-A value of type `char` is a [Unicode scalar value] (i.e. a code point that is not a surrogate), represented as a 32-bit unsigned word in the 0x0000 to 0xD7FF or 0xE000 to 0x10FFFF range.
+<div class="rule" id="r-type.text.intro"><a class="rule-link" href="#r-type.text.intro" title="type.text.intro"><span>[type<wbr>.text<wbr>.intro]</span></a>
+</div>
 
-r[type.text.char-precondition]
-It is immediate [undefined behavior] to create a `char` that falls outside this range. A `[char]` is effectively a UCS-4 / UTF-32 string of length 1.
+类型 `char` 和 `str` 保存文本数据。
 
-r[type.text.str-value]
-A value of type `str` is represented the same way as `[u8]`, a slice of 8-bit unsigned bytes. However, the Rust standard library makes extra assumptions about `str`: methods working on `str` assume and ensure that the data in there is valid UTF-8. Calling a `str` method with a non-UTF-8 buffer can cause [undefined behavior] now or in the future.
+<div class="rule" id="r-type.text.char-value"><a class="rule-link" href="#r-type.text.char-value" title="type.text.char-value"><span>[type<wbr>.text<wbr>.char-value]</span></a>
+</div>
 
-r[type.text.str-unsized]
-Since `str` is a [dynamically sized type], it can only be instantiated through a pointer type, such as `&str`. The layout of `&str` is the same as the layout of `&[u8]`.
+`char` 类型的值是一个 [Unicode 标量值]（即不是代理项的码位），表示为 0x0000 到 0xD7FF 或 0xE000 到 0x10FFFF 范围内的 32 位无符号字。
 
-r[type.text.layout]
-## Layout and bit validity
+<div class="rule" id="r-type.text.char-precondition"><a class="rule-link" href="#r-type.text.char-precondition" title="type.text.char-precondition"><span>[type<wbr>.text<wbr>.char-precondition]</span></a>
+</div>
 
-r[type.layout.char-layout]
-`char` is guaranteed to have the same size and alignment as `u32` on all platforms.
+创建超出此范围的 `char` 会立即导致[未定义行为]。`[char]` 实际上是长度为 1 的 UCS-4 / UTF-32 字符串。
 
-r[type.layout.char-validity]
-Every byte of a `char` is guaranteed to be initialized (in other words, `transmute::<char, [u8; size_of::<char>()]>(...)` is always sound -- but since some bit patterns are invalid `char`s, the inverse is not always sound).
+<div class="rule" id="r-type.text.str-value"><a class="rule-link" href="#r-type.text.str-value" title="type.text.str-value"><span>[type<wbr>.text<wbr>.str-value]</span></a>
+</div>
 
-[Unicode scalar value]: http://www.unicode.org/glossary/#unicode_scalar_value
-[undefined behavior]: ../behavior-considered-undefined.md
-[dynamically sized type]: ../dynamically-sized-types.md
+`str` 类型的值与 `[u8]` 表示方式相同，即一个 8 位无符号字节的切片。不过，Rust 标准库对 `str` 作出额外假设：作用于 `str` 的方法假定并确保其中的数据是有效 UTF-8。对非 UTF-8 缓冲区调用 `str` 方法现在或将来都可能导致[未定义行为]。
+
+<div class="rule" id="r-type.text.str-unsized"><a class="rule-link" href="#r-type.text.str-unsized" title="type.text.str-unsized"><span>[type<wbr>.text<wbr>.str-unsized]</span></a>
+</div>
+
+由于 `str` 是[动态大小类型]，它只能通过指针类型实例化，例如 `&str`。`&str` 的布局与 `&[u8]` 的布局相同。
+
+<div class="rule" id="r-type.text.layout"><a class="rule-link" href="#r-type.text.layout" title="type.text.layout"><span>[type<wbr>.text<wbr>.layout]</span></a>
+</div>
+
+## 布局和位有效性
+
+<div class="rule" id="r-type.layout.char-layout"><a class="rule-link" href="#r-type.layout.char-layout" title="type.layout.char-layout"><span>[type<wbr>.layout<wbr>.char-layout]</span></a>
+</div>
+
+保证 `char` 在所有平台上都具有与 `u32` 相同的大小和对齐。
+
+<div class="rule" id="r-type.layout.char-validity"><a class="rule-link" href="#r-type.layout.char-validity" title="type.layout.char-validity"><span>[type<wbr>.layout<wbr>.char-validity]</span></a>
+</div>
+
+保证 `char` 的每个字节都已初始化（换句话说，`transmute::<char, [u8; size_of::<char>()]>(...)` 始终是可靠的；但由于某些位模式是无效的 `char`，反向转换并不总是可靠）。
+
+[Unicode 标量值]: http://www.unicode.org/glossary/#unicode_scalar_value
+[未定义行为]: ../behavior-considered-undefined.md
+[动态大小类型]: ../dynamically-sized-types.md

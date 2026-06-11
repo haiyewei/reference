@@ -1,45 +1,114 @@
-r[expr.await]
-# Await expressions
+<div class="rule" id="r-expr.await"><a class="rule-link" href="#r-expr.await" title="expr.await"><span>[expr<wbr>.await]</span></a>
+</div>
 
-r[expr.await.syntax]
-```grammar,expressions
-AwaitExpression -> Expression `.` `await`
-```
+# await 表达式
 
-r[expr.await.intro]
-An `await` expression is a syntactic construct for suspending a computation provided by an implementation of `std::future::IntoFuture` until the given future is ready to produce a value.
+<div class="rule" id="r-expr.await.syntax"><a class="rule-link" href="#r-expr.await.syntax" title="expr.await.syntax"><span>[expr<wbr>.await<wbr>.syntax]</span></a>
+</div>
 
-r[expr.await.construct]
-The syntax for an await expression is an expression with a type that implements the [`IntoFuture`] trait, called the *future operand*, then the token `.`, and then the `await` keyword.
+<div class="grammar-container">
 
-r[expr.await.allowed-positions]
-Await expressions are legal only within an [async context], like an [`async fn`], [`async` closure], or [`async` block].
+**<sup>语法</sup>** <br> <span class="grammar-text grammar-production" id="grammar-AwaitExpression" onclick="show_railroad()">[AwaitExpression](await-expr.md#railroad-AwaitExpression)</span> → <span class="grammar-text">[Expression](../expressions.md#grammar-Expression)</span> <span class="grammar-literal">.</span> <span class="grammar-literal">await</span>
 
-r[expr.await.effects]
-More specifically, an await expression has the following effect.
+<button class="grammar-toggle-railroad" type="button" title="切换铁路图显示" onclick="toggle_railroad()">显示铁路图</button>
 
-1. Create a future by calling [`IntoFuture::into_future`] on the future operand.
-2. Evaluate the future to a [future] `tmp`;
-3. Pin `tmp` using [`Pin::new_unchecked`];
-4. This pinned future is then polled by calling the [`Future::poll`] method and passing it the current [task context](#task-context);
-5. If the call to `poll` returns [`Poll::Pending`], then the future returns `Poll::Pending`, suspending its state so that, when the surrounding async context is re-polled, execution returns to step 3;
-6. Otherwise the call to `poll` must have returned [`Poll::Ready`], in which case the value contained in the [`Poll::Ready`] variant is used as the result of the `await` expression itself.
+</div>
+<div class="grammar-railroad grammar-hidden">
 
-r[expr.await.edition2018]
-> [!EDITION-2018]
-> Await expressions are only available beginning with Rust 2018.
+<div style="width: 278px; height: auto; max-width: 100%; max-height: 100%" class="railroad-production" id="railroad-AwaitExpression"><svg class="railroad" viewBox="0 0 278 74" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect class="railroad_canvas" height="100%" width="100%"/>
+<g class="verticalgrid">
+<a class="link" xlink:href="await-expr.md#grammar-AwaitExpression">
+<text class="comment" x="67" y="25">
+AwaitExpression</text>
+</a>
+<g class="sequence">
+<path d=" M 10 53 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5 m 10 0 h 5"/>
+<g class="sequence">
+<a class="link" xlink:href="../expressions.md#railroad-Expression">
+<g class="nonterminal">
+<rect height="22" width="100" x="35" y="42"/>
+<text x="85" y="58">
+Expression</text>
+</g>
+</a>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="28" x="145" y="42"/>
+<text x="159" y="58">
+.</text>
+</g>
+<g class="terminal">
+<rect height="22" rx="10" ry="10" width="60" x="183" y="42"/>
+<text x="213" y="58">
+await</text>
+</g>
+<path d=" M 135 53 h 10"/>
+<path d=" M 173 53 h 10"/>
+</g>
+<path d=" M 253 53 h 5 a 5 5 0 0 1 5 -5 a 5 5 0 0 1 5 5 a 5 5 0 0 1 -5 5 a 5 5 0 0 1 -5 -5"/>
+<path d=" M 25 53 h 10"/>
+<path d=" M 243 53 h 10"/>
+</g>
+</g>
+</svg>
+</div>
+</div>
 
-r[expr.await.task]
-## Task context
+<div class="rule" id="r-expr.await.intro"><a class="rule-link" href="#r-expr.await.intro" title="expr.await.intro"><span>[expr<wbr>.await<wbr>.intro]</span></a>
+</div>
 
-The task context refers to the [`Context`] which was supplied to the current [async context] when the async context itself was polled. Because `await` expressions are only legal in an async context, there must be some task context available.
+`await` 表达式是一种语法构造，用于挂起由 `std::future::IntoFuture` 的某个实现提供的计算，直到给定 future 准备好产生值。
 
-r[expr.await.desugar]
-## Approximate desugaring
+<div class="rule" id="r-expr.await.construct"><a class="rule-link" href="#r-expr.await.construct" title="expr.await.construct"><span>[expr<wbr>.await<wbr>.construct]</span></a>
+</div>
 
-Effectively, an await expression is roughly equivalent to the following non-normative desugaring:
+await 表达式的语法是：一个类型实现了 [`IntoFuture`](../../core/future/into_future/trait.IntoFuture.html) trait 的表达式，称为 _future 操作数_，后跟词法单元 `.`，再后跟 `await` 关键字。
+
+<div class="rule" id="r-expr.await.allowed-positions"><a class="rule-link" href="#r-expr.await.allowed-positions" title="expr.await.allowed-positions"><span>[expr<wbr>.await<wbr>.allowed-positions]</span></a>
+</div>
+
+await 表达式仅在 [async 上下文](../expressions/block-expr.md#async-context)中合法，例如在 [`async fn`](../items/functions.md#async-functions)、[`async` 闭包](closure-expr.md#async-closures)或 [`async` 块](block-expr.md#async-blocks)中。
+
+<div class="rule" id="r-expr.await.effects"><a class="rule-link" href="#r-expr.await.effects" title="expr.await.effects"><span>[expr<wbr>.await<wbr>.effects]</span></a>
+</div>
+
+更具体地说，await 表达式具有以下效果。
+
+1. 通过在 future 操作数上调用 [`IntoFuture::into_future`](../../core/future/into_future/trait.IntoFuture.html#tymethod.into_future) 创建一个 future。
+1. 将该 future 求值为一个 [future](../../core/future/future/trait.Future.html) `tmp`；
+1. 使用 [`Pin::new_unchecked`](../../core/pin/struct.Pin.html#method.new_unchecked) 固定 `tmp`；
+1. 随后通过调用 [`Future::poll`](../../core/future/future/trait.Future.html#tymethod.poll) 方法并向其传入当前[任务上下文](#task-context)来轮询这个已固定的 future；
+1. 如果对 `poll` 的调用返回 [`Poll::Pending`](../../core/task/poll/enum.Poll.html#variant.Pending)，则该 future 返回 `Poll::Pending`，并挂起其状态，以便在外围 async 上下文再次被轮询时，执行返回到步骤 3；
+1. 否则，对 `poll` 的调用必定已返回 [`Poll::Ready`](../../core/task/poll/enum.Poll.html#variant.Ready)，在这种情况下，[`Poll::Ready`](../../core/task/poll/enum.Poll.html#variant.Ready) 变体中包含的值会用作 `await` 表达式本身的结果。
+
+<div class="rule" id="r-expr.await.edition2018"><a class="rule-link" href="#r-expr.await.edition2018" title="expr.await.edition2018"><span>[expr<wbr>.await<wbr>.edition2018]</span></a>
+</div>
+
+<div class="alert alert-edition">
+
+ > 
+ > <p class="alert-title"><span class="alert-title-edition">2018</span> Edition differences</p>
+ > 
+ > await 表达式仅从 Rust 2018 开始可用。
+
+</div>
+
+<div class="rule" id="r-expr.await.task"><a class="rule-link" href="#r-expr.await.task" title="expr.await.task"><span>[expr<wbr>.await<wbr>.task]</span></a>
+</div>
+
+## 任务上下文
+
+任务上下文指当前 [async 上下文](../expressions/block-expr.md#async-context)本身被轮询时提供给它的 [`Context`](../../core/task/wake/struct.Context.html)。因为 `await` 表达式只在 async 上下文中合法，所以必须有某个任务上下文可用。
+
+<div class="rule" id="r-expr.await.desugar"><a class="rule-link" href="#r-expr.await.desugar" title="expr.await.desugar"><span>[expr<wbr>.await<wbr>.desugar]</span></a>
+</div>
+
+## 近似脱糖
+
+实际上，await 表达式大致等价于以下非规范性的脱糖形式：
 
 <!-- ignore: example expansion -->
+
 ```rust,ignore
 match operand.into_future() {
     mut pinned => loop {
@@ -52,17 +121,4 @@ match operand.into_future() {
 }
 ```
 
-where the `yield` pseudo-code returns `Poll::Pending` and, when re-invoked, resumes execution from that point. The variable `current_context` refers to the context taken from the async environment.
-
-[`async fn`]: ../items/functions.md#async-functions
-[`async` closure]: closure-expr.md#async-closures
-[`async` block]: block-expr.md#async-blocks
-[`Context`]: std::task::Context
-[`future::poll`]: std::future::Future::poll
-[`pin::new_unchecked`]: std::pin::Pin::new_unchecked
-[`poll::Pending`]: std::task::Poll::Pending
-[`poll::Ready`]: std::task::Poll::Ready
-[async context]: ../expressions/block-expr.md#async-context
-[future]: std::future::Future
-[`IntoFuture`]: std::future::IntoFuture
-[`IntoFuture::into_future`]: std::future::IntoFuture::into_future
+其中 `yield` 伪代码返回 `Poll::Pending`，并在再次被调用时从该点恢复执行。变量 `current_context` 指的是从 async 环境取得的上下文。

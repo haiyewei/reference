@@ -1,216 +1,285 @@
-r[lang-types]
-# Special types and traits
+<div class="rule" id="r-lang-types"><a class="rule-link" href="#r-lang-types" title="lang-types"><span>[lang-types]</span></a>
+</div>
 
-r[lang-types.intro]
-Certain types and traits that exist in [the standard library] are known to the Rust compiler. This chapter documents the special features of these types and traits.
+# 特殊类型和 trait
 
-r[lang-types.box]
+<div class="rule" id="r-lang-types.intro"><a class="rule-link" href="#r-lang-types.intro" title="lang-types.intro"><span>[lang-types<wbr>.intro]</span></a>
+</div>
+
+存在于[标准库](../std/index.html)中的某些类型和 trait 是 Rust 编译器知晓的。本章记录这些类型和 trait 的特殊特性。
+
+<div class="rule" id="r-lang-types.box"><a class="rule-link" href="#r-lang-types.box" title="lang-types.box"><span>[lang-types<wbr>.box]</span></a>
+</div>
+
 ## `Box<T>`
 
-r[lang-types.box.intro]
-[`Box<T>`] has a few special features that Rust doesn't currently allow for user defined types.
+<div class="rule" id="r-lang-types.box.intro"><a class="rule-link" href="#r-lang-types.box.intro" title="lang-types.box.intro"><span>[lang-types<wbr>.box<wbr>.intro]</span></a>
+</div>
 
-r[lang-types.box.deref]
-* The [dereference operator] for `Box<T>` produces a place which can be [moved from]. This means that the `*` operator and the destructor of `Box<T>` are built-in to the language.
+[`Box<T>`](../alloc/boxed/struct.Box.html) 具有一些 Rust 目前不允许用户定义类型拥有的特殊特性。
 
-r[lang-types.box.receiver]
-* [Methods] can take `Box<Self>` as a receiver.
+<div class="rule" id="r-lang-types.box.deref"><a class="rule-link" href="#r-lang-types.box.deref" title="lang-types.box.deref"><span>[lang-types<wbr>.box<wbr>.deref]</span></a>
+</div>
 
-r[lang-types.box.fundamental]
-* A trait may be implemented for `Box<T>` in the same crate as `T`, which the [orphan rules] prevent for other generic types.
+- `Box<T>` 的[解引用运算符](expressions/operator-expr.md#the-dereference-operator)会产生一个可以[从中移动](expressions.md#r-expr.move.movable-place)的位置。这意味着 `*` 运算符和 `Box<T>` 的析构器是内建于语言中的。
+
+<div class="rule" id="r-lang-types.box.receiver"><a class="rule-link" href="#r-lang-types.box.receiver" title="lang-types.box.receiver"><span>[lang-types<wbr>.box<wbr>.receiver]</span></a>
+</div>
+
+- [方法](items/associated-items.md#associated-functions-and-methods)可以接受 `Box<Self>` 作为接收者。
+
+<div class="rule" id="r-lang-types.box.fundamental"><a class="rule-link" href="#r-lang-types.box.fundamental" title="lang-types.box.fundamental"><span>[lang-types<wbr>.box<wbr>.fundamental]</span></a>
+</div>
+
+- 可以在与 `T` 相同的 crate 中为 `Box<T>` 实现 trait，而[孤儿规则](items/implementations.md#trait-implementation-coherence)会禁止对其他泛型类型这样做。
 
 <!-- Editor Note: This is nowhere close to an exhaustive list -->
 
-r[lang-types.rc]
+<div class="rule" id="r-lang-types.rc"><a class="rule-link" href="#r-lang-types.rc" title="lang-types.rc"><span>[lang-types<wbr>.rc]</span></a>
+</div>
+
 ## `Rc<T>`
 
-r[lang-types.rc.receiver]
-[Methods] can take [`Rc<Self>`] as a receiver.
+<div class="rule" id="r-lang-types.rc.receiver"><a class="rule-link" href="#r-lang-types.rc.receiver" title="lang-types.rc.receiver"><span>[lang-types<wbr>.rc<wbr>.receiver]</span></a>
+</div>
 
-r[lang-types.arc]
+[方法](items/associated-items.md#associated-functions-and-methods)可以接受 [`Rc<Self>`](../alloc/rc/struct.Rc.html) 作为接收者。
+
+<div class="rule" id="r-lang-types.arc"><a class="rule-link" href="#r-lang-types.arc" title="lang-types.arc"><span>[lang-types<wbr>.arc]</span></a>
+</div>
+
 ## `Arc<T>`
 
-r[lang-types.arc.receiver]
-[Methods] can take [`Arc<Self>`] as a receiver.
+<div class="rule" id="r-lang-types.arc.receiver"><a class="rule-link" href="#r-lang-types.arc.receiver" title="lang-types.arc.receiver"><span>[lang-types<wbr>.arc<wbr>.receiver]</span></a>
+</div>
 
-r[lang-types.pin]
+[方法](items/associated-items.md#associated-functions-and-methods)可以接受 [`Arc<Self>`](../alloc/sync/struct.Arc.html) 作为接收者。
+
+<div class="rule" id="r-lang-types.pin"><a class="rule-link" href="#r-lang-types.pin" title="lang-types.pin"><span>[lang-types<wbr>.pin]</span></a>
+</div>
+
 ## `Pin<P>`
 
-r[lang-types.pin.receiver]
-[Methods] can take [`Pin<P>`] as a receiver.
+<div class="rule" id="r-lang-types.pin.receiver"><a class="rule-link" href="#r-lang-types.pin.receiver" title="lang-types.pin.receiver"><span>[lang-types<wbr>.pin<wbr>.receiver]</span></a>
+</div>
 
-r[lang-types.unsafe-cell]
+[方法](items/associated-items.md#associated-functions-and-methods)可以接受 [`Pin<P>`](../core/pin/struct.Pin.html) 作为接收者。
+
+<div class="rule" id="r-lang-types.unsafe-cell"><a class="rule-link" href="#r-lang-types.unsafe-cell" title="lang-types.unsafe-cell"><span>[lang-types<wbr>.unsafe-cell]</span></a>
+</div>
+
 ## `UnsafeCell<T>`
 
-r[lang-types.unsafe-cell.interior-mut]
-[`std::cell::UnsafeCell<T>`] is used for [interior mutability]. It ensures that the compiler doesn't perform optimisations that are incorrect for such types.
+<div class="rule" id="r-lang-types.unsafe-cell.interior-mut"><a class="rule-link" href="#r-lang-types.unsafe-cell.interior-mut" title="lang-types.unsafe-cell.interior-mut"><span>[lang-types<wbr>.unsafe-cell<wbr>.interior-mut]</span></a>
+</div>
 
-r[lang-types.unsafe-cell.read-only-alloc]
-It also ensures that [`static` items] which have a type with interior mutability aren't placed in memory marked as read only.
+[`std::cell::UnsafeCell<T>`](../core/cell/struct.UnsafeCell.html) 用于[内部可变性](interior-mutability.md)。它确保编译器不会执行对这类类型而言不正确的优化。
 
-r[lang-types.phantom-data]
+<div class="rule" id="r-lang-types.unsafe-cell.read-only-alloc"><a class="rule-link" href="#r-lang-types.unsafe-cell.read-only-alloc" title="lang-types.unsafe-cell.read-only-alloc"><span>[lang-types<wbr>.unsafe-cell<wbr>.read-only-alloc]</span></a>
+</div>
+
+它还确保类型具有内部可变性的 [`static` 条目](items/static-items.md)不会被放置在标记为只读的内存中。
+
+<div class="rule" id="r-lang-types.phantom-data"><a class="rule-link" href="#r-lang-types.phantom-data" title="lang-types.phantom-data"><span>[lang-types<wbr>.phantom-data]</span></a>
+</div>
+
 ## `PhantomData<T>`
 
-[`std::marker::PhantomData<T>`] is a [zero-sized], minimum alignment, type that is considered to own a `T` for the purposes of [variance], [drop check], and [auto traits](#auto-traits).
+[`std::marker::PhantomData<T>`](../core/marker/struct.PhantomData.html) 是一种[零大小](glossary.md#r-glossary.zst)、最小对齐的类型；出于[型变](subtyping.md#variance)、[drop 检查](../nomicon/dropck.html)和[auto trait](#auto-traits)的目的，它被视为拥有一个 `T`。
 
-r[lang-types.ops]
-## Operator traits
+<div class="rule" id="r-lang-types.ops"><a class="rule-link" href="#r-lang-types.ops" title="lang-types.ops"><span>[lang-types<wbr>.ops]</span></a>
+</div>
 
-The traits in [`std::ops`] and [`std::cmp`] are used to overload [operators], [indexing expressions], and [call expressions].
+## 运算符 trait
 
-r[lang-types.deref]
-## `Deref` and `DerefMut`
+[`std::ops`](../core/ops/index.html) 和 [`std::cmp`](../core/cmp/index.html) 中的 trait 用于重载[运算符](expressions/operator-expr.md)、[索引表达式](expressions/array-expr.md#array-and-slice-indexing-expressions)和[调用表达式](expressions/call-expr.md)。
 
-As well as overloading the unary `*` operator, [`Deref`] and [`DerefMut`] are also used in [method resolution] and [deref coercions].
+<div class="rule" id="r-lang-types.deref"><a class="rule-link" href="#r-lang-types.deref" title="lang-types.deref"><span>[lang-types<wbr>.deref]</span></a>
+</div>
 
-r[lang-types.drop]
+## `Deref` 和 `DerefMut`
+
+除了重载一元 `*` 运算符外，[`Deref`](../core/ops/deref/trait.Deref.html) 和 [`DerefMut`](../core/ops/deref/trait.DerefMut.html) 还用于[方法解析](expressions/method-call-expr.md)和[deref 强制转换](type-coercions.md#coercion-types)。
+
+<div class="rule" id="r-lang-types.drop"><a class="rule-link" href="#r-lang-types.drop" title="lang-types.drop"><span>[lang-types<wbr>.drop]</span></a>
+</div>
+
 ## `Drop`
 
-The [`Drop`] trait provides a [destructor], to be run whenever a value of this type is to be destroyed.
+[`Drop`](../core/ops/drop/trait.Drop.html) trait 提供一个[析构器](destructors.md)，每当该类型的值即将被销毁时运行。
 
-r[lang-types.copy]
+<div class="rule" id="r-lang-types.copy"><a class="rule-link" href="#r-lang-types.copy" title="lang-types.copy"><span>[lang-types<wbr>.copy]</span></a>
+</div>
+
 ## `Copy`
 
-r[lang-types.copy.intro]
-The [`Copy`] trait changes the semantics of a type implementing it.
+<div class="rule" id="r-lang-types.copy.intro"><a class="rule-link" href="#r-lang-types.copy.intro" title="lang-types.copy.intro"><span>[lang-types<wbr>.copy<wbr>.intro]</span></a>
+</div>
 
-r[lang-types.copy.behavior]
-Values whose type implements `Copy` are copied rather than moved upon assignment.
+[`Copy`](../core/marker/trait.Copy.html) trait 会改变实现它的类型的语义。
 
-r[lang-types.copy.constraint]
-`Copy` can only be implemented for types which do not implement `Drop`, and whose fields are all `Copy`. For enums, this means all fields of all variants have to be `Copy`. For unions, this means all variants have to be `Copy`.
+<div class="rule" id="r-lang-types.copy.behavior"><a class="rule-link" href="#r-lang-types.copy.behavior" title="lang-types.copy.behavior"><span>[lang-types<wbr>.copy<wbr>.behavior]</span></a>
+</div>
 
-r[lang-types.copy.builtin-types]
-`Copy` is implemented by the compiler for
+类型实现了 `Copy` 的值在赋值时会被复制，而不是被移动。
 
-r[lang-types.copy.tuple]
-* [Tuples] of `Copy` types
+<div class="rule" id="r-lang-types.copy.constraint"><a class="rule-link" href="#r-lang-types.copy.constraint" title="lang-types.copy.constraint"><span>[lang-types<wbr>.copy<wbr>.constraint]</span></a>
+</div>
 
-r[lang-types.copy.fn-pointer]
-* [Function pointers]
+`Copy` 只能为未实现 `Drop` 且其字段全都是 `Copy` 的类型实现。对于枚举，这意味着所有变体的所有字段都必须是 `Copy`。对于联合体，这意味着所有变体都必须是 `Copy`。
 
-r[lang-types.copy.fn-item]
-* [Function items]
+<div class="rule" id="r-lang-types.copy.builtin-types"><a class="rule-link" href="#r-lang-types.copy.builtin-types" title="lang-types.copy.builtin-types"><span>[lang-types<wbr>.copy<wbr>.builtin-types]</span></a>
+</div>
 
-r[lang-types.copy.closure]
-* [Closures] that capture no values or that only capture values of `Copy` types
+编译器为以下类型实现了 `Copy`：
 
-r[lang-types.clone]
+<div class="rule" id="r-lang-types.copy.tuple"><a class="rule-link" href="#r-lang-types.copy.tuple" title="lang-types.copy.tuple"><span>[lang-types<wbr>.copy<wbr>.tuple]</span></a>
+</div>
+
+- `Copy` 类型组成的[元组](types/tuple.md)
+
+<div class="rule" id="r-lang-types.copy.fn-pointer"><a class="rule-link" href="#r-lang-types.copy.fn-pointer" title="lang-types.copy.fn-pointer"><span>[lang-types<wbr>.copy<wbr>.fn-pointer]</span></a>
+</div>
+
+- [函数指针](types/function-pointer.md)
+
+<div class="rule" id="r-lang-types.copy.fn-item"><a class="rule-link" href="#r-lang-types.copy.fn-item" title="lang-types.copy.fn-item"><span>[lang-types<wbr>.copy<wbr>.fn-item]</span></a>
+</div>
+
+- [函数项](types/function-item.md)
+
+<div class="rule" id="r-lang-types.copy.closure"><a class="rule-link" href="#r-lang-types.copy.closure" title="lang-types.copy.closure"><span>[lang-types<wbr>.copy<wbr>.closure]</span></a>
+</div>
+
+- 不捕获任何值或只捕获 `Copy` 类型的值的[闭包](types/closure.md)
+
+<div class="rule" id="r-lang-types.clone"><a class="rule-link" href="#r-lang-types.clone" title="lang-types.clone"><span>[lang-types<wbr>.clone]</span></a>
+</div>
+
 ## `Clone`
 
-r[lang-types.clone.intro]
-The [`Clone`] trait is a supertrait of `Copy`, so it also needs compiler generated implementations.
+<div class="rule" id="r-lang-types.clone.intro"><a class="rule-link" href="#r-lang-types.clone.intro" title="lang-types.clone.intro"><span>[lang-types<wbr>.clone<wbr>.intro]</span></a>
+</div>
 
-r[lang-types.clone.builtin-types]
-It is implemented by the compiler for the following types:
+[`Clone`](../core/clone/trait.Clone.html) trait 是 `Copy` 的 supertrait，因此它也需要由编译器生成的实现。
 
-r[lang-types.clone.builtin-copy]
-* Types with a built-in `Copy` implementation (see above)
+<div class="rule" id="r-lang-types.clone.builtin-types"><a class="rule-link" href="#r-lang-types.clone.builtin-types" title="lang-types.clone.builtin-types"><span>[lang-types<wbr>.clone<wbr>.builtin-types]</span></a>
+</div>
 
-r[lang-types.clone.tuple]
-* [Tuples] of `Clone` types
+编译器会为以下类型实现它：
 
-r[lang-types.clone.closure]
-* [Closures] that only capture values of `Clone` types or capture no values from the environment
+<div class="rule" id="r-lang-types.clone.builtin-copy"><a class="rule-link" href="#r-lang-types.clone.builtin-copy" title="lang-types.clone.builtin-copy"><span>[lang-types<wbr>.clone<wbr>.builtin-copy]</span></a>
+</div>
 
-r[lang-types.send]
+- 具有内置 `Copy` 实现的类型（见上文）
+
+<div class="rule" id="r-lang-types.clone.tuple"><a class="rule-link" href="#r-lang-types.clone.tuple" title="lang-types.clone.tuple"><span>[lang-types<wbr>.clone<wbr>.tuple]</span></a>
+</div>
+
+- `Clone` 类型组成的[元组](types/tuple.md)
+
+<div class="rule" id="r-lang-types.clone.closure"><a class="rule-link" href="#r-lang-types.clone.closure" title="lang-types.clone.closure"><span>[lang-types<wbr>.clone<wbr>.closure]</span></a>
+</div>
+
+- 只捕获 `Clone` 类型的值或不从环境中捕获任何值的[闭包](types/closure.md)
+
+<div class="rule" id="r-lang-types.send"><a class="rule-link" href="#r-lang-types.send" title="lang-types.send"><span>[lang-types<wbr>.send]</span></a>
+</div>
+
 ## `Send`
 
-The [`Send`] trait indicates that a value of this type is safe to send from one thread to another.
+[`Send`](../core/marker/trait.Send.html) trait 表示此类型的值可以安全地从一个线程发送到另一个线程。
 
-r[lang-types.sync]
+<div class="rule" id="r-lang-types.sync"><a class="rule-link" href="#r-lang-types.sync" title="lang-types.sync"><span>[lang-types<wbr>.sync]</span></a>
+</div>
+
 ## `Sync`
 
-r[lang-types.sync.intro]
-The [`Sync`] trait indicates that a value of this type is safe to share between multiple threads.
+<div class="rule" id="r-lang-types.sync.intro"><a class="rule-link" href="#r-lang-types.sync.intro" title="lang-types.sync.intro"><span>[lang-types<wbr>.sync<wbr>.intro]</span></a>
+</div>
 
-r[lang-types.sync.static-constraint]
-This trait must be implemented for all types used in immutable [`static` items].
+[`Sync`](../core/marker/trait.Sync.html) trait 表示此类型的值可以安全地在多个线程之间共享。
 
-r[lang-types.termination]
+<div class="rule" id="r-lang-types.sync.static-constraint"><a class="rule-link" href="#r-lang-types.sync.static-constraint" title="lang-types.sync.static-constraint"><span>[lang-types<wbr>.sync<wbr>.static-constraint]</span></a>
+</div>
+
+所有用于不可变 [`static` 项](items/static-items.md)的类型都必须实现此 trait。
+
+<div class="rule" id="r-lang-types.termination"><a class="rule-link" href="#r-lang-types.termination" title="lang-types.termination"><span>[lang-types<wbr>.termination]</span></a>
+</div>
+
 ## `Termination`
 
-The [`Termination`] trait indicates the acceptable return types for the [main function] and [test functions].
+[`Termination`](../std/process/trait.Termination.html) trait 表示[main 函数](crates-and-source-files.md#main-functions)和[测试函数](attributes/testing.md#the-test-attribute)可接受的返回类型。
 
-r[lang-types.auto-traits]
-## Auto traits
+<div class="rule" id="r-lang-types.auto-traits"><a class="rule-link" href="#r-lang-types.auto-traits" title="lang-types.auto-traits"><span>[lang-types<wbr>.auto-traits]</span></a>
+</div>
 
-The [`Send`], [`Sync`], [`Unpin`], [`UnwindSafe`], and [`RefUnwindSafe`] traits are _auto traits_. Auto traits have special properties.
+## auto trait
 
-r[lang-types.auto-traits.auto-impl]
-If no explicit implementation or negative implementation is written out for an auto trait for a given type, then the compiler implements it automatically according to the following rules:
+[`Send`](../core/marker/trait.Send.html)、[`Sync`](../core/marker/trait.Sync.html)、[`Unpin`](../core/marker/trait.Unpin.html)、[`UnwindSafe`](../core/panic/unwind_safe/trait.UnwindSafe.html) 和 [`RefUnwindSafe`](../core/panic/unwind_safe/trait.RefUnwindSafe.html) trait 是 _auto trait_。auto trait 具有特殊属性。
 
-r[lang-types.auto-traits.builtin-composite]
-* `&T`, `&mut T`, `*const T`, `*mut T`, `[T; n]`, and `[T]` implement the trait if `T` does.
+<div class="rule" id="r-lang-types.auto-traits.auto-impl"><a class="rule-link" href="#r-lang-types.auto-traits.auto-impl" title="lang-types.auto-traits.auto-impl"><span>[lang-types<wbr>.auto-traits<wbr>.auto-impl]</span></a>
+</div>
 
-r[lang-types.auto-traits.fn-item-pointer]
-* Function item types and function pointers automatically implement the trait.
+如果没有为给定类型写出某个 auto trait 的显式实现或否定实现，那么编译器会根据以下规则自动实现它：
 
-r[lang-types.auto-traits.aggregate]
-* Structs, enums, unions, and tuples implement the trait if all of their fields do.
+<div class="rule" id="r-lang-types.auto-traits.builtin-composite"><a class="rule-link" href="#r-lang-types.auto-traits.builtin-composite" title="lang-types.auto-traits.builtin-composite"><span>[lang-types<wbr>.auto-traits<wbr>.builtin-composite]</span></a>
+</div>
 
-r[lang-types.auto-traits.closure]
-* Closures implement the trait if the types of all of their captures do. A closure that captures a `T` by shared reference and a `U` by value implements any auto traits that both `&T` and `U` do.
+- 如果 `T` 实现该 trait，则 `&T`、`&mut T`、`*const T`、`*mut T`、`[T; n]` 和 `[T]` 也实现该 trait。
 
-r[lang-types.auto-traits.generic-impl]
-For generic types (counting the built-in types above as generic over `T`), if a generic implementation is available, then the compiler does not automatically implement it for types that could use the implementation except that they do not meet the requisite trait bounds. For instance, the standard library implements `Send` for all `&T` where `T` is `Sync`; this means that the compiler will not implement `Send` for `&T` if `T` is `Send` but not `Sync`.
+<div class="rule" id="r-lang-types.auto-traits.fn-item-pointer"><a class="rule-link" href="#r-lang-types.auto-traits.fn-item-pointer" title="lang-types.auto-traits.fn-item-pointer"><span>[lang-types<wbr>.auto-traits<wbr>.fn-item-pointer]</span></a>
+</div>
 
-r[lang-types.auto-traits.negative]
-Auto traits can also have negative implementations, shown as `impl !AutoTrait for T` in the standard library documentation, that override the automatic implementations. For example `*mut T` has a negative implementation of `Send`, and so `*mut T` is not `Send`, even if `T` is. There is currently no stable way to specify additional negative implementations; they exist only in the standard library.
+- 函数项类型和函数指针会自动实现该 trait。
 
-r[lang-types.auto-traits.trait-object-marker]
-Auto traits may be added as an additional bound to any [trait object], even though normally only one trait is allowed. For instance, `Box<dyn Debug + Send + UnwindSafe>` is a valid type.
+<div class="rule" id="r-lang-types.auto-traits.aggregate"><a class="rule-link" href="#r-lang-types.auto-traits.aggregate" title="lang-types.auto-traits.aggregate"><span>[lang-types<wbr>.auto-traits<wbr>.aggregate]</span></a>
+</div>
 
-r[lang-types.sized]
+- 如果结构体、枚举、联合体和元组的所有字段都实现该 trait，则它们也实现该 trait。
+
+<div class="rule" id="r-lang-types.auto-traits.closure"><a class="rule-link" href="#r-lang-types.auto-traits.closure" title="lang-types.auto-traits.closure"><span>[lang-types<wbr>.auto-traits<wbr>.closure]</span></a>
+</div>
+
+- 如果闭包所有捕获项的类型都实现该 trait，则闭包也实现该 trait。通过共享引用捕获一个 `T` 并按值捕获一个 `U` 的闭包，会实现 `&T` 和 `U` 二者都实现的任何 auto trait。
+
+<div class="rule" id="r-lang-types.auto-traits.generic-impl"><a class="rule-link" href="#r-lang-types.auto-traits.generic-impl" title="lang-types.auto-traits.generic-impl"><span>[lang-types<wbr>.auto-traits<wbr>.generic-impl]</span></a>
+</div>
+
+对于泛型类型（将上述内置类型视为关于 `T` 的泛型类型），如果存在可用的泛型实现，那么对于本可以使用该实现、只是未满足所需 trait 约束的类型，编译器不会自动实现它。例如，标准库为所有满足 `T` 为 `Sync` 的 `&T` 实现 `Send`；这意味着如果 `T` 是 `Send` 但不是 `Sync`，编译器不会为 `&T` 实现 `Send`。
+
+<div class="rule" id="r-lang-types.auto-traits.negative"><a class="rule-link" href="#r-lang-types.auto-traits.negative" title="lang-types.auto-traits.negative"><span>[lang-types<wbr>.auto-traits<wbr>.negative]</span></a>
+</div>
+
+auto trait 也可以有否定实现，在标准库文档中显示为 `impl !AutoTrait for T`，它们会覆盖自动实现。例如，`*mut T` 有一个 `Send` 的否定实现，因此即使 `T` 是 `Send`，`*mut T` 也不是 `Send`。目前没有稳定方式指定额外的否定实现；它们只存在于标准库中。
+
+<div class="rule" id="r-lang-types.auto-traits.trait-object-marker"><a class="rule-link" href="#r-lang-types.auto-traits.trait-object-marker" title="lang-types.auto-traits.trait-object-marker"><span>[lang-types<wbr>.auto-traits<wbr>.trait-object-marker]</span></a>
+</div>
+
+auto trait 可以作为附加约束添加到任何 [trait object](types/trait-object.md) 上，即使通常只允许一个 trait。例如，`Box<dyn Debug + Send + UnwindSafe>` 是一个有效类型。
+
+<div class="rule" id="r-lang-types.sized"><a class="rule-link" href="#r-lang-types.sized" title="lang-types.sized"><span>[lang-types<wbr>.sized]</span></a>
+</div>
+
 ## `Sized`
 
-r[lang-types.sized.intro]
-The [`Sized`] trait indicates that the size of this type is known at compile-time; that is, it's not a [dynamically sized type].
+<div class="rule" id="r-lang-types.sized.intro"><a class="rule-link" href="#r-lang-types.sized.intro" title="lang-types.sized.intro"><span>[lang-types<wbr>.sized<wbr>.intro]</span></a>
+</div>
 
-r[lang-types.sized.implicit-sized]
-[Type parameters] (except `Self` in traits) are `Sized` by default, as are [associated types].
+[`Sized`](../core/marker/trait.Sized.html) trait 表示此类型的大小在编译时已知；也就是说，它不是[动态大小类型](dynamically-sized-types.md)。
 
-r[lang-types.sized.implicit-impl]
-`Sized` is always implemented automatically by the compiler, not by [implementation items].
+<div class="rule" id="r-lang-types.sized.implicit-sized"><a class="rule-link" href="#r-lang-types.sized.implicit-sized" title="lang-types.sized.implicit-sized"><span>[lang-types<wbr>.sized<wbr>.implicit-sized]</span></a>
+</div>
 
-r[lang-types.sized.relaxation]
-These implicit `Sized` bounds may be relaxed by using the special `?Sized` bound.
+[类型参数](types/parameters.md)（trait 中的 `Self` 除外）默认是 `Sized`，[关联类型](items/associated-items.md#associated-types)也是如此。
 
-[`Arc<Self>`]: std::sync::Arc
-[`Deref`]: std::ops::Deref
-[`DerefMut`]: std::ops::DerefMut
-[`Pin<P>`]: std::pin::Pin
-[`Rc<Self>`]: std::rc::Rc
-[`RefUnwindSafe`]: std::panic::RefUnwindSafe
-[`Termination`]: std::process::Termination
-[`UnwindSafe`]: std::panic::UnwindSafe
-[`Unpin`]: std::marker::Unpin
+<div class="rule" id="r-lang-types.sized.implicit-impl"><a class="rule-link" href="#r-lang-types.sized.implicit-impl" title="lang-types.sized.implicit-impl"><span>[lang-types<wbr>.sized<wbr>.implicit-impl]</span></a>
+</div>
 
-[Arrays]: types/array.md
-[associated types]: items/associated-items.md#associated-types
-[call expressions]: expressions/call-expr.md
-[deref coercions]: type-coercions.md#coercion-types
-[dereference operator]: expressions/operator-expr.md#the-dereference-operator
-[destructor]: destructors.md
-[drop check]: ../nomicon/dropck.html
-[dynamically sized type]: dynamically-sized-types.md
-[Function pointers]: types/function-pointer.md
-[Function items]: types/function-item.md
-[implementation items]: items/implementations.md
-[indexing expressions]: expressions/array-expr.md#array-and-slice-indexing-expressions
-[interior mutability]: interior-mutability.md
-[main function]: crates-and-source-files.md#main-functions
-[Methods]: items/associated-items.md#associated-functions-and-methods
-[method resolution]: expressions/method-call-expr.md
-[moved from]: expr.move.movable-place
-[operators]: expressions/operator-expr.md
-[orphan rules]: items/implementations.md#trait-implementation-coherence
-[`static` items]: items/static-items.md
-[test functions]: attributes/testing.md#the-test-attribute
-[the standard library]: std
-[trait object]: types/trait-object.md
-[Tuples]: types/tuple.md
-[Type parameters]: types/parameters.md
-[variance]: subtyping.md#variance
-[zero-sized]: glossary.zst
-[Closures]: types/closure.md
+`Sized` 始终由编译器自动实现，而不是由[实现项](items/implementations.md)实现。
+
+<div class="rule" id="r-lang-types.sized.relaxation"><a class="rule-link" href="#r-lang-types.sized.relaxation" title="lang-types.sized.relaxation"><span>[lang-types<wbr>.sized<wbr>.relaxation]</span></a>
+</div>
+
+这些隐式 `Sized` 约束可以通过使用特殊的 `?Sized` 约束来放宽。

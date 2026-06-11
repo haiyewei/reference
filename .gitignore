@@ -1,4 +1,5 @@
 /book
 /dev-guide/book
 /target
+/po/messages.pot
 /linkcheck.sh
