@@ -15,13 +15,13 @@ r[layout.properties]
 所有值都有对齐和大小。
 
 r[layout.properties.align]
-值的 _对齐_ 指定了哪些地址可用于存储该值。对齐为 `n` 的值只能存储在地址值为 n 的倍数的地址处。例如，对齐为 2 的值必须存储在偶数地址，而对齐为 1 的值可以存储在任意地址。对齐以字节为单位，必须至少为 1，并且始终是 2 的幂。可以使用 [`align_of_val`](../core/mem/fn.align_of_val.html) 函数检查值的对齐。
+值的 *对齐* 指定了哪些地址可用于存储该值。对齐为 `n` 的值只能存储在地址值为 n 的倍数的地址处。例如，对齐为 2 的值必须存储在偶数地址，而对齐为 1 的值可以存储在任意地址。对齐以字节为单位，必须至少为 1，并且始终是 2 的幂。可以使用 [`align_of_val`](std::mem::align_of_val) 函数检查值的对齐。
 
 r[layout.properties.size]
-值的 _大小_ 是具有该元素类型的数组中相邻元素之间的字节偏移量，包括对齐填充。值的大小始终是其对齐的倍数。注意，某些类型是[零大小](glossary.md#r-glossary.zst)；0 被视为任何对齐的倍数（例如，在某些平台上，类型 `[u16; 0]` 的大小为 0、对齐为 2）。可以使用 [`size_of_val`](../core/mem/fn.size_of_val.html) 函数检查值的大小。
+值的 *大小* 是具有该元素类型的数组中相邻元素之间的字节偏移量，包括对齐填充。值的大小始终是其对齐的倍数。注意，某些类型是[零大小](glossary.zst)；0 被视为任何对齐的倍数（例如，在某些平台上，类型 `[u16; 0]` 的大小为 0、对齐为 2）。可以使用 [`size_of_val`](std::mem::size_of_val) 函数检查值的大小。
 
 r[layout.properties.sized]
-所有值都具有相同大小和对齐，且二者在编译时已知的类型，实现 [`Sized`](../core/marker/trait.Sized.html) trait，并可用 [`size_of`](../core/mem/fn.size_of.html) 和 [`align_of`](../core/mem/fn.align_of.html) 函数检查。不是 [`Sized`](../core/marker/trait.Sized.html) 的类型称为[动态大小类型](dynamically-sized-types.md)。由于 `Sized` 类型的所有值共享相同的大小和对齐，我们分别将这些共享的量称为该类型的大小和该类型的对齐。
+所有值都具有相同大小和对齐，且二者在编译时已知的类型，实现 [`Sized`](std::marker::Sized) trait，并可用 [`size_of`](std::mem::size_of) 和 [`align_of`](std::mem::align_of) 函数检查。不是 [`Sized`](std::marker::Sized) 的类型称为[动态大小类型](dynamically-sized-types.md)。由于 `Sized` 类型的所有值共享相同的大小和对齐，我们分别将这些共享的量称为该类型的大小和该类型的对齐。
 
 r[layout.primitive]
 ## 原始数据布局
@@ -31,16 +31,16 @@ r[layout.primitive.size]
 
 | 类型 | `size_of::<Type>()` |
 |--                 |--                  |
-| `bool` | 1 |
-| `u8` / `i8` | 1 |
-| `u16` / `i16` | 2 |
-| `u32` / `i32` | 4 |
-| `u64` / `i64` | 8 |
-| `u128` / `i128` | 16 |
+| `bool`            | 1                  |
+| `u8` / `i8`       | 1                  |
+| `u16` / `i16`     | 2                  |
+| `u32` / `i32`     | 4                  |
+| `u64` / `i64`     | 8                  |
+| `u128` / `i128`   | 16                 |
 | `usize` / `isize` | 见下文 |
-| `f32` | 4 |
-| `f64` | 8 |
-| `char` | 4 |
+| `f32`             | 4                  |
+| `f64`             | 8                  |
+| `char`            | 4                  |
 
 r[layout.primitive.size-minimum]
 `usize` 和 `isize` 的大小足以容纳目标平台上的每个地址。例如，在 32 位目标上为 4 字节，在 64 位目标上为 8 字节。
@@ -94,7 +94,7 @@ r[layout.tuple.def]
 元组按照 [`Rust` 表示](#the-rust-representation)进行布局。
 
 r[layout.tuple.unit]
-例外是单元元组（`()`），保证它作为[零大小类型](glossary.md#r-glossary.zst)具有大小 0 和对齐 1。
+例外是单元元组（`()`），保证它作为[零大小类型](glossary.zst)具有大小 0 和对齐 1。
 
 r[layout.trait-object]
 ## trait 对象布局
@@ -113,15 +113,15 @@ r[layout.repr]
 ## 表示
 
 r[layout.repr.intro]
-所有用户定义的复合类型（`struct`、`enum` 和 `union`）都有一个 _表示_，用于指定该类型的布局。
+所有用户定义的复合类型（`struct`、`enum` 和 `union`）都有一个 *表示*，用于指定该类型的布局。
 
 r[layout.repr.kinds]
 类型可能具有的表示有：
 
 - [`Rust`](#the-rust-representation)（默认）
-- [`C`](#the-c-representation)
+- [`C`]
 - [原始表示](#primitive-representations)
-- [`transparent`](#the-transparent-representation)
+- [`transparent`]
 
 r[layout.repr.attribute]
 可以通过对类型应用 `repr` 属性来改变类型的表示。下面的示例展示了一个具有 `C` 表示的 struct。
@@ -178,7 +178,7 @@ r[layout.repr.rust.layout]
 r[layout.repr.rust.layout.struct]
 对于 [struct](items/structs.md)，还进一步保证字段不重叠。也就是说，可以对字段排序，使得任意字段的偏移量加上其大小小于或等于该排序中下一个字段的偏移量。该排序不必与类型声明中指定字段的顺序相同。
 
-注意，此保证并不意味着字段具有不同地址：[零大小类型](glossary.md#r-glossary.zst) 可能与同一 struct 中的其他字段具有相同地址。
+注意，此保证并不意味着字段具有不同地址：[零大小类型](glossary.zst)可能与同一 struct 中的其他字段具有相同地址。
 
 r[layout.repr.rust.unspecified]
 此表示不作其他数据布局保证。
@@ -213,8 +213,8 @@ r[layout.repr.c.struct.size-field-offset]
 
 <!-- ignore: pseudocode -->
 ```rust,ignore
-/// Returns the amount of padding needed after `offset` to ensure that the
-/// following address will be aligned to `alignment`.
+/// 返回 `offset` 之后所需的填充量，以确保
+/// 后续地址将按 `alignment` 对齐。
 fn padding_needed_for(offset: usize, alignment: usize) -> usize {
     let misalignment = offset % alignment;
     if misalignment > 0 {
@@ -231,9 +231,9 @@ struct.alignment = struct.fields().map(|field| field.alignment).max();
 let current_offset = 0;
 
 for field in struct.fields_in_declaration_order() {
-    // Increase the current offset so that it's a multiple of the alignment
-    // of this field. For the first field, this will always be zero.
-    // The skipped bytes are called padding bytes.
+    // 增加当前偏移量，使其成为此字段对齐的倍数。
+    // 对第一个字段，这始终为零。
+    // 跳过的字节称为填充字节。
     current_offset += padding_needed_for(current_offset, field.alignment);
 
     struct[field].offset = current_offset;
@@ -245,10 +245,10 @@ struct.size = current_offset + padding_needed_for(current_offset, struct.alignme
 ```
 
 > [!WARNING]
-> 为了清晰起见，此伪代码使用忽略溢出问题的朴素算法。要在实际代码中执行内存布局计算，请使用 [`Layout`](../core/alloc/layout/struct.Layout.html)。
+> 为了清晰起见，此伪代码使用了一个会忽略溢出问题的朴素算法。要在实际代码中执行内存布局计算，请使用 [`Layout`](std::alloc::Layout)。
 
 > [!NOTE]
-> 此算法可以产生[零大小](glossary.md#r-glossary.zst) struct。在 C 中，像 `struct Foo { }` 这样的空 struct 声明是非法的。不过，gcc 和 clang 都支持启用这类 struct 的选项，并赋予它们零大小。相比之下，C++ 会给空 struct 大小 1，除非它们被继承，或者它们是具有 `[[no_unique_address]]` 属性的字段；在这些情况下，它们不会增加 struct 的整体大小。
+> 此算法可以产生[零大小](glossary.zst) struct。在 C 中，像 `struct Foo { }` 这样的空 struct 声明是非法的。不过，gcc 和 clang 都支持启用这类 struct 的选项，并赋予它们零大小。相比之下，C++ 会给空 struct 大小 1，除非它们作为基类被继承，或者它们是具有 `[[no_unique_address]]` 属性的字段；在这些情况下，它们不会增加 struct 的整体大小。
 
 r[layout.repr.c.union]
 #### `#[repr(C)]` union
@@ -266,8 +266,8 @@ union Union {
     f2: [u8; 4],
 }
 
-assert_eq!(std::mem::size_of::<Union>(), 4);  // From f2
-assert_eq!(std::mem::align_of::<Union>(), 2); // From f1
+assert_eq!(std::mem::size_of::<Union>(), 4);  // 来自 f2
+assert_eq!(std::mem::align_of::<Union>(), 2); // 来自 f1
 
 assert_eq!(std::mem::offset_of!(Union, f1), 0);
 assert_eq!(std::mem::offset_of!(Union, f2), 0);
@@ -278,10 +278,10 @@ union SizeRoundedUp {
    b: [u16; 3],
 }
 
-assert_eq!(std::mem::size_of::<SizeRoundedUp>(), 8);  // Size of 6 from b,
-                                                      // rounded up to 8 from
-                                                      // alignment of a.
-assert_eq!(std::mem::align_of::<SizeRoundedUp>(), 4); // From a
+assert_eq!(std::mem::size_of::<SizeRoundedUp>(), 8);  // 大小 6 来自 b，
+                                                      // 根据 a 的对齐
+                                                      // 向上取整到 8。
+assert_eq!(std::mem::align_of::<SizeRoundedUp>(), 4); // 来自 a
 
 assert_eq!(std::mem::offset_of!(SizeRoundedUp, a), 0);
 assert_eq!(std::mem::offset_of!(SizeRoundedUp, b), 0);
@@ -355,8 +355,8 @@ struct MyBFields(f32, u64);
 #[derive(Copy, Clone)]
 struct MyCFields { x: u32, y: u8 }
 
-// This struct could be omitted (it is a zero-sized type), and it must be in
-// C/C++ headers.
+// 此 struct 可以省略（它是零大小类型），且它必须位于
+// C/C++ 头文件中。
 #[repr(C)]
 #[derive(Copy, Clone)]
 struct MyDFields;
@@ -366,7 +366,7 @@ r[layout.repr.primitive]
 ### 原始表示
 
 r[layout.repr.primitive.intro]
-_原始表示_ 是与原始整数类型同名的表示。也就是：`u8`、`u16`、`u32`、`u64`、`u128`、`usize`、`i8`、`i16`、`i32`、`i64`、`i128` 和 `isize`。
+*原始表示* 是与原始整数类型同名的表示。也就是：`u8`、`u16`、`u32`、`u64`、`u128`、`usize`、`i8`、`i16`、`i32`、`i64`、`i128` 和 `isize`。
 
 r[layout.repr.primitive.constraint]
 原始表示只能应用于枚举，并且根据 enum 是否有字段而有不同的行为。对[零变体枚举](items/enumerations.md#zero-variant-enums)使用原始表示是错误。将两个原始表示组合在一起是错误。
@@ -428,12 +428,12 @@ struct MyVariantD(MyEnumDiscriminant);
 r[layout.repr.primitive-c]
 #### 组合带字段枚举的原始表示和 `#[repr(C)]`
 
-对于带字段枚举，也可以组合 `repr(C)` 和原始表示（例如 `repr(C, u8)`）。这会修改 [`repr(C)`](#reprc-enums-with-fields)，将判别值 enum 的表示改为所选原始类型。因此，如果选择 `u8` 表示，判别值 enum 的大小和对齐将为 1 字节。
+对于带字段枚举，也可以组合 `repr(C)` 和原始表示（例如 `repr(C, u8)`）。这会修改 [`repr(C)`](#reprc-enums-with-fields)，将判别值 enum 的表示改为所选原始表示。因此，如果选择 `u8` 表示，判别值 enum 的大小和对齐将为 1 字节。
 
 前面[示例](#reprc-enums-with-fields)中的判别值 enum 随后变为：
 
 ```rust
-#[repr(C, u8)] // `u8` was added
+#[repr(C, u8)] // 添加了 `u8`
 enum MyEnum {
     A(u32),
     B(f32, u64),
@@ -443,7 +443,7 @@ enum MyEnum {
 
 // ...
 
-#[repr(u8)] // So `u8` is used here instead of `C`
+#[repr(u8)] // 因此这里使用 `u8` 而不是 `C`
 enum MyEnumDiscriminant { A, B, C, D }
 
 // ...
@@ -476,8 +476,8 @@ enum Enum16 {
 assert_eq!(std::mem::size_of::<EnumC>(), 8);
 // 判别值一个字节，Enum8::Variant0 中的值一个字节
 assert_eq!(std::mem::size_of::<Enum8>(), 2);
-// Two bytes for the discriminant and one byte for the value in Enum16::Variant0
-// plus one byte of padding.
+// 判别值两个字节，Enum16::Variant0 中的值一个字节，
+// 再加一个字节的填充。
 assert_eq!(std::mem::size_of::<Enum16>(), 4);
 ```
 

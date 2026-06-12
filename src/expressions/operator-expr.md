@@ -80,13 +80,13 @@ r[expr.operator.borrow.temporary]
 
 ```rust
 {
-    // 会创建一个值为 7 的临时值，其生命周期持续到此作用域结束。
+    // 创建一个值为 7 的临时值，它在此作用域内持续存在。
     let shared_reference = &7;
 }
 let mut array = [-2, 3, 9];
 {
-    // Mutably borrows `array` for this scope.
-    // `array` may only be used through `mutable_reference`.
+    // 在此作用域内以可变方式借用 `array`。
+    // `array` 只能通过 `mutable_reference` 使用。
     let mutable_reference = &mut array;
 }
 ```
@@ -109,7 +109,7 @@ r[expr.borrow.raw]
 ### 原始借用运算符
 
 r[expr.borrow.raw.intro]
-`&raw const` 和 `&raw mut` 是_原始借用运算符_。
+`&raw const` 和 `&raw mut` 是*原始借用运算符*。
 
 r[expr.borrow.raw.place]
 这些运算符的操作数表达式在位置表达式上下文中求值。
@@ -130,7 +130,7 @@ struct Packed {
 }
 
 let packed = Packed { f1: 1, f2: 2 };
-// `&packed.f2` 会创建未对齐引用，因此是未定义行为！
+// `&packed.f2` 会创建未对齐的引用，因而是未定义行为！
 let raw_f2 = &raw const packed.f2;
 assert_eq!(unsafe { raw_f2.read_unaligned() }, 2);
 ```
@@ -145,8 +145,8 @@ struct Demo {
 }
 
 let mut uninit = MaybeUninit::<Demo>::uninit();
-// `&uninit.as_mut().field` would create a reference to an uninitialized `bool`,
-// and thus be undefined behavior!
+// `&uninit.as_mut().field` 会创建指向未初始化 `bool` 的引用，
+// 因而会是未定义行为！
 let f1_ptr = unsafe { &raw mut (*uninit.as_mut_ptr()).field };
 unsafe { f1_ptr.write(true); }
 let init = unsafe { uninit.assume_init() };
@@ -170,13 +170,13 @@ r[expr.deref.mut]
 如果表达式的类型为 `&mut T`、`*mut T` 或 `Box<T>`，并且它是局部变量、局部变量的（嵌套）字段，或者是可变[位置表达式](../expressions.md#place-expressions-and-value-expressions)，则所得内存位置可以被赋值。
 
 r[expr.deref.box]
-当应用于 [`Box`](../special-types-and-traits.md#boxt) 时，所得位置可以[从中移出](../expressions.md#r-expr.move.movable-place)。
+当应用于 [`Box`](../special-types-and-traits.md#boxt) 时，所得位置可以[从中移出](expr.move.movable-place)。
 
 r[expr.deref.safety]
 解引用裸指针需要 `unsafe`。
 
 r[expr.deref.traits]
-对于非指针类型，`*x` 在[不可变位置表达式上下文](../expressions.md#mutability)中等价于 `*std::ops::Deref::deref(&x)`，在可变位置表达式上下文中等价于 `*std::ops::DerefMut::deref_mut(&mut x)`；但当 `*x` 经历[临时生命周期延长](../destructors.md#r-destructors.scope.lifetime-extension)时，被解引用的表达式 `x` 的[临时作用域](../destructors.md#r-destructors.scope.temporary)也会被延长。
+对于非指针类型，`*x` 在[不可变位置表达式上下文](../expressions.md#mutability)中等价于 `*std::ops::Deref::deref(&x)`，在可变位置表达式上下文中等价于 `*std::ops::DerefMut::deref_mut(&mut x)`；但当 `*x` 经历[临时生命周期延长](destructors.scope.lifetime-extension)时，被解引用的表达式 `x` 的[临时作用域](destructors.scope.temporary)也会被延长。
 
 ```rust
 # struct NoCopy;
@@ -190,17 +190,17 @@ let d: NoCopy = *c;
 ```
 
 ```rust
-// The temporary holding the result of `String::new()` is extended
-// to live to the end of the block, so `x` may be used in subsequent
-// statements.
+// 持有 `String::new()` 结果的临时值的生命周期被延长
+// 到块的末尾，因此 `x` 可以在后续
+// 语句中使用。
 let x = &*String::new();
 # x;
 ```
 
 ```rust,compile_fail,E0716
-// The temporary holding the result of `String::new()` is dropped at
-// the end of the statement, so it's an error to use `y` after.
-let y = &*std::ops::Deref::deref(&String::new()); // ERROR
+// 持有 `String::new()` 结果的临时值会在该语句
+// 末尾被丢弃，因此之后使用 `y` 是错误的。
+let y = &*std::ops::Deref::deref(&String::new()); // 错误
 # y;
 ```
 
@@ -213,15 +213,15 @@ TryPropagationExpression -> Expression `?`
 ```
 
 r[expr.try.intro]
-try 传播表达式会使用内部表达式的值和 [`Try`](../../core/ops/try_trait/trait.Try.html) trait 来决定是否产生一个值以及产生什么值，或者是否向调用者返回一个值以及返回什么值。
+try 传播表达式会使用内部表达式的值和 [`Try`](core::ops::Try) trait 来决定是否产生一个值以及产生什么值，或者是否向调用者返回一个值以及返回什么值。
 
 > [!EXAMPLE]
 > ```rust
 > # use std::num::ParseIntError;
 > fn try_to_parse() -> Result<i32, ParseIntError> {
->     let x: i32 = "123".parse()?; // `x` is `123`.
->     let y: i32 = "24a".parse()?; // Returns an `Err()` immediately.
->     Ok(x + y)                    // Doesn't run.
+>     let x: i32 = "123".parse()?; // `x` 是 `123`。
+>     let y: i32 = "24a".parse()?; // 立即返回一个 `Err()`。
+>     Ok(x + y)                    // 不会运行。
 > }
 >
 > let res = try_to_parse();
@@ -283,7 +283,7 @@ try 传播表达式会使用内部表达式的值和 [`Try`](../../core/ops/try_
 > ```
 
 > [!NOTE]
-> [`Try`](../../core/ops/try_trait/trait.Try.html) trait 目前是不稳定的，因此不能为用户类型实现。
+> [`Try`](core::ops::Try) trait 目前是不稳定的，因此不能为用户类型实现。
 >
 > try 传播表达式目前大致等价于：
 >
@@ -301,25 +301,25 @@ try 传播表达式会使用内部表达式的值和 [`Try`](../../core/ops/try_
 > ```
 
 > [!NOTE]
-> try 传播运算符有时称为_问号运算符_、_`?` 运算符_或 _try 运算符_。
+> try 传播运算符有时称为*问号运算符*、*`?` 运算符*或 *try 运算符*。
 
 r[expr.try.restricted-types]
 try 传播运算符可以应用于具有以下类型的表达式：
 
-- [`Result<T, E>`](../../core/result/enum.Result.html)
+- [`Result<T, E>`]
     - `Result::Ok(val)` 求值为 `val`。
     - `Result::Err(e)` 返回 `Result::Err(From::from(e))`。
-- [`Option<T>`](../../core/option/enum.Option.html)
+- [`Option<T>`]
     - `Option::Some(val)` 求值为 `val`。
     - `Option::None` 返回 `Option::None`。
-- [`ControlFlow<B, C>`](../../core/ops/control_flow/enum.ControlFlow.html)
+- [`ControlFlow<B, C>`][core::ops::ControlFlow]
     - `ControlFlow::Continue(c)` 求值为 `c`。
     - `ControlFlow::Break(b)` 返回 `ControlFlow::Break(b)`。
-- [`Poll<Result<T, E>>`](../../core/task/poll/enum.Poll.html)
+- [`Poll<Result<T, E>>`][core::task::Poll]
     - `Poll::Ready(Ok(val))` 求值为 `Poll::Ready(val)`。
     - `Poll::Ready(Err(e))` 返回 `Poll::Ready(Err(From::from(e)))`。
     - `Poll::Pending` 求值为 `Poll::Pending`。
-- [`Poll<Option<Result<T, E>>>`](../../core/task/poll/enum.Poll.html)
+- [`Poll<Option<Result<T, E>>>`][`core::task::Poll`]
     - `Poll::Ready(Some(Ok(val)))` 求值为 `Poll::Ready(Some(val))`。
     - `Poll::Ready(Some(Err(e)))` 返回 `Poll::Ready(Some(Err(From::from(e))))`。
     - `Poll::Ready(None)` 求值为 `Poll::Ready(None)`。
@@ -343,7 +343,7 @@ r[expr.negate.results]
 
 | 符号 | 整数 | `bool` | 浮点数 | 重载 trait |
 |--------|-------------|-------------- |----------------|--------------------|
-| `-` | 取负\* |  | 取负 | `std::ops::Neg` |
+| `-` | 取负* |  | 取负 | `std::ops::Neg` |
 | `!` | 按位非 | [逻辑非](../types/boolean.md#logical-not) |  | `std::ops::Not` |
 
 \* 仅适用于有符号整数类型。
@@ -383,22 +383,22 @@ r[expr.arith-logic.behavior]
 
 | 符号 | 整数 | `bool` | 浮点数 | 重载 trait | 复合赋值重载 trait |
 |--------|-------------------------|---------------|----------------|--------------------| ------------------------------------- |
-| `+` | 加法 |  | 加法 | `std::ops::Add` | `std::ops::AddAssign` |
-| `-` | 减法 |  | 减法 | `std::ops::Sub` | `std::ops::SubAssign` |
-| `*` | 乘法 |  | 乘法 | `std::ops::Mul` | `std::ops::MulAssign` |
-| `/` | 除法\*† |  | 除法 | `std::ops::Div` | `std::ops::DivAssign` |
-| `%` | 余数\*\*† |  | 余数 | `std::ops::Rem` | `std::ops::RemAssign` |
+| `+` | 加法 |  | Addition | `std::ops::Add` | `std::ops::AddAssign` |
+| `-` | 减法 |  | Subtraction | `std::ops::Sub` | `std::ops::SubAssign` |
+| `*` | 乘法 |  | Multiplication | `std::ops::Mul` | `std::ops::MulAssign` |
+| `/` | 除法*† |  | 除法 | `std::ops::Div` | `std::ops::DivAssign` |
+| `%` | 余数**† |  | 余数 | `std::ops::Rem` | `std::ops::RemAssign` |
 | `&` | 按位与 | [逻辑与](../types/boolean.md#logical-and) |  | `std::ops::BitAnd` | `std::ops::BitAndAssign` |
-| `\ | ` | 按位或 | [逻辑或](../types/boolean.md#logical-or) |  | `std::ops::BitOr` | `std::ops::BitOrAssign` |
+| `\|` | 按位或 | [逻辑或](../types/boolean.md#logical-or) |  | `std::ops::BitOr` | `std::ops::BitOrAssign` |
 | `^` | 按位异或 | [逻辑异或](../types/boolean.md#logical-xor) |  | `std::ops::BitXor` | `std::ops::BitXorAssign` |
 | `<<` | 左移 |  |  | `std::ops::Shl` | `std::ops::ShlAssign` |
-| `>>` | 右移\*\*\* |  |  | `std::ops::Shr` | `std::ops::ShrAssign` |
+| `>>` | 右移*** |  |  | `std::ops::Shr` | `std::ops::ShrAssign` |
 
 \* 整数除法向零取整。
 
-\*\* Rust 使用以[截断除法](https://en.wikipedia.org/wiki/Modulo_operation#Variants_of_the_definition)定义的余数。给定 `remainder = dividend % divisor`，余数将与被除数具有相同符号。
+\*\* Rust uses a remainder defined with [truncating division](https://en.wikipedia.org/wiki/Modulo_operation#Variants_of_the_definition)定义的余数。给定 `remainder = dividend % divisor`，余数将与被除数具有相同符号。
 
-\*\*\* 对有符号整数类型执行算术右移，对无符号整数类型执行逻辑右移。
+*** 对有符号整数类型执行算术右移，对无符号整数类型执行逻辑右移。
 
 † 对于整数类型，除以零会 panic。
 
@@ -493,7 +493,7 @@ r[expr.bool-logic.conditional-evaluation]
 
 ```rust
 let x = false || true; // true
-let y = false && panic!(); // false, doesn't evaluate `panic!()`
+let y = false && panic!(); // false，不会对 `panic!()` 求值
 ```
 
 r[expr.as]
@@ -527,13 +527,13 @@ r[expr.as.coercions]
 
 | `e` 的类型 | `U` | `e as U` 执行的转换 |
 |-----------------------|-----------------------|-------------------------------------------------------|
-| 整数或浮点数类型 | 整数或浮点数类型 | [数值转换](operator-expr.md#r-expr.as.numeric) |
-| 枚举 | 整数类型 | [枚举转换](operator-expr.md#r-expr.as.enum) |
-| `bool` 或 `char` | 整数类型 | [基本类型到整数转换](operator-expr.md#r-expr.as.bool-char-as-int) |
-| `u8` | `char` | [`u8` 到 `char` 的转换](operator-expr.md#r-expr.as.u8-as-char) |
-| `*T` | `*V`（当[兼容](operator-expr.md#r-expr.as.pointer)时） | [指针到指针转换](operator-expr.md#r-expr.as.pointer) |
-| `*T`，其中 `T: Sized` | 整数类型 | [指针到地址转换](operator-expr.md#r-expr.as.pointer-as-int) |
-| 整数类型 | `*V`，其中 `V: Sized` | [地址到指针转换](operator-expr.md#r-expr.as.int-as-pointer) |
+| 整数或浮点数类型 | Integer or Float type | [数值转换][expr.as.numeric] |
+| 枚举 | 整数类型 | [枚举转换][expr.as.enum] |
+| `bool` 或 `char` | 整数类型 | [基本类型到整数转换][expr.as.bool-char-as-int] |
+| `u8` | `char` | [`u8` 到 `char` 的转换][expr.as.u8-as-char] |
+| `*T` | `*V`（当 [兼容][expr.as.pointer] 时） | [指针到指针转换][expr.as.pointer] |
+| `*T`，其中 `T: Sized` | 整数类型 | [指针到地址转换][expr.as.pointer-as-int] |
+| 整数类型 | `*V`，其中 `V: Sized` | [地址到指针转换][expr.as.int-as-pointer] |
 | `&m₁ [T; n]` | `*m₂ T` [^lessmut] | 数组到指针转换 |
 | `*m₁ [T; n]` | `*m₂ T` [^lessmut] | 数组到指针转换 |
 | [函数项](../types/function-item.md) | [函数指针](../types/function-pointer.md) | 函数项到函数指针转换 |
@@ -543,9 +543,9 @@ r[expr.as.coercions]
 | [函数指针](../types/function-pointer.md) | 整数 | 函数指针到地址转换 |
 | 闭包 [^no-capture] | 函数指针 | 闭包到函数指针转换 |
 
-[^lessmut]: Only when `m₁` is `mut` or `m₂` is `const`. Casting `mut` reference/pointer to `const` pointer is allowed.
+[^lessmut]: 仅当 `m₁` 为 `mut` 或 `m₂` 为 `const` 时。允许将 `mut` 引用/指针转换为 `const` 指针。
 
-[^no-capture]: Only closures that do not capture (close over) any local variables can be cast to function pointers.
+[^no-capture]: 只有不捕获（close over）任何局部变量的闭包才能转换为函数指针。
 
 ### 语义
 
@@ -604,8 +604,8 @@ r[expr.as.numeric.float-as-int]
   ```
 
 r[expr.as.numeric.int-as-float]
-* 从整数转换为浮点数会产生最接近的可表示浮点数 \*
-    * 必要时，舍入按照 `roundTiesToEven` 模式进行 \*\*\*
+* 从整数转换为浮点数会产生最接近的可表示浮点数 *
+    * 必要时，舍入按照 `roundTiesToEven` 模式进行 ***
     * 发生溢出时，会产生（与输入符号相同的）无穷大
     * 注意：对于当前这组数值类型，溢出只会发生在 `u128 as f32` 且值大于或等于 `f32::MAX + (0.5 ULP)` 的情况下
 
@@ -625,8 +625,8 @@ r[expr.as.numeric.float-widening]
   ```
 
 r[expr.as.numeric.float-narrowing]
-* 从 f64 转换到 f32 会产生最接近的可表示 f32 \*\*
-    * 必要时，舍入按照 `roundTiesToEven` 模式进行 \*\*\*
+* 从 f64 转换到 f32 会产生最接近的可表示 f32 **
+    * 必要时，舍入按照 `roundTiesToEven` 模式进行 ***
     * 发生溢出时，会产生（与输入符号相同的）无穷大
 
   ```rust
@@ -638,9 +638,9 @@ r[expr.as.numeric.float-narrowing]
 
 \* 如果硬件本身不支持采用这种舍入模式和溢出行为的整数到浮点数转换，这些转换很可能比预期更慢。
 
-\*\* 如果硬件本身不支持采用这种舍入模式和溢出行为的 f64 到 f32 转换，这些转换很可能比预期更慢。
+** 如果硬件本身不支持采用这种舍入模式和溢出行为的 f64 到 f32 转换，这些转换很可能比预期更慢。
 
-\*\*\* as defined in IEEE 754-2008 &sect;4.3.1: pick the nearest floating point number, preferring the one with an even least significant digit if exactly halfway between two floating point numbers.
+*** 如 IEEE 754-2008 §4.3.1 所定义：选择最近的浮点数；如果恰好位于两个浮点数正中间，则优先选择最低有效位为偶数的那个。
 
 r[expr.as.enum]
 #### 枚举转换
@@ -659,7 +659,7 @@ assert_eq!(Enum::C as i32, 2);
 ```
 
 r[expr.as.enum.no-drop]
-如果枚举实现了 [`Drop`](../../core/ops/drop/trait.Drop.html)，则不允许转换。
+如果枚举实现了 [`Drop`]，则不允许转换。
 
 r[expr.as.bool-char-as-int]
 #### 基本类型到整数转换
@@ -736,7 +736,7 @@ r[expr.as.pointer.discard-metadata]
   > ```rust
   > let slice: &[i32] = &[1, 2, 3];
   > let ptr: *const [i32] = slice as *const [i32];
-  > // 从宽指针 (*const [i32]) 转换到瘦指针 (*const i32)
+  > // 从宽指针 (*const [i32]) 转换为瘦指针 (*const i32)
   > // 丢弃长度元数据。
   > let data_ptr: *const i32 = ptr as *const i32;
   > assert_eq!(unsafe { *data_ptr }, 1);
@@ -769,8 +769,8 @@ r[expr.as.pointer.unsized.trait]
      >
      > let x: i32 = 42;
      > let ptr_foo: *const dyn Foo = &x as *const dyn Foo;
-     > // 不能转换到不同的 principal trait。
-     > let ptr_bar: *const dyn Bar = ptr_foo as *const dyn Bar; // ERROR
+     > // 不能转换为不同的主 trait。
+     > let ptr_bar: *const dyn Bar = ptr_foo as *const dyn Bar; // 错误
      > ```
 
 
@@ -813,8 +813,8 @@ r[expr.as.pointer.unsized.trait]
      > #
      > # let s = S;
      > # let ptr_no_send: *const dyn Foo = &s;
-     > // 与上面相同，只是 trait Foo 没有将 Send 作为 super trait。
-     > let ptr_send: *const (dyn Foo + Send) = ptr_no_send as *const (dyn Foo + Send); // ERROR
+     > // 与上面相同，但 trait Foo 没有将 Send 作为 super trait。
+     > let ptr_send: *const (dyn Foo + Send) = ptr_no_send as *const (dyn Foo + Send); // 错误
      > ```
 
 
@@ -838,8 +838,8 @@ r[expr.as.pointer.unsized.trait]
      > fn lengthen_lifetime<'long: 'short, 'short>(
      >     ptr: *const (dyn Foo + 'short),
      > ) -> *const (dyn Foo + 'long) {
-     >     // 不允许转换到更长的生命周期。
-     >     ptr as *const (dyn Foo + 'long) // ERROR
+     >     // 不允许转换为更长的生命周期。
+     >     ptr as *const (dyn Foo + 'long) // 错误
      > }
      > ```
 
@@ -853,8 +853,8 @@ r[expr.as.pointer.unsized.trait]
      >
      > let x = ();
      > let ptr_i32: *const dyn Generic<i32> = &x;
-     > // 不能转换到不同的泛型参数。
-     > let ptr_u32: *const dyn Generic<u32> = ptr_i32 as *const dyn Generic<u32>; // ERROR
+     > // 不能转换为不同的泛型参数。
+     > let ptr_u32: *const dyn Generic<u32> = ptr_i32 as *const dyn Generic<u32>; // 错误
      > ```
      >
      > ```rust
@@ -871,7 +871,7 @@ r[expr.as.pointer.unsized.trait]
      >     'a: 'b,
      >     'b: 'a,
      >     A: HasType,
-     >     B: HasType<Output = A::Output>, // Forces equality
+     >     B: HasType<Output = A::Output>, // 强制要求相等
      > {
      >     ptr as *const dyn Generic<'b, B::Output>
      > }
@@ -889,11 +889,11 @@ r[expr.as.pointer.unsized.compound]
   > let slice: &[u8] = &[1, 2, 3];
   > let ptr: *const [u8] = slice;
   >
-  > // 转换到结构体时保留元数据（长度 3）
-  > // 其中最后一个字段是未确定大小类型 `[u8]`。
+  > // 元数据（长度 3）在转换为 struct 时会被保留
+  > // 其中最后一个字段是未定长类型 `[u8]`。
   > let wrapper_ptr: *const Wrapper = ptr as *const Wrapper;
   >
-  > // 转换回来时也会保留。
+  > // 并且在转换回来时也会被保留。
   > let ptr_back: *const [u8] = wrapper_ptr as *const [u8];
   > assert_eq!(ptr_back.len(), 3);
   > ```
@@ -907,10 +907,10 @@ AssignmentExpression -> Expression `=` Expression
 ```
 
 r[expr.assign.intro]
-_赋值表达式_会将一个值移动到指定位置。
+*赋值表达式*会将一个值移动到指定位置。
 
 r[expr.assign.assignee]
-赋值表达式由[可变](../expressions.md#mutability) [赋值目标表达式](../expressions.md#place-expressions-and-value-expressions)（即_赋值目标操作数_）后接等号（`=`）和[值表达式](../expressions.md#place-expressions-and-value-expressions)（即_被赋的值操作数_）组成。
+赋值表达式由[可变](../expressions.md#mutability) [赋值目标表达式](../expressions.md#place-expressions-and-value-expressions)（即*赋值目标操作数*）后接等号（`=`）和[值表达式](../expressions.md#place-expressions-and-value-expressions)（即*被赋的值操作数*）组成。
 
 r[expr.assign.behavior-basic]
 在最基本的形式中，赋值目标表达式是[位置表达式](../expressions.md#place-expressions-and-value-expressions)，我们先讨论这种情况。
@@ -1008,15 +1008,15 @@ r[expr.assign.destructure.default-binding]
 
 r[expr.assign.destructure.tmp-scopes]
 > [!NOTE]
-> 脱糖会限制解构赋值的被赋的值操作数（RHS）的[临时作用域](../destructors.md#r-destructors.scope.temporary)。
+> 脱糖会限制解构赋值的被赋的值操作数（RHS）的[临时作用域](destructors.scope.temporary)。
 >
-> 在基本赋值中，[临时值](../expressions.md#r-expr.temporary)会在外围临时作用域的末尾被丢弃。在下面的例子中，也就是语句末尾。因此，赋值和使用是允许的。
+> 在基本赋值中，[临时值](expr.temporary)会在外围临时作用域的末尾被丢弃。在下面的例子中，也就是语句末尾。因此，赋值和使用是允许的。
 >
 > ```rust
 > # fn temp() {}
 > fn f<T>(x: T) -> T { x }
 > let x;
-> (x = f(&temp()), x); // OK
+> (x = f(&temp()), x); // 可以
 > ```
 >
 > 相反，在解构赋值中，临时值会在脱糖中 `let` 语句的末尾被丢弃。由于这发生在下面我们尝试赋值给 `x` 之前，因此会失败。
@@ -1025,7 +1025,7 @@ r[expr.assign.destructure.tmp-scopes]
 > # fn temp() {}
 > # fn f<T>(x: T) -> T { x }
 > # let x;
-> [x] = [f(&temp())]; // ERROR
+> [x] = [f(&temp())]; // 错误
 > ```
 >
 > 这会脱糖为：
@@ -1038,20 +1038,20 @@ r[expr.assign.destructure.tmp-scopes]
 >     let [_x] = [f(&temp())];
 >     //                     ^
 >     //      临时值在这里被丢弃。
->     x = _x; // ERROR
+>     x = _x; // 错误
 > }
 > ```
 
 r[expr.assign.destructure.tmp-ext]
 > [!NOTE]
-> 由于脱糖，解构赋值的被赋的值操作数（RHS）是在新引入块内的[延长表达式](../destructors.md#r-destructors.scope.lifetime-extension.exprs)。
+> 由于脱糖，解构赋值的被赋的值操作数（RHS）是在新引入块内的[延长表达式](destructors.scope.lifetime-extension.exprs)。
 >
-> 下面，因为[临时作用域](../destructors.md#r-destructors.scope.temporary)被延长到这个引入块的末尾，所以赋值是允许的。
+> 下面，因为[临时作用域](destructors.scope.temporary)被延长到这个引入块的末尾，所以赋值是允许的。
 >
 > ```rust
 > # fn temp() {}
 > # let x;
-> [x] = [&temp()]; // OK
+> [x] = [&temp()]; // 可以
 > ```
 >
 > 这会脱糖为：
@@ -1059,15 +1059,15 @@ r[expr.assign.destructure.tmp-ext]
 > ```rust
 > # fn temp() {}
 > # let x;
-> { let [_x] = [&temp()]; x = _x; } // OK
+> { let [_x] = [&temp()]; x = _x; } // 可以
 > ```
 >
-> 然而，如果我们尝试使用 `x`，即使是在同一条语句内，也会得到错误，因为[临时值](../expressions.md#r-expr.temporary)会在这个引入块的末尾被丢弃。
+> 然而，如果我们尝试使用 `x`，即使是在同一条语句内，也会得到错误，因为[临时值](expr.temporary)会在这个引入块的末尾被丢弃。
 >
 > ```rust,compile_fail,E0716
 > # fn temp() {}
 > # let x;
-> ([x] = [&temp()], x); // ERROR
+> ([x] = [&temp()], x); // 错误
 > ```
 >
 > 这会脱糖为：
@@ -1079,8 +1079,8 @@ r[expr.assign.destructure.tmp-ext]
 >     {
 >         let [_x] = [&temp()];
 >         x = _x;
->     }, // <-- The temporary is dropped here.
->     x, // ERROR
+>     }, // <-- 临时值在这里被丢弃。
+>     x, // 错误
 > );
 > ```
 
@@ -1103,7 +1103,7 @@ CompoundAssignmentExpression ->
 ```
 
 r[expr.compound-assign.intro]
-_复合赋值表达式_将算术和逻辑二元运算符与赋值表达式结合起来。
+*复合赋值表达式*将算术和逻辑二元运算符与赋值表达式结合起来。
 
 例如：
 
@@ -1113,7 +1113,7 @@ x += 1;
 assert!(x == 6);
 ```
 
-复合赋值的语法是一个[可变](../expressions.md#mutability) [位置表达式](../expressions.md#place-expressions-and-value-expressions)（即_被赋值操作数_），然后是某个运算符后接 `=` 作为单个 token（没有空白），再后接一个[值表达式](../expressions.md#place-expressions-and-value-expressions)（即_修改操作数_）。
+复合赋值的语法是一个[可变](../expressions.md#mutability) [位置表达式](../expressions.md#place-expressions-and-value-expressions)（即*被赋值操作数*），然后是某个运算符后接 `=` 作为单个 token（没有空白），再后接一个[值表达式](../expressions.md#place-expressions-and-value-expressions)（即*修改操作数*）。
 
 r[expr.compound-assign.place]
 与其他位置操作数不同，被赋值位置操作数必须是位置表达式。
@@ -1135,25 +1135,25 @@ impl<T> Equate for (T, T) {}
 
 fn f1(x: (u8,)) {
     let mut order = vec![];
-    // The RHS is evaluated first as both operands are of primitive
-    // type.
+    // RHS 会先求值，因为两个操作数都是基本
+    // 类型。
     { order.push(2); x }.0 += { order.push(1); x }.0;
     assert!(order.is_sorted());
 }
 
 fn f2(x: (Wrapping<u8>,)) {
     let mut order = vec![];
-    // The LHS is evaluated first as `Wrapping<_>` is not a primitive
-    // type.
+    // LHS 会先求值，因为 `Wrapping<_>` 不是基本
+    // 类型。
     { order.push(1); x }.0 += { order.push(2); (0u8,) }.0;
     assert!(order.is_sorted());
 }
 
 fn f3<T: AddAssign<u8> + Copy>(x: (T,)) where (T, u8): Equate {
     let mut order = vec![];
-    // The LHS is evaluated first as one of the operands is a generic
-    // parameter, even though that generic parameter can be unified
-    // with a primitive type due to the where clause bound.
+    // LHS 会先求值，因为其中一个操作数是泛型
+    // 参数，即使该泛型参数由于 where 子句约束
+    // 可以与基本类型合一。
     { order.push(1); x }.0 += { order.push(2); (0u8,) }.0;
     assert!(order.is_sorted());
 }
@@ -1161,9 +1161,9 @@ fn f3<T: AddAssign<u8> + Copy>(x: (T,)) where (T, u8): Equate {
 fn main() {
     f1((0u8,));
     f2((Wrapping(0u8),));
-    // We supply a primitive type as the generic argument, but this
-    // does not affect the evaluation order in `f3` when
-    // monomorphized.
+    // 我们提供一个基本类型作为泛型实参，但这
+    // 不会影响 `f3` 单态化时的求值
+    // 顺序。
     f3::<u8>((0u8,));
 }
 ```
@@ -1174,27 +1174,27 @@ fn main() {
 > 更多示例见 [eval order test](https://github.com/rust-lang/rust/blob/1.58.0/src/test/ui/expr/compound-assignment/eval-order.rs)。
 
 r[expr.compound-assign.trait]
-否则，此表达式是使用该运算符对应 trait（见 [expr.arith-logic.behavior](operator-expr.md#r-expr.arith-logic.behavior)）的语法糖，并以左侧作为[接收者](method-call-expr.md#r-expr.method.intro)、右侧作为下一个参数来调用其方法。
+否则，此表达式是使用该运算符对应 trait（见 [expr.arith-logic.behavior]）的语法糖，并以左侧作为[接收者](expr.method.intro)、右侧作为下一个参数来调用其方法。
 
 例如，下面两个语句是等价的：
 
 ```rust
 # use std::ops::AddAssign;
 fn f<T: AddAssign + Copy>(mut x: T, y: T) {
-    x += y; // Statement 1.
-    x.add_assign(y); // Statement 2.
+    x += y; // 语句 1。
+    x.add_assign(y); // 语句 2。
 }
 ```
 
 > [!NOTE]
-> 令人意外的是，进一步将其脱糖为完全限定的方法调用并不等价，因为当第一个操作数的可变引用通过 [autoref](method-call-expr.md#r-expr.method.candidate-receivers-refs) 获取时，借用检查器有特殊行为。
+> 令人意外的是，进一步将其脱糖为完全限定的方法调用并不等价，因为当第一个操作数的可变引用通过 [autoref](expr.method.candidate-receivers-refs) 获取时，借用检查器有特殊行为。
 >
 > ```rust
 > # use std::ops::AddAssign;
 > fn f<T: AddAssign + Copy>(mut x: T) {
->     // 这里我们同时将 `x` 用作 LHS 和 RHS。由于
->     // 调用 trait 方法所需的 LHS 可变借用
->     // 是通过 autoref 隐式获取的，所以这是可以的。
+>     // 这里我们将 `x` 同时用作 LHS 和 RHS。因为
+>     // 调用 trait 方法所需的 LHS 的可变借用
+>     // 是通过 autoref 隐式取得的，所以这是可以的。
 >     x += x; //~ OK
 >     x.add_assign(x); //~ OK
 > }
@@ -1203,9 +1203,9 @@ fn f<T: AddAssign + Copy>(mut x: T, y: T) {
 > ```rust,compile_fail,E0503
 > # use std::ops::AddAssign;
 > fn f<T: AddAssign + Copy>(mut x: T) {
->     // 不能将上面的代码脱糖为下面的代码，因为一旦我们获取
->     // `x` 的可变借用以传递第一个参数，就不能再
->     // 在第二个参数中按值传递 `x`，因为该可变
+>     // 我们不能将上面的代码脱糖成下面这样，因为一旦我们取得
+>     // `x` 的可变借用以传递第一个实参，就不能
+>     // 在第二个实参中按值传递 `x`，因为该可变
 >     // 引用仍然存活。
 >     <T as AddAssign>::add_assign(&mut x, x);
 >     //~^ ERROR cannot use `x` because it was mutably borrowed
@@ -1215,7 +1215,7 @@ fn f<T: AddAssign + Copy>(mut x: T, y: T) {
 > ```rust,compile_fail,E0503
 > # use std::ops::AddAssign;
 > fn f<T: AddAssign + Copy>(mut x: T) {
->     // As above.
+>     // 同上。
 >     (&mut x).add_assign(x);
 >     //~^ ERROR cannot use `x` because it was mutably borrowed
 > }

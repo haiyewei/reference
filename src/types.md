@@ -2,7 +2,7 @@ r[type]
 # 类型
 
 r[type.intro]
-Rust 程序中的每个变量、项和值都有类型。_值_ 的 _类型_ 定义了如何解释保存该值的内存，以及可以对该值执行哪些操作。
+Rust 程序中的每个变量、项和值都有类型。*值* 的 *类型* 定义了如何解释保存该值的内存，以及可以对该值执行哪些操作。
 
 r[type.builtin]
 内置类型以非平凡的方式紧密集成到语言中，这些方式无法用用户定义类型来模拟。
@@ -16,8 +16,8 @@ r[type.kinds]
 * 原始类型：
     * [布尔](types/boolean.md) --- `bool`
     * [数值](types/numeric.md) --- 整数和浮点数
-    * [`char`](types/char.md)
-    * [`str`](types/str.md)
+    * [`char`]
+    * [`str`]
     * [never](types/never.md) --- `!` --- 没有值的类型
 * 序列类型：
     * [元组](types/tuple.md)
@@ -36,7 +36,7 @@ r[type.kinds]
     * [函数指针](types/function-pointer.md)
 * trait 类型：
     * [Trait 对象](types/trait-object.md)
-    * [Impl trait](types/impl-trait.md)
+    * [Impl trait]
 
 r[type.name]
 ## 类型表达式
@@ -66,7 +66,7 @@ TypeNoBounds ->
 ```
 
 r[type.name.intro]
-上方 [Type](types.md#r-type) 语法规则所定义的 _类型表达式_ 是引用类型的语法。它可以指代：
+上方 [Type] 语法规则所定义的 *类型表达式* 是引用类型的语法。它可以指代：
 
 r[type.name.sequence]
 * 序列类型（[元组](types/tuple.md)、[数组](types/array.md)、[切片](types/slice.md)）。
@@ -105,7 +105,7 @@ ParenthesizedType -> `(` Type `)`
 ```
 
 r[type.name.parenthesized.intro]
-在某些情况下，类型的组合可能存在歧义。可以在类型周围使用圆括号来避免歧义。例如，在[引用类型](types/pointer.md#shared-references-)中，用于[类型边界](trait-bounds.md)的 `+` 运算符不清楚边界应用于何处，因此必须使用圆括号。需要这种消歧的语法规则会使用 [TypeNoBounds](types.md#grammar-TypeNoBounds) 规则，而不是 [Type](types.md#grammar-Type)。
+在某些情况下，类型的组合可能存在歧义。可以在类型周围使用圆括号来避免歧义。例如，在[引用类型](types/pointer.md#shared-references-)中，用于[类型边界](trait-bounds.md)的 `+` 运算符不清楚边界应用于何处，因此必须使用圆括号。需要这种消歧的语法规则会使用 [TypeNoBounds] 规则，而不是 [Type][grammar-Type]。
 
 ```rust
 # use std::any::Any;
@@ -116,7 +116,7 @@ r[type.recursive]
 ## 递归类型
 
 r[type.recursive.intro]
-Nominal types &mdash; [structs], [enumerations], and [unions] &mdash; may be recursive. That is, each `enum` variant or `struct` or `union` field may refer, directly or indirectly, to the enclosing `enum` or `struct` type itself.
+名义类型，即[结构体](types/struct.md)、[枚举](types/enum.md)和[联合体](types/union.md)，可以是递归的。也就是说，每个 `enum` 变体或 `struct` 或 `union` 字段都可以直接或间接地引用包围它的 `enum` 或 `struct` 类型本身。
 
 r[type.recursive.constraint]
 这种递归有以下限制：
@@ -124,7 +124,7 @@ r[type.recursive.constraint]
 * 递归类型必须在递归中包含名义类型（不能只是[类型别名](items/type-aliases.md)，也不能是其他结构类型，例如[数组](types/array.md)或[元组](types/tuple.md)）。因此不允许 `type Rec = &'static [Rec]`。
 * 递归类型的大小必须是有限的；换句话说，该类型中的递归字段必须是[指针类型](types/pointer.md)。
 
-_递归_ 类型及其用法的一个示例：
+*递归* 类型及其用法的一个示例：
 
 ```rust
 enum List<T> {

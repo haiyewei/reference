@@ -70,7 +70,7 @@ r[items.traits.dyn-compatible]
 ## dyn 兼容性
 
 r[items.traits.dyn-compatible.intro]
-dyn 兼容 trait 可以作为 [trait 对象](../types/trait-object.md)的基础 trait。如果 trait 具有以下性质，则它是 _dyn 兼容_ 的：
+dyn 兼容 trait 可以作为 [trait 对象](../types/trait-object.md)的基础 trait。如果 trait 具有以下性质，则它是 *dyn 兼容* 的：
 
 r[items.traits.dyn-compatible.supertraits]
 * 所有 [supertrait](#supertraits) 也必须是 dyn 兼容的。
@@ -92,9 +92,9 @@ r[items.traits.dyn-compatible.associated-functions]
         * 具有以下类型之一的接收者：
             * `&Self`（即 `&self`）
             * `&mut Self`（即 `&mut self`）
-            * [`Box<Self>`](../special-types-and-traits.md#boxt)
-            * [`Rc<Self>`](../special-types-and-traits.md#rct)
-            * [`Arc<Self>`](../special-types-and-traits.md#arct)
+            * [`Box<Self>`]
+            * [`Rc<Self>`]
+            * [`Arc<Self>`]
             * [`Pin<P>`](../special-types-and-traits.md#pinp)，其中 `P` 是上述类型之一
         * 没有不透明返回类型；也就是说，
             * 不是 `async fn`（它有隐藏的 `Future` 类型）。
@@ -104,7 +104,7 @@ r[items.traits.dyn-compatible.associated-functions]
         * 具有 `where Self: Sized` 约束（类型为 `Self` 的接收者（即 `self`）会隐含此约束）。
 
 r[items.traits.dyn-compatible.async-traits]
-* [`AsyncFn`](../../core/ops/async_function/trait.AsyncFn.html)、[`AsyncFnMut`](../../core/ops/async_function/trait.AsyncFnMut.html) 和 [`AsyncFnOnce`](../../core/ops/async_function/trait.AsyncFnOnce.html) trait 不是 dyn 兼容的。
+* [`AsyncFn`]、[`AsyncFnMut`] 和 [`AsyncFnOnce`] trait 不是 dyn 兼容的。
 
 > [!NOTE]
 > 此概念以前称为 _object safety_。
@@ -147,28 +147,28 @@ impl NonDispatchable for S {
     fn returns(&self) -> Self where Self: Sized { S }
 }
 let obj: Box<dyn NonDispatchable> = Box::new(S);
-obj.returns(); // ERROR: cannot call with Self return
-obj.param(S);  // ERROR: cannot call with Self parameter
-obj.typed(1);  // ERROR: cannot call with generic type
+obj.returns(); // 错误：不能以 Self 作为返回类型调用
+obj.param(S);  // 错误：不能以 Self 作为参数调用
+obj.typed(1);  // 错误：不能以泛型类型调用
 ```
 
 ```rust,compile_fail
 # use std::rc::Rc;
 // dyn 不兼容 trait 示例。
 trait DynIncompatible {
-    const CONST: i32 = 1;  // ERROR: cannot have associated const
+    const CONST: i32 = 1;  // 错误：不能有关联 const
 
-    fn foo() {}  // ERROR: associated function without Sized
-    fn returns(&self) -> Self; // ERROR: Self in return type
-    fn typed<T>(&self, x: T) {} // ERROR: has generic type parameters
-    fn nested(self: Rc<Box<Self>>) {} // ERROR: nested receiver cannot be dispatched on
+    fn foo() {}  // 错误：没有 Sized 的关联函数
+    fn returns(&self) -> Self; // 错误：返回类型中有 Self
+    fn typed<T>(&self, x: T) {} // 错误：具有泛型类型参数
+    fn nested(self: Rc<Box<Self>>) {} // 错误：不能在嵌套接收者上分派
 }
 
 struct S;
 impl DynIncompatible for S {
     fn returns(&self) -> Self { S }
 }
-let obj: Box<dyn DynIncompatible> = Box::new(S); // ERROR
+let obj: Box<dyn DynIncompatible> = Box::new(S); // 错误
 ```
 
 ```rust,compile_fail
@@ -177,7 +177,7 @@ trait TraitWithSize where Self: Sized {}
 
 struct S;
 impl TraitWithSize for S {}
-let obj: Box<dyn TraitWithSize> = Box::new(S); // ERROR
+let obj: Box<dyn TraitWithSize> = Box::new(S); // 错误
 ```
 
 ```rust,compile_fail
@@ -188,14 +188,14 @@ trait WithSelf: Super<Self> where Self: Sized {}
 struct S;
 impl<A> Super<A> for S {}
 impl WithSelf for S {}
-let obj: Box<dyn WithSelf> = Box::new(S); // ERROR: cannot use `Self` type parameter
+let obj: Box<dyn WithSelf> = Box::new(S); // 错误：不能使用 `Self` 类型参数
 ```
 
 r[items.traits.supertraits]
 ## Supertrait
 
 r[items.traits.supertraits.intro]
-**Supertrait** 是为使某个类型实现特定 trait 而要求该类型必须实现的 trait。此外，在任何由某个 trait 约束的[泛型](generics.md)或 [trait 对象](../types/trait-object.md)处，都可以访问该 trait 的 supertrait 的关联项。
+**Supertrait** 是某个类型若要实现特定 trait 就必须实现的 trait。此外，任何受某个 trait 约束的[泛型](generics.md)或 [trait 对象](../types/trait-object.md)，都可以访问该 trait 的 supertrait 的关联项。
 
 r[items.traits.supertraits.decl]
 Supertrait 通过 trait 的 `Self` 类型上的 trait 约束声明，并且还传递地包括这些 trait 约束中所声明 trait 的 supertrait。trait 不能成为它自己的 supertrait，否则是错误。
@@ -224,7 +224,7 @@ trait Circle where Self: Shape { fn radius(&self) -> f64; }
 trait Circle where Self: Shape {
     fn radius(&self) -> f64 {
         // A = pi * r^2
-        // so algebraically,
+        // 因此按代数变换，
         // r = sqrt(A / pi)
         (self.area() / std::f64::consts::PI).sqrt()
     }
@@ -260,7 +260,7 @@ r[items.traits.safety]
 ## Unsafe trait
 
 r[items.traits.safety.intro]
-以 `unsafe` 关键字开头的 trait 项表示_实现_该 trait 可能是[不安全](../unsafety.md)的。使用正确实现的 unsafe trait 是安全的。[trait 实现](implementations.md#trait-implementations)也必须以 `unsafe` 关键字开头。
+以 `unsafe` 关键字开头的 trait 项表示*实现*该 trait 可能是[不安全](../unsafety.md)的。使用正确实现的 unsafe trait 是安全的。[trait 实现](implementations.md#trait-implementations)也必须以 `unsafe` 关键字开头。
 
 [`Sync`](../special-types-and-traits.md#sync) 和 [`Send`](../special-types-and-traits.md#send) 是 unsafe trait 的示例。
 
@@ -268,7 +268,7 @@ r[items.traits.params]
 ## 参数模式
 
 r[items.traits.params.patterns-no-body]
-没有函数体的关联函数中的参数只允许 [IDENTIFIER] 或 `_` [通配符][WildcardPattern]模式，以及 [SelfParam] 允许的形式。当前允许 `mut` [IDENTIFIER]，但这已被弃用，并将在未来成为硬错误。
+没有函数体的关联函数中的参数只允许 [IDENTIFIER] 或 `_` [通配符](../patterns.md#wildcard-pattern)模式，以及 [SelfParam] 所允许的形式。当前允许 `mut` [IDENTIFIER]，但它已弃用，并将在未来成为硬错误。
 <!-- https://github.com/rust-lang/rust/issues/35203 -->
 
 ```rust
@@ -280,7 +280,7 @@ trait T {
 
 ```rust,compile_fail,E0642
 trait T {
-    fn f2(&x: &i32); // ERROR: patterns aren't allowed in functions without bodies
+    fn f2(&x: &i32); // 错误：无函数体的函数中不允许使用模式
 }
 ```
 
@@ -289,14 +289,14 @@ r[items.traits.params.patterns-with-body]
 
 ```rust
 trait T {
-    fn f1((a, b): (i32, i32)) {} // OK: is irrefutable
+    fn f1((a, b): (i32, i32)) {} // OK：不可反驳
 }
 ```
 
 ```rust,compile_fail,E0005
 trait T {
-    fn f1(123: i32) {} // ERROR: pattern is refutable
-    fn f2(Some(x): Option<i32>) {} // ERROR: pattern is refutable
+    fn f1(123: i32) {} // 错误：模式可反驳
+    fn f2(Some(x): Option<i32>) {} // 错误：模式可反驳
 }
 ```
 
@@ -305,9 +305,9 @@ r[items.traits.params.pattern-required.edition2018]
 > 在 2018 edition 之前，关联函数参数的模式是可选的：
 >
 > ```rust,edition2015
-> // 2015 Edition
+> // 2015 版
 > trait T {
->     fn f(i32); // OK: parameter identifiers are not required
+>     fn f(i32); // OK：不要求参数标识符
 > }
 > ```
 >
@@ -324,19 +324,19 @@ r[items.traits.params.restriction-patterns.edition2018]
 > * `&&` [IDENTIFIER]
 >
 > ```rust,edition2015,compile_fail,E0642
-> // 2015 Edition
+> // 2015 版
 > trait T {
->     fn f1((a, b): (i32, i32)) {} // ERROR: pattern not allowed
+>     fn f1((a, b): (i32, i32)) {} // 错误：不允许使用模式
 > }
 > ```
 >
-> 从 2018 开始，允许 [items.traits.params.patterns-with-body](traits.md#r-items.traits.params.patterns-with-body) 中所述的所有不可反驳模式。
+> 从 2018 开始，允许 [items.traits.params.patterns-with-body] 中所述的所有不可反驳模式。
 
 r[items.traits.associated-visibility]
 ## 项可见性
 
 r[items.traits.associated-visibility.intro]
-trait 项在语法上允许使用 [Visibility](../visibility-and-privacy.md#grammar-Visibility) 注解，但在验证 trait 时会拒绝这种注解。这允许在不同使用上下文中用统一语法解析项。例如，可以对 trait 项使用空的 `vis` 宏片段说明符，而该宏规则还可以用于其他允许可见性的场景。
+trait 项在语法上允许使用 [Visibility] 注解，但在验证 trait 时会拒绝这种注解。这允许在不同使用上下文中用统一语法解析项。例如，可以对 trait 项使用空的 `vis` 宏片段说明符，而该宏规则还可以用于其他允许可见性的场景。
 
 ```rust
 macro_rules! create_method {
@@ -346,7 +346,7 @@ macro_rules! create_method {
 }
 
 trait T1 {
-    // Empty `vis` is allowed.
+    // 允许空的 `vis`。
     create_method! { method_of_t1 }
 }
 

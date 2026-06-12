@@ -52,23 +52,23 @@ trait Shape {
 }
 
 fn draw_twice<T: Shape>(surface: Surface, sh: T) {
-    sh.draw(surface);           // Can call method because T: Shape
+    sh.draw(surface);           // 可以调用方法，因为 T: Shape
     sh.draw(surface);
 }
 
 fn copy_and_draw_twice<T: Copy>(surface: Surface, sh: T) where T: Shape {
-    let shape_copy = sh;        // doesn't move sh because T: Copy
-    draw_twice(surface, sh);    // Can use generic function because T: Shape
+    let shape_copy = sh;        // 不会移动 sh，因为 T: Copy
+    draw_twice(surface, sh);    // 可以使用泛型函数，因为 T: Shape
 }
 
 struct Figure<S: Shape>(S, S);
 
 fn name_figure<U: Shape>(
-    figure: Figure<U>,          // Type Figure<U> is well-formed because U: Shape
+    figure: Figure<U>,          // 类型 Figure<U> 是良构的，因为 U: Shape
 ) {
     println!(
         "Figure of two {}",
-        U::name(),              // Can use associated function
+        U::name(),              // 可以使用关联函数
     );
 }
 ```
@@ -77,15 +77,15 @@ r[bound.trivial]
 不使用该项的参数或[高阶生命周期](#higher-ranked-trait-bounds)的约束，会在定义该项时被检查。这样的约束若为假，则是错误。
 
 r[bound.special]
-对于某些泛型类型，在使用该项时也会检查 [`Copy`](../core/marker/trait.Copy.html)、[`Clone`](../core/clone/trait.Clone.html) 和 [`Sized`](../core/marker/trait.Sized.html) 约束，即使该使用没有提供具体类型。在可变引用、[trait 对象](types/trait-object.md)或[切片](types/slice.md)上以 `Copy` 或 `Clone` 作为约束是错误。在 trait 对象或切片上以 `Sized` 作为约束也是错误。
+使用该项时，对于某些泛型类型也会检查 [`Copy`]、[`Clone`] 和 [`Sized`] 约束，即使该使用没有提供具体类型。在可变引用、[trait 对象](types/trait-object.md)或[切片](types/slice.md)上以 `Copy` 或 `Clone` 作为约束是错误的。在 trait 对象或切片上以 `Sized` 作为约束也是错误的。
 
 ```rust,compile_fail
 struct A<'a, T>
 where
-    i32: Default,           // Allowed, but not useful
-    i32: Iterator,          // Error: `i32` is not an iterator
-    &'a mut T: Copy,        // (at use) Error: the trait bound is not satisfied
-    [T]: Sized,             // (at use) Error: size cannot be known at compilation
+    i32: Default,           // 允许，但没有用处
+    i32: Iterator,          // 错误：`i32` 不是迭代器
+    &'a mut T: Copy,        // （使用时）错误：未满足 trait 约束
+    [T]: Sized,             // （使用时）错误：无法在编译时知道大小
 {
     f: &'a T,
 }
@@ -98,7 +98,7 @@ Trait 约束和生命周期约束也用于命名 [trait 对象](types/trait-obje
 r[bound.sized]
 ## `?Sized`
 
-`?` 只用于放宽[类型形参](types/parameters.md)或[关联类型](items/associated-items.md#associated-types)的隐式 [`Sized`](../core/marker/trait.Sized.html) trait 约束。`?Sized` 不得用作其他类型的约束。
+`?` 只用于放宽[类型形参](types/parameters.md)或[关联类型](items/associated-items.md#associated-types)的隐式 [`Sized`] trait 约束。`?Sized` 不得用作其他类型的约束。
 
 r[bound.lifetime]
 ## 生命周期约束
@@ -111,13 +111,13 @@ r[bound.lifetime.outlive-lifetime]
 
 ```rust
 fn f<'a, 'b>(x: &'a i32, mut y: &'b i32) where 'a: 'b {
-    y = x;                      // &'a i32 is a subtype of &'b i32 because 'a: 'b
-    let r: &'b &'a i32 = &&0;   // &'b &'a i32 is well formed because 'a: 'b
+    y = x;                      // &'a i32 是 &'b i32 的子类型，因为 'a: 'b
+    let r: &'b &'a i32 = &&0;   // &'b &'a i32 是良构的，因为 'a: 'b
 }
 ```
 
 r[bound.lifetime.outlive-type]
-`T: 'a` 表示 `T` 的所有生命周期参数都比 `'a` 活得更久。例如，如果 `'a` 是一个未受约束的生命周期参数，那么 `i32: 'static` 和 `&'static str: 'a` 得到满足，但 `Vec<&'a ()>: 'static` 不满足。
+`T: 'a` 表示 `T` 的所有生命周期参数都至少与 `'a` 一样长。例如，如果 `'a` 是一个未受约束的生命周期参数，那么 `i32: 'static` 和 `&'static str: 'a` 得到满足，但 `Vec<&'a ()>: 'static` 不满足。
 
 r[bound.higher-ranked]
 ## 高阶 trait 约束
@@ -128,7 +128,7 @@ ForLifetimes -> `for` GenericParams
 ```
 
 r[bound.higher-ranked.intro]
-Trait 约束可以在生命周期上是_高阶_的。这些约束指定了对_所有_生命周期都为真的约束。例如，像 `for<'a> &'a T: PartialEq<i32>` 这样的约束会要求有如下实现
+Trait 约束可以在生命周期上是*高阶*的。这些约束指定了对*所有*生命周期都为真的约束。例如，像 `for<'a> &'a T: PartialEq<i32>` 这样的约束会要求有如下实现
 
 ```rust
 # struct T;
@@ -169,7 +169,7 @@ r[bound.implied.intro]
 fn requires_t_outlives_a<'a, T>(x: &'a T) {}
 ```
 
-为了使类型 `&'a T` 成为良构类型，类型参数 `T` 必须比 `'a` 活得更久。这会被推断出来，因为函数签名包含类型 `&'a T`，而该类型只有在 `T: 'a` 成立时才有效。
+为了使类型 `&'a T` 成为良构类型，类型参数 `T` 必须至少与 `'a` 一样长。这会被推断出来，因为函数签名包含类型 `&'a T`，而该类型只有在 `T: 'a` 成立时才有效。
 
 r[bound.implied.context]
 隐含约束会为函数的所有参数和输出添加。在 `requires_t_outlives_a` 内部，即使没有显式指定这一点，也可以假定 `T: 'a` 成立：
@@ -178,8 +178,8 @@ r[bound.implied.context]
 fn requires_t_outlives_a_not_implied<'a, T: 'a>() {}
 
 fn requires_t_outlives_a<'a, T>(x: &'a T) {
-    // This compiles, because `T: 'a` is implied by
-    // the reference type `&'a T`.
+    // 这可以编译，因为 `T: 'a` 由
+    // 引用类型 `&'a T` 隐含。
     requires_t_outlives_a_not_implied::<'a, T>();
 }
 ```
@@ -187,8 +187,8 @@ fn requires_t_outlives_a<'a, T>(x: &'a T) {
 ```rust,compile_fail,E0309
 # fn requires_t_outlives_a_not_implied<'a, T: 'a>() {}
 fn not_implied<'a, T>() {
-    // This errors, because `T: 'a` is not implied by
-    // the function signature.
+    // 这会出错，因为 `T: 'a` 并不由
+    // 函数签名隐含。
     requires_t_outlives_a_not_implied::<'a, T>();
 }
 ```
@@ -208,25 +208,25 @@ r[bound.implied.def]
 
 ```rust
 struct Struct<'a, T> {
-    // This requires `T: 'a` to be well-formed
-    // which is inferred by the compiler.
+    // 这要求满足 `T: 'a`，该类型才是良构的，
+    // 这一点由编译器推断。
     field: &'a T,
 }
 
 enum Enum<'a, T> {
-    // This requires `T: 'a` to be well-formed,
-    // which is inferred by the compiler.
+    // 这要求满足 `T: 'a`，该类型才是良构的，
+    // 这一点由编译器推断。
     //
-    // Note that `T: 'a` is required even when only
-    // using `Enum::OtherVariant`.
+    // 注意，即使只使用 `Enum::OtherVariant`，
+    // 也要求 `T: 'a`。
     SomeVariant(&'a T),
     OtherVariant,
 }
 
 trait Trait<'a, T: 'a> {}
 
-// This would error because `T: 'a` is not implied by any type
-// in the impl header.
+// 这会出错，因为 `T: 'a` 不由 impl 头部中的
+// 任何类型隐含。
 //     impl<'a, T> Trait<'a, T> for () {}
 
 // 这可以编译，因为 `T: 'a` 由 self 类型 `&'a T` 隐含。

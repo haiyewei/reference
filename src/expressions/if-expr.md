@@ -26,13 +26,15 @@ LetChainCondition ->
     | AssignmentExpression
     | CompoundAssignmentExpression
 ```
-<!-- TODO: The struct exception above needs clarification, see https://github.com/rust-lang/reference/issues/1808 The chain grammar could use some work, see https://github.com/rust-lang/reference/issues/1811 -->
+<!-- TODO: The struct exception above needs clarification, see https://github.com/rust-lang/reference/issues/1808
+     The chain grammar could use some work, see https://github.com/rust-lang/reference/issues/1811
+-->
 
 r[expr.if.intro]
 `if` 表达式的语法是一个或多个以 `&&` 分隔的条件操作数序列，后跟一个结果块、任意数量的 `else if` 条件和块，以及一个可选的尾随 `else` 块。
 
 r[expr.if.condition]
-条件操作数必须是具有[布尔类型](../types/boolean.md)的 [Expression](../expressions.md#grammar-Expression)，或者是条件式 `let` 匹配。
+条件操作数必须是具有[布尔类型](../types/boolean.md)的 [Expression]，或者是条件式 `let` 匹配。
 
 r[expr.if.condition-true]
 如果所有条件操作数都求值为 `true`，并且所有 `let` 模式都成功匹配其[被匹配值](../glossary.md#scrutinee)，则执行结果块，并跳过任何后续的 `else if` 或 `else` 块。
@@ -44,7 +46,7 @@ r[expr.if.else]
 如果所有 `if` 和 `else if` 条件都求值为 `false`，则执行存在的 `else` 块。
 
 r[expr.if.result]
-`if` 表达式求值为被执行块的同一值；如果没有块被求值，则求值为 `()`。
+`if` 表达式的求值结果与被执行块相同；如果没有块被求值，则求值为 `()`。
 
 r[expr.if.type]
 `if` 表达式在所有情况下必须具有相同的类型。
@@ -59,7 +61,7 @@ if x == 4 {
     println!("x is something else");
 }
 
-// `if` can be used as an expression.
+// `if` 可用作表达式。
 let y = if 12 * 15 > 150 {
     "Bigger"
 } else {
@@ -69,25 +71,25 @@ assert_eq!(y, "Bigger");
 ```
 
 r[expr.if.diverging]
-如果条件表达式发散，或者所有分支都发散，则 `if` 表达式[发散](../divergence.md#r-divergence)。
+如果条件表达式发散，或者所有分支都发散，则 `if` 表达式[发散](divergence)。
 
 ```rust,no_run
 fn diverging_condition() -> ! {
-    // Diverges because the condition expression diverges
+    // 发散，因为条件表达式发散
     if loop {} {
         ()
     } else {
         ()
     };
-    // The semicolon above is important: The type of the `if` expression is
-    // `()`, despite being diverging. When the final body expression is
-    // elided, the type of the body is inferred to ! because the function body
-    // diverges. Without the semicolon, the `if` would be the tail expression
-    // with type `()`, which would fail to match the return type `!`.
+    // 上面的分号很重要：`if` 表达式的类型是
+    // `()`，尽管它会发散。当最终的函数体表达式
+    // 被省略时，函数体的类型会被推断为 !，因为函数体
+    // 发散。没有分号时，`if` 将成为尾表达式，
+    // 其类型为 `()`，这将无法匹配返回类型 `!`。
 }
 
 fn diverging_arms() -> ! {
-    // Diverges because all arms diverge
+    // 发散，因为所有分支都发散
     if true {
         loop {}
     } else {
@@ -107,15 +109,15 @@ r[expr.if.let.intro]
 ```rust
 let dish = ("Ham", "Eggs");
 
-// This body will be skipped because the pattern is refuted.
+// 此函数体会被跳过，因为该模式被驳回。
 if let ("Bacon", b) = dish {
     println!("Bacon is served with {}", b);
 } else {
-    // This block is evaluated instead.
+    // 改为对这个块求值。
     println!("No bacon will be served");
 }
 
-// This body will execute.
+// 此函数体将会执行。
 if let ("Ham", b) = dish {
     println!("Ham is served with {}", b);
 }
@@ -147,7 +149,7 @@ r[expr.if.chains.intro]
 多个条件操作数可以用 `&&` 分隔。
 
 r[expr.if.chains.order]
-类似于 `&&` [LazyBooleanExpression](operator-expr.md#grammar-LazyBooleanExpression)，每个操作数会从左到右求值，直到某个操作数求值为 `false` 或某个 `let` 匹配失败；在这种情况下，后续操作数不会被求值。
+类似于 `&&` [LazyBooleanExpression]，每个操作数会从左到右求值，直到某个操作数求值为 `false` 或某个 `let` 匹配失败；在这种情况下，后续操作数不会被求值。
 
 r[expr.if.chains.bindings]
 每个模式的绑定都会被放入作用域，以供下一个条件操作数和结果块使用。
@@ -184,7 +186,7 @@ fn nested() {
 ```
 
 r[expr.if.chains.or]
-如果任何条件操作数是 `let` 模式，则由于与 `let` 被匹配值之间存在歧义和优先级问题，所有条件操作数都不能是 `||` [惰性布尔运算符表达式](operator-expr.md#r-expr.bool-logic)。
+如果任何条件操作数是 `let` 模式，则由于与 `let` 被匹配值之间存在歧义和优先级问题，所有条件操作数都不能是 `||` [惰性布尔运算符表达式][expr.bool-logic]。
 
 > [!EXAMPLE]
 > 如果需要 `||` 表达式，则可以使用括号。例如：
@@ -194,14 +196,14 @@ r[expr.if.chains.or]
 > # let condition1 = true;
 > # let condition2 = false;
 > if let Some(x) = foo
->     // Parentheses are required here.
+>     // 这里需要括号。
 >     && (condition1 || condition2)
 > {}
 > ```
 
 r[expr.if.edition2024]
 > [!EDITION-2024]
-> 在 2024 edition 之前，不支持 let chains。也就是说，`if` 表达式中不允许使用 [LetChain](if-expr.md#grammar-LetChain) 语法。
+> 在 2024 edition 之前，不支持 let chains。也就是说，`if` 表达式中不允许使用 [LetChain] 语法。
 
 [`match` expressions]: match-expr.md
 [boolean type]: ../types/boolean.md

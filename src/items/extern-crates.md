@@ -11,7 +11,7 @@ AsClause -> `as` ( IDENTIFIER | `_` )
 ```
 
 r[items.extern-crate.intro]
-_`extern crate` 声明_ 指定对外部 crate 的依赖。
+*`extern crate` 声明* 指定对外部 crate 的依赖。
 
 r[items.extern-crate.namespace]
 随后，该外部 crate 会在声明所在作用域中，作为给定的[标识符](../identifiers.md)绑定到[类型命名空间](../names/namespaces.md)。
@@ -34,9 +34,9 @@ r[items.extern-crate.self]
 ```rust,ignore
 extern crate pcre;
 
-extern crate std; // equivalent to: extern crate std as std;
+extern crate std; // 等价于：extern crate std as std;
 
-extern crate std as ruststd; // linking to 'std' under another name
+extern crate std as ruststd; // 以另一个名称链接到 'std'
 ```
 
 r[items.extern-crate.name-restrictions]
@@ -46,8 +46,8 @@ r[items.extern-crate.name-restrictions]
 
 <!-- ignore: requires external crates -->
 ```rust,ignore
-// Importing the Cargo package hello-world
-extern crate hello_world; // hyphen replaced with an underscore
+// 导入 Cargo 包 hello-world
+extern crate hello_world; // 连字符替换为下划线
 ```
 
 r[items.extern-crate.underscore]
@@ -64,7 +64,7 @@ r[items.extern-crate.no_link]
 ## `no_link` 属性
 
 r[items.extern-crate.no_link.intro]
-_`no_link` [属性](../attributes.md#r-attributes)_ 可以应用于 `extern crate` 项，以阻止链接该 crate。
+*`no_link` [属性][attributes]* 可以应用于 `extern crate` 项，以阻止链接该 crate。
 
 > [!NOTE]
 > 例如，当只需要某个 crate 的宏时，这会很有用。
@@ -79,7 +79,7 @@ _`no_link` [属性](../attributes.md#r-attributes)_ 可以应用于 `extern crat
 > ```
 
 r[items.extern-crate.no_link.syntax]
-`no_link` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法。
+`no_link` 属性使用 [MetaWord] 语法。
 
 r[items.extern-crate.no_link.allowed-positions]
 `no_link` 属性只能应用于 `extern crate` 声明。

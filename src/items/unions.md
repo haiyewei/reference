@@ -80,7 +80,7 @@ r[items.union.fields.offset]
 字段可能具有非零偏移量（使用 [C 表示](../type-layout.md#reprc-unions)时除外）；在这种情况下，会读取从这些字段偏移量开始的位。
 
 r[items.union.fields.validity]
-程序员有责任确保数据对于该字段的类型是有效的。未能做到这一点会导致[未定义行为](../behavior-considered-undefined.md)。例如，从[布尔类型](../types/boolean.md)的字段读取值 `3` 是未定义行为。实际上，对于具有 [C 表示](../type-layout.md#reprc-unions)的联合体，先写入再读取类似于从写入所用类型到读取所用类型的 [`transmute`](../../core/intrinsics/fn.transmute.html)。
+程序员有责任确保数据对于该字段的类型是有效的。未能做到这一点会导致[未定义行为](../behavior-considered-undefined.md)。例如，从[布尔类型](../types/boolean.md)的字段读取值 `3` 是未定义行为。实际上，对于具有 [C 表示](../type-layout.md#reprc-unions)的联合体，先写入再读取类似于从写入所用类型到读取所用类型的 [`transmute`](std::mem::transmute)。
 
 r[items.union.fields.read-safety]
 因此，所有对联合体字段的读取都必须放在 `unsafe` 块中：
@@ -165,23 +165,23 @@ r[items.union.ref.borrow]
 
 ```rust,compile_fail
 # union MyUnion { f1: u32, f2: f32 }
-// ERROR: cannot borrow `u` (via `u.f2`) as mutable more than once at a time
+// ERROR: 不能同时多次将 `u`（通过 `u.f2`）可变借用
 fn test() {
     let mut u = MyUnion { f1: 1 };
     unsafe {
         let b1 = &mut u.f1;
-//                    ---- first mutable borrow occurs here (via `u.f1`)
+//                    ---- 第一次可变借用在此处发生（通过 `u.f1`）
         let b2 = &mut u.f2;
-//                    ^^^^ second mutable borrow occurs here (via `u.f2`)
+//                    ^^^^ 第二次可变借用在此处发生（通过 `u.f2`）
         *b1 = 5;
     }
-//  - first borrow ends here
+//  - 第一次借用在此处结束
     assert_eq!(unsafe { u.f1 }, 5);
 }
 ```
 
 r[items.union.ref.use]
-可以看到，在许多方面（除布局、安全性和所有权之外），联合体的行为与结构体完全相同，这很大程度上是因为它们继承了结构体的语法形态。对于 Rust 语言中许多未提及的方面（如隐私性、名称解析、类型推断、泛型、trait 实现、固有实现、一致性、模式检查等等）也是如此。
+可以看到，在许多方面（除布局、安全性和所有权之外），联合体的行为与结构体完全相同，这很大程度上是因为它们继承了结构体的语法形态。对于 Rust 语言中许多未提及的方面（如私有性、名称解析、类型推断、泛型、trait 实现、固有实现、一致性、模式检查等等）也是如此。
 
 [`transmute`]: std::mem::transmute
 [boolean type]: ../types/boolean.md

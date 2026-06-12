@@ -8,7 +8,7 @@ r[attributes.codegen.inline]
 ### `inline` 属性
 
 r[attributes.codegen.inline.intro]
-_`inline` [属性](../attributes.md)_ 建议是否应将带属性函数的代码副本放置到调用者中，而不是生成对该函数的调用。
+*`inline` [属性](../attributes.md)* 建议是否应将带属性函数的代码副本放置到调用者中，而不是生成对该函数的调用。
 
 > [!EXAMPLE]
 > ```rust
@@ -36,23 +36,23 @@ r[attributes.codegen.inline.syntax]
 ```
 
 r[attributes.codegen.inline.allowed-positions]
-`inline` 属性只能应用于具有[函数体](../items/functions.md#r-items.fn.body)的函数 --- [闭包](../expressions/closure-expr.md#r-expr.closure)、[async 块](../expressions/block-expr.md#r-expr.block.async)、[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent)或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及 [trait 定义](../items/traits.md#r-items.traits)中那些具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的关联函数。
+`inline` 属性只能应用于具有[函数体](items.fn.body)的函数 --- [闭包](expr.closure)、[async 块](expr.block.async)、[自由函数](items.fn)、[固有 impl](items.impl.inherent) 或 [trait impl](items.impl.trait) 中的[关联函数](items.associated.fn)，以及 [trait 定义](items.traits)中那些具有[默认定义](items.traits.associated-item-decls)的关联函数。
 
 > [!NOTE]
 > `rustc` 会忽略在其他位置的使用，但会对此发出 lint。将来这可能会变成错误。
 
 > [!NOTE]
-> 尽管该属性可以应用于[闭包](../expressions/closure-expr.md#r-expr.closure)和[async 块](../expressions/block-expr.md#r-expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
+> 尽管该属性可以应用于[闭包](expr.closure)和[async 块](expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
 >
 > ```rust
 > // 我们允许语句上有属性。
-> #[inline] || (); // OK
-> #[inline] async {}; // OK
+> #[inline] || (); // 可以
+> #[inline] async {}; // 可以
 > ```
 >
 > ```rust,compile_fail,E0658
 > // 我们尚不允许表达式上有属性。
-> let f = #[inline] || (); // ERROR
+> let f = #[inline] || (); // 错误
 > ```
 
 r[attributes.codegen.inline.duplicates]
@@ -64,31 +64,31 @@ r[attributes.codegen.inline.duplicates]
 r[attributes.codegen.inline.modes]
 `inline` 属性支持以下模式：
 
-- `#[inline]` _建议_执行内联展开。
-- `#[inline(always)]` _建议_始终执行内联展开。
-- `#[inline(never)]` _建议_永不执行内联展开。
+- `#[inline]` *建议*执行内联展开。
+- `#[inline(always)]` *建议*始终执行内联展开。
+- `#[inline(never)]` *建议*永不执行内联展开。
 
 > [!NOTE]
 > 无论是哪种形式，该属性都是一种提示。编译器可以忽略它。
 
 r[attributes.codegen.inline.trait]
-当 `inline` 应用于 [trait](../items/traits.md#r-items.traits) 中的函数时，它只应用于[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的代码。
+当 `inline` 应用于 [trait](items.traits) 中的函数时，它只应用于[默认定义](items.traits.associated-item-decls)的代码。
 
 r[attributes.codegen.inline.async]
-当 `inline` 应用于 [async 函数](../items/functions.md#r-items.fn.async)或 [async 闭包](../expressions/closure-expr.md#r-expr.closure.async)时，它只应用于生成的 `poll` 函数的代码。
+当 `inline` 应用于 [async 函数](items.fn.async)或 [async 闭包](expr.closure.async)时，它只应用于生成的 `poll` 函数的代码。
 
 > [!NOTE]
 > 更多细节见 [Rust issue #129347](https://github.com/rust-lang/rust/issues/129347)。
 
 r[attributes.codegen.inline.externally-exported]
-如果函数通过 [`no_mangle`](../abi.md#r-abi.no_mangle) 或 [`export_name`](../abi.md#r-abi.export_name) 对外导出，则 `inline` 属性会被忽略。
+如果函数通过 [`no_mangle`](abi.no_mangle) 或 [`export_name`](abi.export_name) 对外导出，则 `inline` 属性会被忽略。
 
 <!-- template:attributes -->
 r[attributes.codegen.cold]
 ### `cold` 属性
 
 r[attributes.codegen.cold.intro]
-_`cold` [属性](../attributes.md)_ 建议带属性函数不太可能被调用，这可以帮助编译器生成更好的代码。
+*`cold` [属性](../attributes.md)* 建议带属性函数不太可能被调用，这可以帮助编译器生成更好的代码。
 
 > [!EXAMPLE]
 > ```rust
@@ -97,16 +97,16 @@ _`cold` [属性](../attributes.md)_ 建议带属性函数不太可能被调用�
 > ```
 
 r[attributes.codegen.cold.syntax]
-`cold` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法。
+`cold` 属性使用 [MetaWord] 语法。
 
 r[attributes.codegen.cold.allowed-positions]
-`cold` 属性只能应用于具有[函数体](../items/functions.md#r-items.fn.body)的函数 --- [闭包](../expressions/closure-expr.md#r-expr.closure)、[async 块](../expressions/block-expr.md#r-expr.block.async)、[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent)或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及 [trait 定义](../items/traits.md#r-items.traits)中那些具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的关联函数。
+`cold` 属性只能应用于具有[函数体](items.fn.body)的函数 --- [闭包](expr.closure)、[async 块](expr.block.async)、[自由函数](items.fn)、[固有 impl](items.impl.inherent) 或 [trait impl](items.impl.trait) 中的[关联函数](items.associated.fn)，以及 [trait 定义](items.traits)中那些具有[默认定义](items.traits.associated-item-decls)的关联函数。
 
 > [!NOTE]
 > `rustc` 会忽略在其他位置的使用，但会对此发出 lint。将来这可能会变成错误。
 
 > [!NOTE]
-> 尽管该属性可以应用于[闭包](../expressions/closure-expr.md#r-expr.closure)和[async 块](../expressions/block-expr.md#r-expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
+> 尽管该属性可以应用于[闭包](expr.closure)和[async 块](expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
 
 <!-- TODO: rustc currently seems to allow cold on a trait function without a body, but it appears to be ignored. I think that may be a bug, and it should at least warn if not reject (like inline does). -->
 
@@ -117,14 +117,14 @@ r[attributes.codegen.cold.duplicates]
 > `rustc` 会对第一次使用之后的任何使用发出 lint。这在将来可能会变成错误。
 
 r[attributes.codegen.cold.trait]
-当 `cold` 应用于 [trait](../items/traits.md#r-items.traits) 中的函数时，它只应用于[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的代码。
+当 `cold` 应用于 [trait](items.traits) 中的函数时，它只应用于[默认定义](items.traits.associated-item-decls)的代码。
 
 <!-- template:attributes -->
 r[attributes.codegen.naked]
 ## `naked` 属性
 
 r[attributes.codegen.naked.intro]
-_`naked` [属性](../attributes.md)_ 会阻止编译器为带属性函数发出函数序言和尾声 --- 这样的函数称为 _naked function_。
+*`naked` [属性](../attributes.md)* 会阻止编译器为带属性函数发出函数序言和尾声 --- 这样的函数称为 _naked function_。
 
 > [!EXAMPLE]
 > ```rust
@@ -145,10 +145,10 @@ _`naked` [属性](../attributes.md)_ 会阻止编译器为带属性函数发出�
 > ```
 
 r[attributes.codegen.naked.syntax]
-`naked` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法。
+`naked` 属性使用 [MetaWord] 语法。
 
 r[attributes.codegen.naked.allowed-positions]
-`naked` 属性只能应用于[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent)或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及 [trait 定义](../items/traits.md#r-items.traits)中那些具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)的关联函数。
+`naked` 属性只能应用于[自由函数](items.fn)、[固有 impl](items.impl.inherent) 或 [trait impl](items.impl.trait) 中的[关联函数](items.associated.fn)，以及 [trait 定义](items.traits)中那些具有[默认定义](items.traits.associated-item-decls)的关联函数。
 
 r[attributes.codegen.naked.duplicates]
 在一个函数上，只有第一次使用 `naked` 会产生效果。
@@ -157,13 +157,13 @@ r[attributes.codegen.naked.duplicates]
 > `rustc` 会对第一次之后的任何使用发出 lint。
 
 r[attributes.codegen.naked.unsafe]
-`naked` 属性必须标记为 [`unsafe`](../attributes.md#r-attributes.safety)，因为函数体必须遵守函数的调用约定、满足其签名，并且要么返回，要么发散（即不会直通执行到汇编代码末尾之后）。
+`naked` 属性必须标记为 [`unsafe`][attributes.safety]，因为函数体必须遵守函数的调用约定、满足其签名，并且要么返回，要么发散（即不会直通执行到汇编代码末尾之后）。
 
 r[attributes.codegen.naked.body]
-[函数体](../items/functions.md#r-items.fn.body)必须正好由一个 [`naked_asm!`](../inline-assembly.md#r-asm) 宏调用组成。
+[函数体](items.fn.body)必须正好由一个 [`naked_asm!`](asm) 宏调用组成。
 
 r[attributes.codegen.naked.prologue-epilogue]
-编译器不会为 naked function 发出序言或尾声：[`naked_asm!`](../inline-assembly.md#r-asm) 调用中的汇编代码构成其整个函数体。
+编译器不会为 naked function 发出序言或尾声：[`naked_asm!`](asm) 调用中的汇编代码构成其整个函数体。
 
 r[attributes.codegen.naked.call-stack]
 进入时，汇编代码可以假定调用栈和寄存器状态按照该函数的签名和调用约定是有效的。
@@ -178,28 +178,28 @@ r[attributes.codegen.naked.unused-variables]
 naked function 中会抑制 [`unused_variables` lint](../../rustc/lints/listing/warn-by-default.html#unused-variables)。
 
 r[attributes.codegen.naked.inline]
-[`inline` 属性](codegen.md#r-attributes.codegen.inline)不能应用于 naked function。
+[`inline` 属性](attributes.codegen.inline)不能应用于 naked function。
 
 r[attributes.codegen.naked.track_caller]
-[`track_caller` 属性](codegen.md#r-attributes.codegen.track_caller)不能应用于 naked function。
+[`track_caller` 属性](attributes.codegen.track_caller)不能应用于 naked function。
 
 r[attributes.codegen.naked.testing]
-[测试属性](testing.md#r-attributes.testing)不能应用于 naked function。
+[测试属性](attributes.testing)不能应用于 naked function。
 
 r[attributes.codegen.naked.target_feature]
-[`target_feature` 属性](codegen.md#r-attributes.codegen.target_feature)不能应用于 naked function。
+[`target_feature` 属性](attributes.codegen.target_feature)不能应用于 naked function。
 
 <!-- TODO: Reflexive rules? -->
 
 r[attributes.codegen.naked.abi]
-naked function 不能使用 ["Rust" ABI](../items/external-blocks.md#r-items.extern.abi.rust)。
+naked function 不能使用 ["Rust" ABI](items.extern.abi.rust)。
 
 <!-- template:attributes -->
 r[attributes.codegen.no_builtins]
 ## `no_builtins` 属性
 
 r[attributes.codegen.no_builtins.intro]
-_`no_builtins` [属性](../attributes.md)_ 会禁用某些代码模式的优化，这些代码模式与调用被假定存在的库函数有关。
+*`no_builtins` [属性](../attributes.md)* 会禁用某些代码模式的优化，这些代码模式与调用被假定存在的库函数有关。
 
 <!-- TODO: This needs expanding, see <https://github.com/rust-lang/reference/issues/542>. -->
 
@@ -209,7 +209,7 @@ _`no_builtins` [属性](../attributes.md)_ 会禁用某些代码模式的优化�
 > ```
 
 r[attributes.codegen.no_builtins.syntax]
-`no_builtins` 属性使用 [MetaWord](../attributes.md#grammar-MetaWord) 语法。
+`no_builtins` 属性使用 [MetaWord] 语法。
 
 r[attributes.codegen.no_builtins.allowed-positions]
 `no_builtins` 属性只能应用于 crate 根。
@@ -224,7 +224,7 @@ r[attributes.codegen.target_feature]
 ## `target_feature` 属性
 
 r[attributes.codegen.target_feature.intro]
-_`target_feature` [属性](../attributes.md)_ 可以应用于函数，以便为特定平台架构特性启用该函数的代码生成。它使用 [MetaListNameValueStr](../attributes.md#grammar-MetaListNameValueStr) 语法，带有单个 `enable` 键，其值是一个由逗号分隔的、要启用的特性名称字符串。
+*`target_feature` [属性](../attributes.md)* 可以应用于函数，以便为特定平台架构特性启用该函数的代码生成。它使用 [MetaListNameValueStr] 语法，带有单个 `enable` 键，其值是一个由逗号分隔的、要启用的特性名称字符串。
 
 ```rust
 # #[cfg(target_feature = "avx2")]
@@ -236,16 +236,16 @@ r[attributes.codegen.target_feature.arch]
 每个[目标架构](../conditional-compilation.md#target_arch)都有一组可以启用的特性。为 crate 并未针对其编译的目标架构指定特性是错误。
 
 r[attributes.codegen.target_feature.closures]
-Closures defined within a `target_feature`-annotated function inherit the attribute from the enclosing function.
+在带有 `target_feature`-注解的函数内定义的闭包，会从外围函数继承该属性。
 
 r[attributes.codegen.target_feature.target-ub]
-调用一个使用当前代码运行平台不支持的特性编译的函数是[未定义行为](../behavior-considered-undefined.md)，_除非_该平台明确将这种情况记录为安全。
+调用一个使用当前代码运行平台不支持的特性编译的函数是[未定义行为](../behavior-considered-undefined.md)， *除非* 该平台明确将这种情况记录为安全。
 
 r[attributes.codegen.target_feature.safety-restrictions]
 除非下文平台规则另有规定，否则适用以下限制：
 
 - 安全的 `#[target_feature]` 函数（以及继承该属性的闭包）只能在启用了被调用方所启用的全部 `target_feature` 的调用方中安全调用。此限制不适用于 `unsafe` 上下文。
-- 安全的 `#[target_feature]` 函数（以及继承该属性的闭包）只能在启用了被强制转换对象所启用的全部 `target_feature` 的上下文中，被强制转换为_安全_函数指针。此限制不适用于 `unsafe` 函数指针。
+- 安全的 `#[target_feature]` 函数（以及继承该属性的闭包）只能在启用了被强制转换对象所启用的全部 `target_feature` 的上下文中，被强制转换为*安全*函数指针。此限制不适用于 `unsafe` 函数指针。
 
 隐式启用的特性也包含在此规则内。例如，`sse2` 函数可以调用标记为 `sse` 的函数。
 
@@ -255,9 +255,9 @@ r[attributes.codegen.target_feature.safety-restrictions]
 fn foo_sse() {}
 
 fn bar() {
-    // Calling `foo_sse` here is unsafe, as we must ensure that SSE is
-    // available first, even if `sse` is enabled by default on the target
-    // platform or manually enabled as compiler flags.
+    // 在这里调用 `foo_sse` 是 unsafe 的，因为我们必须先确保
+    // SSE 可用，即使 `sse` 在目标平台上默认启用，
+    // 或者作为编译器标志手动启用。
     unsafe {
         foo_sse();
     }
@@ -279,13 +279,13 @@ fn bar_sse2() {
 ```
 
 r[attributes.codegen.target_feature.fn-traits]
-带有 `#[target_feature]` 属性的函数_永远不会_实现 `Fn` trait 家族，但从外围函数继承特性的闭包会实现。
+带有 `#[target_feature]` 属性的函数 *永远不会* 实现 `Fn` trait 家族，但从外围函数继承特性的闭包会实现。
 
 r[attributes.codegen.target_feature.allowed-positions]
 `#[target_feature]` 属性不允许用于以下位置：
 
-- [`main` 函数](../crates-and-source-files.md#r-crate.main)
-- [`panic_handler` 函数](../panic.md#r-panic.panic_handler)
+- [`main` 函数][crate.main]
+- 一个 [`panic_handler` 函数][panic.panic_handler]
 - 安全 trait 方法
 - trait 中的安全默认函数
 
@@ -298,71 +298,71 @@ r[attributes.codegen.target_feature.availability]
 以下是可用特性名称列表。
 
 r[attributes.codegen.target_feature.cfg-only]
-此列表中标记为 "(cfg only)" 的目标特性名称只能与 [`target_feature`](../conditional-compilation.md#r-cfg.target_feature) 条件编译选项一起使用，不能与 `target_feature` 属性一起使用。
+此列表中标记为 "(cfg only)" 的目标特性名称只能与 [`target_feature`][cfg.target_feature] 条件编译选项一起使用，不能与 `target_feature` 属性一起使用。
 
 r[attributes.codegen.target_feature.x86]
 #### `x86` 或 `x86_64`
 
-在此平台上，执行带有不受支持特性的代码是未定义行为。因此，在此平台上使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
+在此平台上，执行带有不受支持特性的代码是未定义行为。因此，在此平台上使用 `#[target_feature]` 函数遵循[上述限制][attributes.codegen.target_feature.safety-restrictions]。
 
- 特性 | 隐式启用 | 说明
+| 特性 | 隐式启用 | 说明 |
 ------------|--------------------|-------------------
- `adx` |  | [ADX](https://en.wikipedia.org/wiki/Intel_ADX) --- 多精度带进位加法指令扩展
- `aes` | `sse2` | [AES](https://en.wikipedia.org/wiki/AES_instruction_set) --- 高级加密标准
- `avx` | `sse4.2` | [AVX](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions) --- 高级向量扩展
- `avx2` | `avx` | [AVX2](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX2) --- 高级向量扩展 2
- `avx512bf16` | `avx512bw` | [AVX512-BF16](https://en.wikipedia.org/wiki/AVX-512#BF16) --- 高级向量扩展 512 位 - Bfloat16 扩展
- `avx512bitalg` | `avx512bw` | [AVX512-BITALG](https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG) --- 高级向量扩展 512 位 - 位算法
- `avx512bw` | `avx512f` | [AVX512-BW](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 字节和字指令
- `avx512cd` | `avx512f` | [AVX512-CD](https://en.wikipedia.org/wiki/AVX-512#Conflict_detection) --- 高级向量扩展 512 位 - 冲突检测指令
- `avx512dq` | `avx512f` | [AVX512-DQ](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 双字和四字指令
- `avx512f` | `avx2`, `fma`, `f16c` | [AVX512-F](https://en.wikipedia.org/wiki/AVX-512) --- 高级向量扩展 512 位 - 基础
- `avx512fp16` | `avx512bw` | [AVX512-FP16](https://en.wikipedia.org/wiki/AVX-512#FP16) --- 高级向量扩展 512 位 - Float16 扩展
- `avx512ifma` | `avx512f` | [AVX512-IFMA](https://en.wikipedia.org/wiki/AVX-512#IFMA) --- 高级向量扩展 512 位 - 整数融合乘加
- `avx512vbmi` | `avx512bw` | [AVX512-VBMI](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 向量字节操作指令
- `avx512vbmi2` | `avx512bw` | [AVX512-VBMI2](https://en.wikipedia.org/wiki/AVX-512#VBMI2) --- 高级向量扩展 512 位 - 向量字节操作指令 2
- `avx512vl` | `avx512f` | [AVX512-VL](https://en.wikipedia.org/wiki/AVX-512) --- 高级向量扩展 512 位 - 向量长度扩展
- `avx512vnni` | `avx512f` | [AVX512-VNNI](https://en.wikipedia.org/wiki/AVX-512#VNNI) --- 高级向量扩展 512 位 - 向量神经网络指令
- `avx512vp2intersect` | `avx512f` | [AVX512-VP2INTERSECT](https://en.wikipedia.org/wiki/AVX-512#VP2INTERSECT) --- 高级向量扩展 512 位 - 向量对求交到一对掩码寄存器
- `avx512vpopcntdq` | `avx512f` | [AVX512-VPOPCNTDQ](https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG) --- 高级向量扩展 512 位 - 向量置位计数指令
- `avxifma` | `avx2` | [AVX-IFMA](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 整数融合乘加
- `avxneconvert` | `avx2` | [AVX-NE-CONVERT](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 无异常浮点转换指令
- `avxvnni` | `avx2` | [AVX-VNNI](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 向量神经网络指令
- `avxvnniint16` | `avx2` | [AVX-VNNI-INT16](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 使用 16 位整数的向量神经网络指令
- `avxvnniint8` | `avx2` | [AVX-VNNI-INT8](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 使用 8 位整数的向量神经网络指令
- `bmi1` |  | [BMI1](https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets) --- 位操作指令集
- `bmi2` |  | [BMI2](https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets#BMI2) --- 位操作指令集 2
- `cmpxchg16b` |  | [`cmpxchg16b`](https://www.felixcloutier.com/x86/cmpxchg8b:cmpxchg16b) --- 以原子方式比较并交换 16 字节（128 位）数据
- `f16c` | `avx` | [F16C](https://en.wikipedia.org/wiki/F16C) --- 16 位浮点转换指令
- `fma` | `avx` | [FMA3](https://en.wikipedia.org/wiki/FMA_instruction_set) --- 三操作数融合乘加
- `fxsr` |  | [`fxsave`](https://www.felixcloutier.com/x86/fxsave) and [`fxrstor`](https://www.felixcloutier.com/x86/fxrstor) --- 保存和恢复 x87 FPU、MMX 技术和 SSE 状态
- `gfni` | `sse2` | [GFNI](https://en.wikipedia.org/wiki/AVX-512#GFNI) --- 伽罗瓦域新指令
- `kl` | `sse2` | [KEYLOCKER](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions) --- Intel Key Locker 指令
- `lzcnt` |  | [`lzcnt`](https://www.felixcloutier.com/x86/lzcnt) --- 前导零计数
- `movbe` |  | [`movbe`](https://www.felixcloutier.com/x86/movbe) --- 交换字节后移动数据
- `pclmulqdq` | `sse2` | [`pclmulqdq`](https://www.felixcloutier.com/x86/pclmulqdq) --- 打包四字无进位乘法
- `popcnt` |  | [`popcnt`](https://www.felixcloutier.com/x86/popcnt) --- 置位为 1 的位数
- `rdrand` |  | [`rdrand`](https://en.wikipedia.org/wiki/RdRand) --- 读取随机数
- `rdseed` |  | [`rdseed`](https://en.wikipedia.org/wiki/RdRand) --- 读取随机种子
- `sha` | `sse2` | [SHA](https://en.wikipedia.org/wiki/Intel_SHA_extensions) --- 安全散列算法
- `sha512` | `avx2` | [SHA512](https://en.wikipedia.org/wiki/Intel_SHA_extensions) --- 使用 512 位摘要的安全散列算法
- `sm3` | `avx` | [SM3](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions) --- 商密 3 散列算法
- `sm4` | `avx2` | [SM4](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions) --- 商密 4 密码算法
- `sse` |  | [SSE](https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions) --- 流式 <abbr title="Single Instruction Multiple Data">SIMD</abbr> 扩展
- `sse2` | `sse` | [SSE2](https://en.wikipedia.org/wiki/SSE2) --- 流式 SIMD 扩展 2
- `sse3` | `sse2` | [SSE3](https://en.wikipedia.org/wiki/SSE3) --- 流式 SIMD 扩展 3
- `sse4.1` | `ssse3` | [SSE4.1](https://en.wikipedia.org/wiki/SSE4#SSE4.1) --- 流式 SIMD 扩展 4.1
- `sse4.2` | `sse4.1` | [SSE4.2](https://en.wikipedia.org/wiki/SSE4#SSE4.2) --- 流式 SIMD 扩展 4.2
- `sse4a` | `sse3` | [SSE4a](https://en.wikipedia.org/wiki/SSE4#SSE4a) --- 流式 SIMD 扩展 4a
- `ssse3` | `sse3` | [SSSE3](https://en.wikipedia.org/wiki/SSSE3) --- 补充流式 SIMD 扩展 3
- `tbm` |  | [TBM](https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set#TBM_(Trailing_Bit_Manipulation)) --- 尾随位操作
- `vaes` | `avx2`, `aes` | [VAES](https://en.wikipedia.org/wiki/AVX-512#VAES) --- 向量 AES 指令
- `vpclmulqdq` | `avx`, `pclmulqdq` | [VPCLMULQDQ](https://en.wikipedia.org/wiki/AVX-512#VPCLMULQDQ) --- 向量四字无进位乘法
- `widekl` | `kl` | [KEYLOCKER_WIDE](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions) --- Intel Wide Keylocker 指令
- `xsave` |  | [`xsave`](https://www.felixcloutier.com/x86/xsave) --- 保存处理器扩展状态
- `xsavec` |  | [`xsavec`](https://www.felixcloutier.com/x86/xsavec) --- 以压缩形式保存处理器扩展状态
- `xsaveopt` |  | [`xsaveopt`](https://www.felixcloutier.com/x86/xsaveopt) --- 优化地保存处理器扩展状态
- `xsaves` |  | [`xsaves`](https://www.felixcloutier.com/x86/xsaves) --- 保存处理器 supervisor 扩展状态
+| `adx` |  | [ADX](https://en.wikipedia.org/wiki/Intel_ADX) --- 多精度带进位加法指令扩展 |
+| `aes` | `sse2` | [AES](https://en.wikipedia.org/wiki/AES_instruction_set) --- 高级加密标准 |
+| `avx` | `sse4.2` | [AVX](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions) --- 高级向量扩展 |
+| `avx2` | `avx` | [AVX2](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX2) --- 高级向量扩展 2 |
+| `avx512bf16` | `avx512bw` | [AVX512-BF16](https://en.wikipedia.org/wiki/AVX-512#BF16) --- 高级向量扩展 512 位 - Bfloat16 扩展 |
+| `avx512bitalg` | `avx512bw` | [AVX512-BITALG](https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG) --- 高级向量扩展 512 位 - 位算法 |
+| `avx512bw` | `avx512f` | [AVX512-BW](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 字节和字指令 |
+| `avx512cd` | `avx512f` | [AVX512-CD](https://en.wikipedia.org/wiki/AVX-512#Conflict_detection) --- 高级向量扩展 512 位 - 冲突检测指令 |
+| `avx512dq` | `avx512f` | [AVX512-DQ](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 双字和四字指令 |
+| `avx512f` | `avx2`, `fma`, `f16c` | [AVX512-F](https://en.wikipedia.org/wiki/AVX-512) --- 高级向量扩展 512 位 - 基础 |
+| `avx512fp16` | `avx512bw` | [AVX512-FP16](https://en.wikipedia.org/wiki/AVX-512#FP16) --- 高级向量扩展 512 位 - Float16 扩展 |
+| `avx512ifma` | `avx512f` | [AVX512-IFMA](https://en.wikipedia.org/wiki/AVX-512#IFMA) --- 高级向量扩展 512 位 - 整数融合乘加 |
+| `avx512vbmi` | `avx512bw` | [AVX512-VBMI](https://en.wikipedia.org/wiki/AVX-512#BW,_DQ_and_VBMI) --- 高级向量扩展 512 位 - 向量字节操作指令 |
+| `avx512vbmi2` | `avx512bw` | [AVX512-VBMI2](https://en.wikipedia.org/wiki/AVX-512#VBMI2) --- 高级向量扩展 512 位 - 向量字节操作指令 2 |
+| `avx512vl` | `avx512f` | [AVX512-VL](https://en.wikipedia.org/wiki/AVX-512) --- 高级向量扩展 512 位 - 向量长度扩展 |
+| `avx512vnni` | `avx512f` | [AVX512-VNNI](https://en.wikipedia.org/wiki/AVX-512#VNNI) --- 高级向量扩展 512 位 - 向量神经网络指令 |
+| `avx512vp2intersect` | `avx512f` | [AVX512-VP2INTERSECT](https://en.wikipedia.org/wiki/AVX-512#VP2INTERSECT) --- 高级向量扩展 512 位 - 向量对求交到一对掩码寄存器 |
+| `avx512vpopcntdq` | `avx512f` | [AVX512-VPOPCNTDQ](https://en.wikipedia.org/wiki/AVX-512#VPOPCNTDQ_and_BITALG) --- 高级向量扩展 512 位 - 向量置位计数指令 |
+| `avxifma` | `avx2` | [AVX-IFMA](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 整数融合乘加 |
+| `avxneconvert` | `avx2` | [AVX-NE-CONVERT](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 无异常浮点转换指令 |
+| `avxvnni` | `avx2` | [AVX-VNNI](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 向量神经网络指令 |
+| `avxvnniint16` | `avx2` | [AVX-VNNI-INT16](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 使用 16 位整数的向量神经网络指令 |
+| `avxvnniint8` | `avx2` | [AVX-VNNI-INT8](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX-VNNI,_AVX-IFMA) --- 高级向量扩展 - 使用 8 位整数的向量神经网络指令 |
+| `bmi1` |  | [BMI1](https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets) --- 位操作指令集 |
+| `bmi2` |  | [BMI2](https://en.wikipedia.org/wiki/Bit_Manipulation_Instruction_Sets#BMI2) --- 位操作指令集 2 |
+| `cmpxchg16b` |  | [`cmpxchg16b`](https://www.felixcloutier.com/x86/cmpxchg8b:cmpxchg16b) --- 以原子方式比较并交换 16 字节（128 位）数据 |
+| `f16c` | `avx` | [F16C](https://en.wikipedia.org/wiki/F16C) --- 16 位浮点转换指令 |
+| `fma` | `avx` | [FMA3](https://en.wikipedia.org/wiki/FMA_instruction_set) --- 三操作数融合乘加 |
+| `fxsr` |  | [`fxsave`](https://www.felixcloutier.com/x86/fxsave) and [`fxrstor`](https://www.felixcloutier.com/x86/fxrstor) --- 保存和恢复 x87 FPU、MMX 技术和 SSE 状态 |
+| `gfni` | `sse2` | [GFNI](https://en.wikipedia.org/wiki/AVX-512#GFNI) --- 伽罗瓦域新指令 |
+| `kl` | `sse2` | [KEYLOCKER](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions) --- Intel Key Locker 指令 |
+| `lzcnt` |  | [`lzcnt`](https://www.felixcloutier.com/x86/lzcnt) --- 前导零计数 |
+| `movbe` |  | [`movbe`](https://www.felixcloutier.com/x86/movbe) --- 交换字节后移动数据 |
+| `pclmulqdq` | `sse2` | [`pclmulqdq`](https://www.felixcloutier.com/x86/pclmulqdq) --- 打包四字无进位乘法 |
+| `popcnt` |  | [`popcnt`](https://www.felixcloutier.com/x86/popcnt) --- 置位为 1 的位数 |
+| `rdrand` |  | [`rdrand`](https://en.wikipedia.org/wiki/RdRand) --- 读取随机数 |
+| `rdseed` |  | [`rdseed`](https://en.wikipedia.org/wiki/RdRand) --- 读取随机种子 |
+| `sha` | `sse2` | [SHA](https://en.wikipedia.org/wiki/Intel_SHA_extensions) --- 安全散列算法 |
+| `sha512` | `avx2` | [SHA512](https://en.wikipedia.org/wiki/Intel_SHA_extensions) --- 使用 512 位摘要的安全散列算法 |
+| `sm3` | `avx` | [SM3](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions) --- 商密 3 散列算法 |
+| `sm4` | `avx2` | [SM4](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_SHA_and_SM3_instructions) --- 商密 4 密码算法 |
+| `sse` |  | [SSE](https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions) --- 流式 <abbr title="Single Instruction Multiple Data">SIMD</abbr> 扩展 |
+| `sse2` | `sse` | [SSE2](https://en.wikipedia.org/wiki/SSE2) --- 流式 SIMD 扩展 2 |
+| `sse3` | `sse2` | [SSE3](https://en.wikipedia.org/wiki/SSE3) --- 流式 SIMD 扩展 3 |
+| `sse4.1` | `ssse3` | [SSE4.1](https://en.wikipedia.org/wiki/SSE4#SSE4.1) --- 流式 SIMD 扩展 4.1 |
+| `sse4.2` | `sse4.1` | [SSE4.2](https://en.wikipedia.org/wiki/SSE4#SSE4.2) --- 流式 SIMD 扩展 4.2 |
+| `sse4a` | `sse3` | [SSE4a](https://en.wikipedia.org/wiki/SSE4#SSE4a) --- 流式 SIMD 扩展 4a |
+| `ssse3` | `sse3` | [SSSE3](https://en.wikipedia.org/wiki/SSSE3) --- 补充流式 SIMD 扩展 3 |
+| `tbm` |  | [TBM](https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set#TBM_(Trailing_Bit_Manipulation)) --- 尾随位操作 |
+| `vaes` | `avx2`, `aes` | [VAES](https://en.wikipedia.org/wiki/AVX-512#VAES) --- 向量 AES 指令 |
+| `vpclmulqdq` | `avx`, `pclmulqdq` | [VPCLMULQDQ](https://en.wikipedia.org/wiki/AVX-512#VPCLMULQDQ) --- 向量四字无进位乘法 |
+| `widekl` | `kl` | [KEYLOCKER_WIDE](https://en.wikipedia.org/wiki/List_of_x86_cryptographic_instructions#Intel_Key_Locker_instructions) --- Intel Wide Keylocker 指令 |
+| `xsave` |  | [`xsave`](https://www.felixcloutier.com/x86/xsave) --- 保存处理器扩展状态 |
+| `xsavec` |  | [`xsavec`](https://www.felixcloutier.com/x86/xsavec) --- 以压缩形式保存处理器扩展状态 |
+| `xsaveopt` |  | [`xsaveopt`](https://www.felixcloutier.com/x86/xsaveopt) --- 优化地保存处理器扩展状态 |
+| `xsaves` |  | [`xsaves`](https://www.felixcloutier.com/x86/xsaves) --- 保存处理器 supervisor 扩展状态 |
 
 <!-- Keep links near each table to make it easier to move and update. -->
 
@@ -427,7 +427,7 @@ r[attributes.codegen.target_feature.x86]
 r[attributes.codegen.target_feature.aarch64]
 #### `aarch64`
 
-在此平台上，使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
+在此平台上，使用 `#[target_feature]` 函数遵循[上述限制][attributes.codegen.target_feature.safety-restrictions]。
 
 关于这些特性的更多文档可在 [ARM 架构参考手册](https://developer.arm.com/documentation/ddi0487/latest) 中找到，或在 [developer.arm.com](https://developer.arm.com) 上的其他位置找到。
 
@@ -435,74 +435,75 @@ r[attributes.codegen.target_feature.aarch64]
 [developer.arm.com]: https://developer.arm.com
 
 > [!NOTE]
-> The following pairs of features should both be marked as enabled or disabled together if used: - `paca` and `pacg`, which LLVM currently implements as one feature.
+> 如果使用以下成对特性，应将它们同时标记为启用或禁用：
+> - `paca` 和 `pacg`，LLVM 目前将它们作为一个特性实现。
 
- 特性 | 隐式启用 | 特性名称
+| 特性 | 隐式启用 | 特性名称 |
 -------        | ------------------ | ------------
- `aes` | `neon` | FEAT_AES & FEAT_PMULL --- 高级 <abbr title="Single Instruction Multiple Data">SIMD</abbr> AES 和 PMULL 指令
- `bf16` |  | FEAT_BF16 --- BFloat16 指令
- `bti` |  | FEAT_BTI --- 分支目标标识
- `crc` |  | FEAT_CRC --- CRC32 校验和指令
- `dit` |  | FEAT_DIT  --- 数据无关时序指令
- `dotprod` | `neon` | FEAT_DotProd --- 高级 SIMD Int8 点积指令
- `dpb` |  | FEAT_DPB --- 将数据缓存清理到持久点
- `dpb2` | `dpb` | FEAT_DPB2 --- 将数据缓存清理到深度持久点
- `f32mm` | `sve` | FEAT_F32MM --- SVE 单精度浮点矩阵乘法指令
- `f64mm` | `sve` | FEAT_F64MM --- SVE 双精度浮点矩阵乘法指令
- `fcma` | `neon` | FEAT_FCMA --- 浮点复数支持
- `fhm` | `fp16` | FEAT_FHM --- 半精度浮点 FMLAL 指令
- `flagm` |  | FEAT_FLAGM --- 条件标志操作
- `fp16` | `neon` | FEAT_FP16 --- 半精度浮点数据处理
- `frintts` |  | FEAT_FRINTTS --- 浮点到整数辅助指令
- `i8mm` |  | FEAT_I8MM --- Int8 矩阵乘法
- `jsconv` | `neon` | FEAT_JSCVT --- JavaScript 转换指令
- `lor` |  | FEAT_LOR --- 有限排序区域扩展
- `lse` |  | FEAT_LSE --- 大系统扩展
- `mte` |  | FEAT_MTE & FEAT_MTE2 --- 内存标记扩展
- `neon` |  | FEAT_AdvSimd & FEAT_FP --- 浮点和高级 SIMD 扩展
- `paca` |  | FEAT_PAUTH --- 指针认证（地址认证）
- `pacg` |  | FEAT_PAUTH --- 指针认证（通用认证）
- `pan` |  | FEAT_PAN --- 特权访问禁止扩展
- `pmuv3` |  | FEAT_PMUv3 --- 性能监视器扩展（v3）
- `rand` |  | FEAT_RNG --- 随机数生成器
- `ras` |  | FEAT_RAS & FEAT_RASv1p1 --- 可靠性、可用性和可服务性扩展
- `rcpc` |  | FEAT_LRCPC --- 释放一致的处理器一致性
- `rcpc2` | `rcpc` | FEAT_LRCPC2 --- 带立即数偏移的 RcPc
- `rdm` | `neon` | FEAT_RDM --- 舍入双倍乘法累加
- `sb` |  | FEAT_SB --- 推测屏障
- `sha2` | `neon` | FEAT_SHA1 & FEAT_SHA256 --- 高级 SIMD SHA 指令
- `sha3` | `sha2` | FEAT_SHA512 & FEAT_SHA3 --- 高级 SIMD SHA 指令
- `sm4` | `neon` | FEAT_SM3 & FEAT_SM4 --- 高级 SIMD SM3/4 指令
- `spe` |  | FEAT_SPE --- 统计剖析扩展
- `ssbs` |  | FEAT_SSBS & FEAT_SSBS2 --- 推测性存储绕过安全
- `sve` | `neon` | FEAT_SVE --- 可伸缩向量扩展
- `sve2` | `sve` | FEAT_SVE2 --- 可伸缩向量扩展 2
- `sve2-aes` | `sve2`, `aes` | FEAT_SVE_AES & FEAT_SVE_PMULL128 --- SVE AES 指令
- `sve2-bitperm` | `sve2` | FEAT_SVE2_BitPerm --- SVE 位排列
- `sve2-sha3` | `sve2`, `sha3` | FEAT_SVE2_SHA3 --- SVE SHA3 指令
- `sve2-sm4` | `sve2`, `sm4` | FEAT_SVE2_SM4 --- SVE SM4 指令
- `tme` |  | FEAT_TME --- 事务内存扩展
- `vh` |  | FEAT_VHE --- 虚拟化主机扩展
+| `aes` | `neon` | FEAT_AES & FEAT_PMULL --- 高级 <abbr title="Single Instruction Multiple Data">SIMD</abbr> AES 和 PMULL 指令 |
+| `bf16` |  | FEAT_BF16 --- BFloat16 指令 |
+| `bti` |  | FEAT_BTI --- 分支目标标识 |
+| `crc` |  | FEAT_CRC --- CRC32 校验和指令 |
+| `dit` |  | FEAT_DIT  --- 数据无关时序指令 |
+| `dotprod` | `neon` | FEAT_DotProd --- 高级 SIMD Int8 点积指令 |
+| `dpb` |  | FEAT_DPB --- 将数据缓存清理到持久点 |
+| `dpb2` | `dpb` | FEAT_DPB2 --- 将数据缓存清理到深度持久点 |
+| `f32mm` | `sve` | FEAT_F32MM --- SVE 单精度浮点矩阵乘法指令 |
+| `f64mm` | `sve` | FEAT_F64MM --- SVE 双精度浮点矩阵乘法指令 |
+| `fcma` | `neon` | FEAT_FCMA --- 浮点复数支持 |
+| `fhm` | `fp16` | FEAT_FHM --- 半精度浮点 FMLAL 指令 |
+| `flagm` |  | FEAT_FLAGM --- 条件标志操作 |
+| `fp16` | `neon` | FEAT_FP16 --- 半精度浮点数据处理 |
+| `frintts` |  | FEAT_FRINTTS --- 浮点到整数辅助指令 |
+| `i8mm` |  | FEAT_I8MM --- Int8 矩阵乘法 |
+| `jsconv` | `neon` | FEAT_JSCVT --- JavaScript 转换指令 |
+| `lor` |  | FEAT_LOR --- 有限排序区域扩展 |
+| `lse` |  | FEAT_LSE --- 大系统扩展 |
+| `mte` |  | FEAT_MTE & FEAT_MTE2 --- 内存标记扩展 |
+| `neon` |  | FEAT_AdvSimd & FEAT_FP --- 浮点和高级 SIMD 扩展 |
+| `paca` |  | FEAT_PAUTH --- 指针认证（地址认证） |
+| `pacg` |  | FEAT_PAUTH --- 指针认证（通用认证） |
+| `pan` |  | FEAT_PAN --- 特权访问禁止扩展 |
+| `pmuv3` |  | FEAT_PMUv3 --- 性能监视器扩展（v3） |
+| `rand` |  | FEAT_RNG --- 随机数生成器 |
+| `ras` |  | FEAT_RAS & FEAT_RASv1p1 --- 可靠性、可用性和可服务性扩展 |
+| `rcpc` |  | FEAT_LRCPC --- 释放一致的处理器一致性 |
+| `rcpc2` | `rcpc` | FEAT_LRCPC2 --- 带立即数偏移的 RcPc |
+| `rdm` | `neon` | FEAT_RDM --- 舍入双倍乘法累加 |
+| `sb` |  | FEAT_SB --- 推测屏障 |
+| `sha2` | `neon` | FEAT_SHA1 & FEAT_SHA256 --- 高级 SIMD SHA 指令 |
+| `sha3` | `sha2` | FEAT_SHA512 & FEAT_SHA3 --- 高级 SIMD SHA 指令 |
+| `sm4` | `neon` | FEAT_SM3 & FEAT_SM4 --- 高级 SIMD SM3/4 指令 |
+| `spe` |  | FEAT_SPE --- 统计剖析扩展 |
+| `ssbs` |  | FEAT_SSBS & FEAT_SSBS2 --- 推测性存储绕过安全 |
+| `sve` | `neon` | FEAT_SVE --- 可伸缩向量扩展 |
+| `sve2` | `sve` | FEAT_SVE2 --- 可伸缩向量扩展 2 |
+| `sve2-aes` | `sve2`, `aes` | FEAT_SVE_AES & FEAT_SVE_PMULL128 --- SVE AES 指令 |
+| `sve2-bitperm` | `sve2` | FEAT_SVE2_BitPerm --- SVE 位排列 |
+| `sve2-sha3` | `sve2`, `sha3` | FEAT_SVE2_SHA3 --- SVE SHA3 指令 |
+| `sve2-sm4` | `sve2`, `sm4` | FEAT_SVE2_SM4 --- SVE SM4 指令 |
+| `tme` |  | FEAT_TME --- 事务内存扩展 |
+| `vh` |  | FEAT_VHE --- 虚拟化主机扩展 |
 
 r[attributes.codegen.target_feature.loongarch]
 #### `loongarch`
 
-在此平台上，使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
+在此平台上，使用 `#[target_feature]` 函数遵循[上述限制][attributes.codegen.target_feature.safety-restrictions]。
 
- 特性 | 隐式启用 | 说明
+| 特性 | 隐式启用 | 说明 |
 ------------|---------------------|-------------------
- `f` |  | [F](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_sp) --- 单精度浮点指令
- `d` | `f` | [D](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_dp) --- 双精度浮点指令
- `frecipe` |  | [FRECIPE](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-frecipe) --- 倒数近似指令
- `lasx` | `lsx` | [LASX](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lasx) --- 256 位向量指令
- `lbt` |  | [LBT](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lbt_x86) --- 二进制翻译指令
- `lsx` | `d` | [LSX](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lsx) --- 128 位向量指令
- `lvz` |  | [LVZ](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lvz) --- 虚拟化指令
- `div32` |  | [DIV32](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-div32) --- 接受非符号扩展 32 位操作数的除法指令
- `lam-bh` |  | [LAM-BH](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lam_bh) --- 面向字节和半字的原子交换与加法指令
- `lamcas` |  | [LAMCAS](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lamcas) --- 面向字节、半字、字和双字的原子比较并交换指令
- `ld-seq-sa` |  | [LD-SEQ-SA](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-ld_seq_sa) --- 对同一地址的加载操作进行顺序排序
- `scq` |  | [SCQ](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-scq) --- 条件存储四字指令
+| `f` |  | [F](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_sp) --- 单精度浮点指令 |
+| `d` | `f` | [D](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-fp_dp) --- 双精度浮点指令 |
+| `frecipe` |  | [FRECIPE](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-frecipe) --- 倒数近似指令 |
+| `lasx` | `lsx` | [LASX](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lasx) --- 256 位向量指令 |
+| `lbt` |  | [LBT](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lbt_x86) --- 二进制翻译指令 |
+| `lsx` | `d` | [LSX](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lsx) --- 128 位向量指令 |
+| `lvz` |  | [LVZ](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lvz) --- 虚拟化指令 |
+| `div32` |  | [DIV32](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-div32) --- 接受非符号扩展 32 位操作数的除法指令 |
+| `lam-bh` |  | [LAM-BH](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lam_bh) --- 面向字节和半字的原子交换与加法指令 |
+| `lamcas` |  | [LAMCAS](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-lamcas) --- 面向字节、半字、字和双字的原子比较并交换指令 |
+| `ld-seq-sa` |  | [LD-SEQ-SA](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-ld_seq_sa) --- 对同一地址的加载操作进行顺序排序 |
+| `scq` |  | [SCQ](https://loongson.github.io/LoongArch-Documentation/LoongArch-Vol1-EN.html#cpucfg-scq) --- 条件存储四字指令 |
 
 <!-- Keep links near each table to make it easier to move and update. -->
 
@@ -522,7 +523,7 @@ r[attributes.codegen.target_feature.loongarch]
 r[attributes.codegen.target_feature.riscv]
 #### `riscv32` 或 `riscv64`
 
-在此平台上，使用 `#[target_feature]` 函数遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
+在此平台上，使用 `#[target_feature]` 函数遵循[上述限制][attributes.codegen.target_feature.safety-restrictions]。
 
 关于这些特性的更多文档可在其各自的规范中找到。许多规范在 [RISC-V ISA 手册](https://github.com/riscv/riscv-isa-manual)、[版本 20250508](https://github.com/riscv/riscv-isa-manual/tree/20250508) 中说明，或在 [RISC-V GitHub 账户](https://github.com/riscv) 托管的其他手册中说明。
 
@@ -530,60 +531,60 @@ r[attributes.codegen.target_feature.riscv]
 [version 20250508]: https://github.com/riscv/riscv-isa-manual/tree/20250508
 [RISC-V GitHub Account]: https://github.com/riscv
 
- 特性 | 隐式启用 | 说明
+| 特性 | 隐式启用 | 说明 |
 ------------|---------------------|-------------------
- `a` | `zaamo`, `zalrsc` | [A](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 原子指令
- `b` | `zba`, `zbc`, `zbs` | [B](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 位操作指令
- `c` | `zca` | [C](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/c-st-ext.adoc) --- 压缩指令
- `d` | `f` | [D](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/d-st-ext.adoc) --- [仅 cfg](codegen.md#r-attributes.codegen.target_feature.cfg-only) 双精度浮点
- `e` |  | [E](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/rv32e.adoc) --- [仅 cfg](codegen.md#r-attributes.codegen.target_feature.cfg-only) 具有 16 个 GPR 的嵌入式指令集
- `f` | `zicsr` | [F](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/f-st-ext.adoc) --- [仅 cfg](codegen.md#r-attributes.codegen.target_feature.cfg-only) 单精度浮点
- `m` |  | [M](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/m-st-ext.adoc) --- 整数乘法和除法指令
- `za64rs` | `za128rs` | [Za64rs](https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc) --- 平台行为：自然对齐的保留集，大小 ≦ 64 字节
- `za128rs` |  | [Za128rs](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：自然对齐的保留集，大小 ≦ 128 字节
- `zaamo` |  | [Zaamo](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 原子内存操作指令
- `zabha` | `zaamo` | [Zabha](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zabha.adoc) --- 字节和半字原子内存操作指令
- `zacas` | `zaamo` | [Zacas](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zacas.adoc) --- 原子比较并交换（CAS）指令
- `zalrsc` |  | [Zalrsc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 加载保留/条件存储指令
- `zama16b` |  | [Zama16b](https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc) --- 平台行为：对未跨越自然对齐 16 字节边界的主内存区域执行的未对齐加载、存储和 AMO 是原子的
- `zawrs` |  | [Zawrs](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zawrs.adoc) --- 等待保留集指令
- `zba` |  | [Zba](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 地址生成指令
- `zbb` |  | [Zbb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 基本位操作
- `zbc` | `zbkc` | [Zbc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 无进位乘法
- `zbkb` |  | [Zbkb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 密码学位操作指令
- `zbkc` |  | [Zbkc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 用于密码学的无进位乘法
- `zbkx` |  | [Zbkx](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 交叉开关置换
- `zbs` |  | [Zbs](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 单比特指令
- `zca` |  | [Zca](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc) --- 压缩指令：整数部分子集
- `zcb` | `zca` | [Zcb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc) --- 简单节省代码大小的压缩指令
- `zcmop` | `zca` | [Zcmop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zimop.adoc) --- 压缩 May-Be-Operations
- `zic64b` |  | [Zic64b](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：自然对齐的 64 字节缓存块
- `zicbom` |  | [Zicbom](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块管理指令
- `zicbop` |  | [Zicbop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块预取提示指令
- `zicboz` |  | [Zicboz](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块清零指令
- `ziccamoa` |  | [Ziccamoa](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持所有基本原子操作
- `ziccif` |  | [Ziccif](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持取指，且最大为 `min(ILEN,XLEN)` 的自然对齐 2 的幂大小获取是原子的
- `zicclsm` |  | [Zicclsm](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持未对齐加载/存储访问
- `ziccrse` |  | [Ziccrse](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存保证 LR/SC 序列最终成功
- `zicntr` | `zicsr` | [Zicntr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc) --- 基础计数器和定时器
- `zicond` |  | [Zicond](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicond.adoc) --- 整数条件操作指令
- `zicsr` |  | [Zicsr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicsr.adoc) --- 控制与状态寄存器（CSR）指令
- `zifencei` |  | [Zifencei](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zifencei.adoc) --- 取指栅栏指令
- `zihintntl` |  | [Zihintntl](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintntl.adoc) --- 非时序局部性提示指令
- `zihintpause` |  | [Zihintpause](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintpause.adoc) --- 暂停提示指令
- `zihpm` | `zicsr` | [Zihpm](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc) --- 硬件性能计数器
- `zimop` |  | [Zimop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zimop.adoc) --- May-Be-Operations
- `zk` | `zkn`, `zkr`, `zks`, `zkt`, `zbkb`, `zbkc`, `zkbx` | [Zk](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 标量密码学
- `zkn` | `zknd`, `zkne`, `zknh`, `zbkb`, `zbkc`, `zkbx` | [Zkn](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 算法套件扩展
- `zknd` |  | [Zknd](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：AES 解密
- `zkne` |  | [Zkne](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：AES 加密
- `zknh` |  | [Zknh](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：哈希函数指令
- `zkr` |  | [Zkr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 熵源扩展
- `zks` | `zksed`, `zksh`, `zbkb`, `zbkc`, `zkbx` | [Zks](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密算法套件
- `zksed` |  | [Zksed](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密套件：SM4 分组密码指令
- `zksh` |  | [Zksh](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密套件：SM3 哈希函数指令
- `zkt` |  | [Zkt](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 数据无关执行延迟子集
- `ztso` |  | [Ztso](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/ztso-st-ext.adoc) --- 总存储排序
+| `a` | `zaamo`, `zalrsc` | [A](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 原子指令 |
+| `b` | `zba`, `zbc`, `zbs` | [B](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 位操作指令 |
+| `c` | `zca` | [C](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/c-st-ext.adoc) --- 压缩指令 |
+| `d` | `f` | [D](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/d-st-ext.adoc) --- [仅 cfg](attributes.codegen.target_feature.cfg-only) 双精度浮点 |
+| `e` |  | [E](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/rv32e.adoc) --- [仅 cfg](attributes.codegen.target_feature.cfg-only) 具有 16 个 GPR 的嵌入式指令集 |
+| `f` | `zicsr` | [F](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/f-st-ext.adoc) --- [仅 cfg](attributes.codegen.target_feature.cfg-only) 单精度浮点 |
+| `m` |  | [M](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/m-st-ext.adoc) --- 整数乘法和除法指令 |
+| `za64rs` | `za128rs` | [Za64rs](https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc) --- 平台行为：自然对齐的保留集，大小 ≦ 64 字节 |
+| `za128rs` |  | [Za128rs](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：自然对齐的保留集，大小 ≦ 128 字节 |
+| `zaamo` |  | [Zaamo](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 原子内存操作指令 |
+| `zabha` | `zaamo` | [Zabha](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zabha.adoc) --- 字节和半字原子内存操作指令 |
+| `zacas` | `zaamo` | [Zacas](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zacas.adoc) --- 原子比较并交换（CAS）指令 |
+| `zalrsc` |  | [Zalrsc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/a-st-ext.adoc) --- 加载保留/条件存储指令 |
+| `zama16b` |  | [Zama16b](https://github.com/riscv/riscv-profiles/blob/rva23-rvb23-ratified/src/rva23-profile.adoc) --- 平台行为：对未跨越自然对齐 16 字节边界的主内存区域执行的未对齐加载、存储和 AMO 是原子的 |
+| `zawrs` |  | [Zawrs](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zawrs.adoc) --- 等待保留集指令 |
+| `zba` |  | [Zba](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 地址生成指令 |
+| `zbb` |  | [Zbb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 基本位操作 |
+| `zbc` | `zbkc` | [Zbc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 无进位乘法 |
+| `zbkb` |  | [Zbkb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 密码学位操作指令 |
+| `zbkc` |  | [Zbkc](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 用于密码学的无进位乘法 |
+| `zbkx` |  | [Zbkx](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 交叉开关置换 |
+| `zbs` |  | [Zbs](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/b-st-ext.adoc) --- 单比特指令 |
+| `zca` |  | [Zca](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc) --- 压缩指令：整数部分子集 |
+| `zcb` | `zca` | [Zcb](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zc.adoc) --- 简单节省代码大小的压缩指令 |
+| `zcmop` | `zca` | [Zcmop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zimop.adoc) --- 压缩 May-Be-Operations |
+| `zic64b` |  | [Zic64b](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：自然对齐的 64 字节缓存块 |
+| `zicbom` |  | [Zicbom](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块管理指令 |
+| `zicbop` |  | [Zicbop](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块预取提示指令 |
+| `zicboz` |  | [Zicboz](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/cmo.adoc) --- 缓存块清零指令 |
+| `ziccamoa` |  | [Ziccamoa](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持所有基本原子操作 |
+| `ziccif` |  | [Ziccif](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持取指，且最大为 `min(ILEN,XLEN)` 的自然对齐 2 的幂大小获取是原子的 |
+| `zicclsm` |  | [Zicclsm](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存支持未对齐加载/存储访问 |
+| `ziccrse` |  | [Ziccrse](https://github.com/riscv/riscv-profiles/blob/v1.0/profiles.adoc) --- 平台行为：可缓存且一致的主内存保证 LR/SC 序列最终成功 |
+| `zicntr` | `zicsr` | [Zicntr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc) --- 基础计数器和定时器 |
+| `zicond` |  | [Zicond](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicond.adoc) --- 整数条件操作指令 |
+| `zicsr` |  | [Zicsr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zicsr.adoc) --- 控制与状态寄存器（CSR）指令 |
+| `zifencei` |  | [Zifencei](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zifencei.adoc) --- 取指栅栏指令 |
+| `zihintntl` |  | [Zihintntl](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintntl.adoc) --- 非时序局部性提示指令 |
+| `zihintpause` |  | [Zihintpause](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/zihintpause.adoc) --- 暂停提示指令 |
+| `zihpm` | `zicsr` | [Zihpm](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/counters.adoc) --- 硬件性能计数器 |
+`zimop`     |                     | [Zimop][rv-zimop] --- May-Be-Operations
+| `zk` | `zkn`, `zkr`, `zks`, `zkt`, `zbkb`, `zbkc`, `zkbx` | [Zk](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 标量密码学 |
+| `zkn` | `zknd`, `zkne`, `zknh`, `zbkb`, `zbkc`, `zkbx` | [Zkn](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 算法套件扩展 |
+| `zknd` |  | [Zknd](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：AES 解密 |
+| `zkne` |  | [Zkne](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：AES 加密 |
+| `zknh` |  | [Zknh](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- NIST 套件：哈希函数指令 |
+| `zkr` |  | [Zkr](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 熵源扩展 |
+| `zks` | `zksed`, `zksh`, `zbkb`, `zbkc`, `zkbx` | [Zks](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密算法套件 |
+| `zksed` |  | [Zksed](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密套件：SM4 分组密码指令 |
+| `zksh` |  | [Zksh](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 商密套件：SM3 哈希函数指令 |
+| `zkt` |  | [Zkt](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/scalar-crypto.adoc) --- 数据无关执行延迟子集 |
+| `ztso` |  | [Ztso](https://github.com/riscv/riscv-isa-manual/blob/20250508/src/ztso-st-ext.adoc) --- 总存储排序 |
 
 <!-- Keep links near each table to make it easier to move and update. -->
 
@@ -645,18 +646,18 @@ r[attributes.codegen.target_feature.wasm]
 
 在 Wasm 平台上，安全的 `#[target_feature]` 函数始终可以在安全上下文中使用。无法通过 `#[target_feature]` 属性导致未定义行为，因为尝试使用 Wasm 引擎不支持的指令会在加载时失败，不会有被解释为与编译器预期不同方式的风险。
 
- 特性 | 隐式启用 | 说明
+| 特性 | 隐式启用 | 说明 |
 ----------------------|---------------------|-------------------
- `bulk-memory` |  | [WebAssembly 批量内存操作提案](https://github.com/WebAssembly/bulk-memory-operations)
- `extended-const` |  | [WebAssembly 扩展 const 表达式提案](https://github.com/WebAssembly/extended-const)
- `mutable-globals` |  | [WebAssembly 可变全局提案](https://github.com/WebAssembly/mutable-global)
- `nontrapping-fptoint` |  | [WebAssembly 非陷入式浮点到整数转换提案](https://github.com/WebAssembly/nontrapping-float-to-int-conversions)
- `relaxed-simd` | `simd128` | [WebAssembly 宽松 simd 提案](https://github.com/WebAssembly/relaxed-simd)
- `sign-ext` |  | [WebAssembly 符号扩展运算符提案](https://github.com/WebAssembly/sign-extension-ops)
- `simd128` |  | [WebAssembly simd 提案](https://github.com/webassembly/simd)
- `multivalue` |  | [WebAssembly 多值提案](https://github.com/webassembly/multi-value)
- `reference-types` |  | [WebAssembly 引用类型提案](https://github.com/webassembly/reference-types)
- `tail-call` |  | [WebAssembly 尾调用提案](https://github.com/webassembly/tail-call)
+| `bulk-memory` |  | [WebAssembly 批量内存操作提案](https://github.com/WebAssembly/bulk-memory-operations) |
+| `extended-const` |  | [WebAssembly 扩展 const 表达式提案](https://github.com/WebAssembly/extended-const) |
+| `mutable-globals` |  | [WebAssembly 可变全局提案](https://github.com/WebAssembly/mutable-global) |
+| `nontrapping-fptoint` |  | [WebAssembly 非陷入式浮点到整数转换提案](https://github.com/WebAssembly/nontrapping-float-to-int-conversions) |
+| `relaxed-simd` | `simd128` | [WebAssembly 宽松 simd 提案](https://github.com/WebAssembly/relaxed-simd) |
+| `sign-ext` |  | [WebAssembly 符号扩展运算符提案](https://github.com/WebAssembly/sign-extension-ops) |
+| `simd128` |  | [WebAssembly simd 提案](https://github.com/webassembly/simd) |
+| `multivalue` |  | [WebAssembly 多值提案](https://github.com/webassembly/multi-value) |
+| `reference-types` |  | [WebAssembly 引用类型提案](https://github.com/webassembly/reference-types) |
+| `tail-call` |  | [WebAssembly 尾调用提案](https://github.com/webassembly/tail-call) |
 
 [bulk-memory]: https://github.com/WebAssembly/bulk-memory-operations
 [extended-const]: https://github.com/WebAssembly/extended-const
@@ -672,24 +673,24 @@ r[attributes.codegen.target_feature.wasm]
 r[attributes.codegen.target_feature.s390x]
 #### `s390x`
 
-在 `s390x` 目标上，使用带有 `#[target_feature]` 属性的函数时，需遵循[上述限制](codegen.md#r-attributes.codegen.target_feature.safety-restrictions)。
+在 `s390x` 目标上，使用带有 `#[target_feature]` 属性的函数时，需遵循[上述限制][attributes.codegen.target_feature.safety-restrictions]。
 
 关于这些特性的更多文档，可参见 _[z/Architecture Principles of Operation](https://publibfp.dhe.ibm.com/epubs/pdf/a227832d.pdf)_ 第一章中的 “Additions to z/Architecture” 一节。
 
- 特性 | 隐式启用 | 说明
+| 特性 | 隐式启用 | 说明 |
 ---------------------------------------|---------------------------------------|---------------------
- `vector` |  | 128 位向量指令
- `vector-enhancements-1` | `vector` | 向量增强 1
- `vector-enhancements-2` | `vector-enhancements-1` | 向量增强 2
- `vector-enhancements-3` | `vector-enhancements-2` | 向量增强 3
- `vector-packed-decimal` | `vector` | 向量密集十进制
- `vector-packed-decimal-enhancement` | `vector-packed-decimal` | 向量密集十进制增强
- `vector-packed-decimal-enhancement-2` | `vector-packed-decimal-enhancement-2` | 向量密集十进制增强 2
- `vector-packed-decimal-enhancement-3` | `vector-packed-decimal-enhancement-3` | 向量密集十进制增强 3
- `nnp-assist` | `vector` | nnp 辅助
- `miscellaneous-extensions-2` |  | 杂项扩展 2
- `miscellaneous-extensions-3` |  | 杂项扩展 3
- `miscellaneous-extensions-4` |  | 杂项扩展 4
+| `vector` |  | 128 位向量指令 |
+| `vector-enhancements-1` | `vector` | 向量增强 1 |
+| `vector-enhancements-2` | `vector-enhancements-1` | 向量增强 2 |
+| `vector-enhancements-3` | `vector-enhancements-2` | 向量增强 3 |
+| `vector-packed-decimal` | `vector` | 向量压缩十进制 |
+| `vector-packed-decimal-enhancement` | `vector-packed-decimal` | 向量压缩十进制增强 |
+| `vector-packed-decimal-enhancement-2` | `vector-packed-decimal-enhancement-2` | 向量压缩十进制增强 2 |
+| `vector-packed-decimal-enhancement-3` | `vector-packed-decimal-enhancement-3` | 向量压缩十进制增强 3 |
+| `nnp-assist` | `vector` | nnp 辅助 |
+| `miscellaneous-extensions-2` |  | 杂项扩展 2 |
+| `miscellaneous-extensions-3` |  | 杂项扩展 3 |
+| `miscellaneous-extensions-4` |  | 杂项扩展 4 |
 
 [z/Architecture Principles of Operation]: https://publibfp.dhe.ibm.com/epubs/pdf/a227832d.pdf
 
@@ -720,7 +721,7 @@ r[attributes.codegen.track_caller.extern]
 r[attributes.codegen.track_caller.behavior]
 ### 行为
 
-将该属性应用于函数 `f` 后，`f` 内部的代码便可以获得导致调用 `f` 的“最顶层”已追踪调用的 [`Location`](../../core/panic/location/struct.Location.html) 提示。在观察点上，某个实现的行为如同它从 `f` 的栈帧向上遍历调用栈，找到最近的未带属性函数 `outer` 的栈帧，并返回 `outer` 中该已追踪调用的 [`Location`](../../core/panic/location/struct.Location.html)。
+将该属性应用于函数 `f` 后，`f` 内部的代码便可以获得导致调用 `f` 的“最顶层”已追踪调用的 [`Location`](core::panic::Location) 提示。在观察点上，某个实现的行为如同它从 `f` 的栈帧向上遍历调用栈，找到最近的未带属性函数 `outer` 的栈帧，并返回 `outer` 中该已追踪调用的 [`Location`](core::panic::Location)。
 
 ```rust
 #[track_caller]
@@ -730,10 +731,10 @@ fn f() {
 ```
 
 > [!NOTE]
-> `core` 提供了 [`core::panic::Location::caller`](../../core/panic/location/struct.Location.html#method.caller) 用于观测调用者位置。它封装了由 `rustc` 实现的 [`core::intrinsics::caller_location`](../../core/intrinsics/fn.caller_location.html) 内在函数。
+> `core` 提供了 [`core::panic::Location::caller`] 用于观测调用者位置。它封装了由 `rustc` 实现的 [`core::intrinsics::caller_location`] 内在函数。
 
 > [!NOTE]
-> 由于得到的 `Location` 只是一个提示，实现可以提前停止向上遍历调用栈。重要注意事项请参见[局限性](#limitations)。
+> 由于得到的 `Location` 只是一个提示，实现可以提前停止向上遍历调用栈。重要注意事项请参见[限制](#limitations)。
 
 #### 示例
 
@@ -745,7 +746,7 @@ fn f() {
 #     println!("{}", std::panic::Location::caller());
 # }
 fn calls_f() {
-    f(); // <-- f() prints this location
+    f(); // <-- f() 打印此位置
 }
 ```
 
@@ -763,7 +764,7 @@ fn g() {
 }
 
 fn calls_g() {
-    g(); // <-- g() prints this location twice, once itself and once from f()
+    g(); // <-- g() 打印此位置两次：一次来自自身，一次来自 f()
 }
 ```
 
@@ -786,7 +787,7 @@ fn h() {
 }
 
 fn calls_h() {
-    h(); // <-- prints this location three times, once itself, once from g(), once from f()
+    h(); // <-- 打印此位置三次：一次来自自身，一次来自 g()，一次来自 f()
 }
 ```
 
@@ -809,7 +810,7 @@ r[attributes.codegen.instruction_set]
 ## `instruction_set` 属性
 
 r[attributes.codegen.instruction_set.intro]
-_`instruction_set` [属性](../attributes.md)_ 指定函数在代码生成期间将使用的指令集。这允许在单个程序中混用多种指令集。
+*`instruction_set` [属性](../attributes.md)* 指定函数在代码生成期间将使用的指令集。这允许在单个程序中混用多种指令集。
 
 > [!EXAMPLE]
 > <!-- ignore: arm-only -->
@@ -822,16 +823,16 @@ _`instruction_set` [属性](../attributes.md)_ 指定函数在代码生成期间
 > ```
 
 r[attributes.codegen.instruction_set.syntax]
-`instruction_set` 属性使用 [MetaListPaths](../attributes.md#grammar-MetaListPaths) 语法来指定单一路径，该路径由架构族名称和指令集名称组成。
+`instruction_set` 属性使用 [MetaListPaths] 语法来指定单一路径，该路径由架构族名称和指令集名称组成。
 
 r[attributes.codegen.instruction_set.allowed-positions]
-`instruction_set` 属性只能应用于具有[函数体](../items/functions.md#r-items.fn.body)的函数，包括[闭包](../expressions/closure-expr.md#r-expr.closure)、[async 块](../expressions/block-expr.md#r-expr.block.async)、[自由函数](../items/functions.md#r-items.fn)、[固有 impl](../items/implementations.md#r-items.impl.inherent) 或 [trait impl](../items/implementations.md#r-items.impl.trait) 中的[关联函数](../items/associated-items.md#r-items.associated.fn)，以及在这些函数具有[默认定义](../items/traits.md#r-items.traits.associated-item-decls)时，[trait 定义](../items/traits.md#r-items.traits)中的关联函数。
+`instruction_set` 属性只能应用于具有[函数体](items.fn.body)的函数 --- [闭包](expr.closure)、[async 块](expr.block.async)、[自由函数](items.fn)、[固有 impl](items.impl.inherent) 或 [trait impl](items.impl.trait) 中的[关联函数](items.associated.fn)，以及 [trait 定义](items.traits)中那些具有[默认定义](items.traits.associated-item-decls)的关联函数。
 
 > [!NOTE]
 > `rustc` 会忽略在其他位置的使用，但会对此发出 lint。将来这可能会变成错误。
 
 > [!NOTE]
-> 尽管该属性可以应用于[闭包](../expressions/closure-expr.md#r-expr.closure)和[async 块](../expressions/block-expr.md#r-expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
+> 尽管该属性可以应用于[闭包](expr.closure)和[async 块](expr.block.async)，但其用途有限，因为我们尚不支持在表达式上使用属性。
 
 r[attributes.codegen.instruction_set.duplicates]
 `instruction_set` 属性在一个函数上只能使用一次。

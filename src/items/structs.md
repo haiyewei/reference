@@ -23,7 +23,7 @@ TupleField -> OuterAttribute* Visibility? Type
 ```
 
 r[items.struct.intro]
-_结构体_ 是一种名义[结构体类型](../types/struct.md)，使用关键字 `struct` 定义。
+*结构体*是一种名义[结构体类型](../types/struct.md)，使用关键字 `struct` 定义。
 
 r[items.struct.namespace]
 结构体声明会在其所在模块或块的[类型命名空间](../names/namespaces.md)中定义给定名称。
@@ -37,7 +37,7 @@ let px: i32 = p.x;
 ```
 
 r[items.struct.tuple]
-_元组结构体_ 是一种名义[元组类型](../types/tuple.md)，也使用关键字 `struct` 定义。除定义一个类型之外，它还会在[值命名空间](../names/namespaces.md)中定义一个同名构造器。该构造器是一个可被调用以创建结构体新实例的函数。例如：
+*元组结构体*是一种名义[元组类型](../types/tuple.md)，也使用关键字 `struct` 定义。除定义一个类型之外，它还会在[值命名空间](../names/namespaces.md)中定义一个同名构造器。该构造器是一个可被调用以创建结构体新实例的函数。例如：
 
 ```rust
 struct Point(i32, i32);
@@ -46,7 +46,7 @@ let px: i32 = match p { Point(x, _) => x };
 ```
 
 r[items.struct.unit]
-_类单元结构体_ 是没有任何字段的结构体，通过完全省略字段列表来定义。这样的结构体会隐式定义一个同名的、类型为该结构体的[常量](constant-items.md)。例如：
+*类单元结构体*是没有任何字段的结构体，通过完全省略字段列表来定义。这样的结构体会隐式定义一个同名的、类型为该结构体的[常量](constant-items.md)。例如：
 
 ```rust
 struct Cookie;

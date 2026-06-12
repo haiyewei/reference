@@ -19,7 +19,7 @@ fn bar<'a>() {
 由于 `'static` 比生命周期参数 `'a` 存活得更久，`&'static str` 是 `&'a str` 的子类型。
 
 r[subtype.higher-ranked]
-[Higher-ranked]&#32;[function pointers] and [trait objects] have another subtype relation. They are subtypes of types that are given by substitutions of the higher-ranked lifetimes. Some examples:
+[高阶](../nomicon/hrtb.html)[函数指针](types/function-pointer.md)和 [trait 对象](types/trait-object.md)具有另一种子类型关系。它们是由替换高阶生命周期所给出的类型的子类型。一些示例：
 
 ```rust
 // 这里用 'a 替换 'static
@@ -39,23 +39,23 @@ r[subtyping.variance]
 ## 型变
 
 r[subtyping.variance.intro]
-型变是泛型类型相对于其实参所具有的属性。泛型类型在某个参数上的 _型变_，表示该参数的子类型化如何影响该类型的子类型化。
+型变是泛型类型相对于其实参所具有的属性。泛型类型在某个参数上的 *型变*，表示该参数的子类型化如何影响该类型的子类型化。
 
 r[subtyping.variance.covariant]
-* 如果 `T` 是 `U` 的子类型会推出 `F<T>` 是 `F<U>` 的子类型，则 `F<T>` 对 `T` 是_协变_ 的（子类型化“传递通过”）
+* 如果 `T` 是 `U` 的子类型会推出 `F<T>` 是 `F<U>` 的子类型，则 `F<T>` 对 `T` 是*协变* 的（子类型化“传递通过”）
 
 r[subtyping.variance.contravariant]
-* 如果 `T` 是 `U` 的子类型会推出 `F<U>` 是 `F<T>` 的子类型，则 `F<T>` 对 `T` 是_逆变_ 的
+* 如果 `T` 是 `U` 的子类型会推出 `F<U>` 是 `F<T>` 的子类型，则 `F<T>` 对 `T` 是*逆变* 的
 
 r[subtyping.variance.invariant]
-* 否则，`F<T>` 对 `T` 是 _不变_ 的（无法导出子类型关系）
+* 否则，`F<T>` 对 `T` 是 *不变* 的（无法导出子类型关系）
 
 r[subtyping.variance.builtin-types]
 类型的型变按如下方式自动确定
 
 | 类型 | 在 `'a` 上的型变 | 在 `T` 上的型变 |
 |-------------------------------|-------------------|-------------------|
-| `&'a T` | 协变 | 协变 |
+| `&'a T` | 协变 | covariant |
 | `&'a mut T` | 协变 | 不变 |
 | `*const T` |  | 协变 |
 | `*mut T` |  | 不变 |
@@ -72,14 +72,14 @@ r[subtyping.variance.user-composite-types]
 ```rust
 use std::cell::UnsafeCell;
 struct Variance<'a, 'b, 'c, T, U: 'a> {
-    x: &'a U,               // This makes `Variance` covariant in 'a, and would
-                            // make it covariant in U, but U is used later
-    y: *const T,            // Covariant in T
-    z: UnsafeCell<&'b f64>, // Invariant in 'b
-    w: *mut U,              // Invariant in U, makes the whole struct invariant
+    x: &'a U,               // 这使 `Variance` 在 'a 上协变，并且本会使它
+                            // 在 U 上协变，但 U 稍后还会被使用
+    y: *const T,            // 在 T 上协变
+    z: UnsafeCell<&'b f64>, // 在 'b 上不变
+    w: *mut U,              // 在 U 上不变，使整个结构体不变
 
-    f: fn(&'c ()) -> &'c () // Both co- and contravariant, makes 'c invariant
-                            // in the struct.
+    f: fn(&'c ()) -> &'c () // 同时协变和逆变，使 'c 在该结构体中
+                            // 不变。
 }
 ```
 
@@ -92,8 +92,8 @@ fn generic_tuple<'short, 'long: 'short>(
     // 'long 在元组内同时用于协变位置和不变位置。
     x: (&'long u32, UnsafeCell<&'long u32>),
 ) {
-    // As the variance at these positions is computed separately,
-    // we can freely shrink 'long in the covariant position.
+    // 由于这些位置上的型变是分别计算的，
+    // 我们可以在协变位置自由缩短 'long。
     let _: (&'short u32, UnsafeCell<&'long u32>) = x;
 }
 
@@ -101,9 +101,9 @@ fn takes_fn_ptr<'short, 'middle: 'short>(
     // 'middle 同时用于协变位置和逆变位置。
     f: fn(&'middle ()) -> &'middle (),
 ) {
-    // As the variance at these positions is computed separately,
-    // we can freely shrink 'middle in the covariant position
-    // and extend it in the contravariant position.
+    // 由于这些位置上的型变是分别计算的，
+    // 我们可以在协变位置自由缩短 'middle，
+    // 并在逆变位置扩展它。
     let _: fn(&'static ()) -> &'short () = f;
 }
 ```

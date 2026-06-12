@@ -2,7 +2,7 @@ r[dynamic-sized]
 # 动态大小类型
 
 r[dynamic-sized.intro]
-大多数类型都有在编译时已知的固定大小，并实现 trait [`Sized`](special-types-and-traits.md#sized)。大小只有在运行时才知道的类型称为_动态大小类型_（_DST_），非正式地也称为 unsized 类型。[切片](types/slice.md)、[trait 对象](types/trait-object.md) 和 [str](types/str.md) 是 <abbr title="dynamically sized types">DSTs</abbr> 的例子。
+大多数类型都有在编译时已知的固定大小，并实现 trait [`Sized`](special-types-and-traits.md#sized)。大小只有在运行时才知道的类型称为*动态大小类型*（_DST_），非正式地也称为 unsized 类型。[切片](types/slice.md)、[trait 对象](types/trait-object.md) 和 [str](types/str.md) 是 <abbr title="dynamically sized types">DSTs</abbr> 的例子。
 
 r[dynamic-sized.restriction]
 这类类型只能在某些情况下使用：
@@ -17,7 +17,7 @@ r[dynamic-sized.question-sized]
 
 r[dynamic-sized.trait-impl]
 * 可以为 <abbr title="dynamically sized
-types">DSTs</abbr> 实现 trait。与泛型类型形参不同，在 trait 定义中 `Self: ?Sized` 是默认情况。
+  types">DSTs</abbr> 实现 trait。与泛型类型形参不同，在 trait 定义中 `Self: ?Sized` 是默认情况。
 
 r[dynamic-sized.struct-field]
 * 结构体可以包含一个 <abbr title="dynamically sized type">DST</abbr> 作为最后一个字段；这会使该结构体本身成为一个 <abbr title="dynamically sized type">DST</abbr>。

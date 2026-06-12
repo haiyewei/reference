@@ -17,7 +17,7 @@ r[memory.bytes.contents]
 每个字节可以具有以下值之一：
 
 r[memory.bytes.init]
-* 包含一个 `u8` 值和可选 [provenance（来源）](../core/ptr/index.html#provenance)的已初始化字节，
+* 包含一个 `u8` 值和可选的 [provenance（来源）][std::ptr#provenance] 的已初始化字节，
 
 r[memory.bytes.uninit]
 * 未初始化的字节。

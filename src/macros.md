@@ -53,16 +53,16 @@ r[macro.invocation.extern]
 * [外部块](items/external-blocks.md)
 
 r[macro.invocation.item-statement]
-用作项或语句时，如果没有使用花括号且末尾需要分号，则使用 [MacroInvocationSemi](macros.md#grammar-MacroInvocationSemi) 形式。[可见性限定符](visibility-and-privacy.md)绝不允许出现在宏调用或 [`macro_rules`](macros-by-example.md) 定义之前。
+用作项或语句时，如果没有使用花括号且末尾需要分号，则使用 [MacroInvocationSemi] 形式。[可见性限定符](visibility-and-privacy.md)绝不允许出现在宏调用或 [`macro_rules`](macros-by-example.md) 定义之前。
 
 ```rust
-// Used as an expression.
+// 用作表达式。
 let x = vec![1,2,3];
 
-// Used as a statement.
+// 用作语句。
 println!("Hello!");
 
-// Used in a pattern.
+// 用于模式。
 macro_rules! pat {
     ($i:ident) => (Some($i))
 }
@@ -71,18 +71,18 @@ if let pat!(x) = Some(1) {
     assert_eq!(x, 1);
 }
 
-// Used in a type.
+// 用于类型。
 macro_rules! Tuple {
     { $A:ty, $B:ty } => { ($A, $B) };
 }
 
 type N2 = Tuple!(i32, i32);
 
-// Used as an item.
+// 用作项。
 # use std::cell::RefCell;
 thread_local!(static FOO: RefCell<u32> = RefCell::new(1));
 
-// Used as an associated item.
+// 用作关联项。
 macro_rules! const_maker {
     ($t:ty, $v:tt) => { const CONST: $t = $v; };
 }
@@ -90,11 +90,11 @@ trait T {
     const_maker!{i32, 7}
 }
 
-// Macro calls within macros.
+// 宏中的宏调用。
 macro_rules! example {
     () => { println!("Macro call in a macro!") };
 }
-// Outer macro `example` is expanded, then inner macro `println` is expanded.
+// 先展开外层宏 `example`，然后展开内层宏 `println`。
 example!();
 ```
 

@@ -11,10 +11,10 @@ TupleElements -> ( Expression `,` )+ Expression?
 ```
 
 r[expr.tuple.result]
-_元组表达式_构造[元组值](../types/tuple.md)。
+*元组表达式*构造[元组值](../types/tuple.md)。
 
 r[expr.tuple.intro]
-元组表达式的语法是用括号括起、以逗号分隔的表达式列表，称为_元组初始化器操作数_。
+元组表达式的语法是用括号括起、以逗号分隔的表达式列表，称为*元组初始化器操作数*。
 
 r[expr.tuple.unary-tuple-restriction]
 一元元组表达式要求在其元组初始化器操作数后有一个逗号，以便与[带括号表达式](grouped-expr.md)消除歧义。
@@ -36,9 +36,9 @@ r[expr.tuple.fields]
 | 表达式 | 类型 |
 | -------------------- | ------------ |
 | `()` | `()`（单元） |
-| `(0.0, 4.5)` | `(f64, f64)` |
-| `("x".to_string(), )` | `(String, )` |
-| `("a", 4usize, true)` | `(&'static str, usize, bool)` |
+| `(0.0, 4.5)`         | `(f64, f64)` |
+| `("x".to_string(), )` | `(String, )`  |
+| `("a", 4usize, true)`| `(&'static str, usize, bool)` |
 
 r[expr.tuple-index]
 ## 元组索引表达式
@@ -49,12 +49,12 @@ TupleIndexingExpression -> Expression `.` TUPLE_INDEX
 ```
 
 r[expr.tuple-index.intro]
-_元组索引表达式_访问[元组](../types/tuple.md)和[元组结构体](../types/struct.md)的字段。
+*元组索引表达式*访问[元组](../types/tuple.md)和[元组结构体](../types/struct.md)的字段。
 
-元组索引表达式的语法是一个称为_元组操作数_的表达式，后跟一个 `.`，最后跟一个元组索引。
+元组索引表达式的语法是一个称为*元组操作数*的表达式，后跟一个 `.`，最后跟一个元组索引。
 
 r[expr.tuple-index.index-syntax]
-_元组索引_的语法是不带前导零、下划线或后缀的[十进制字面量](../tokens.md#integer-literals)。例如，`0` 和 `2` 是有效的元组索引，而 `01`、`0_` 和 `0i32` 不是。
+*元组索引*的语法是不带前导零、下划线或后缀的[十进制字面量](../tokens.md#integer-literals)。例如，`0` 和 `2` 是有效的元组索引，而 `01`、`0_` 和 `0i32` 不是。
 
 r[expr.tuple-index.required-type]
 元组操作数的类型必须是[元组类型](../types/tuple.md)或[元组结构体](../types/struct.md)。
@@ -68,11 +68,11 @@ r[expr.tuple-index.result]
 元组索引表达式的示例：
 
 ```rust
-// Indexing a tuple
+// 索引元组
 let pair = ("a string", 2);
 assert_eq!(pair.1, 2);
 
-// Indexing a tuple struct
+// 索引元组结构体
 # struct Point(f32, f32);
 let point = Point(1.0, 0.0);
 assert_eq!(point.0, 1.0);

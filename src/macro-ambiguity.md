@@ -16,7 +16,7 @@ r[macro.ambiguity.convention.defs]
   - `NT`：非终结符，即可以出现在 matcher 中的各种“元变量”或 repetition matcher，在 MBE 语法中用前导 `$` 字符指定。
   - `simple NT`：“元变量”非终结符（下文会进一步讨论）。
   - `complex NT`：进行重复匹配的非终结符，通过 repetition operator（`*`、`+`、`?`）指定。
-  - `token`：matcher 的原子元素；即标识符、运算符、开/闭分隔符，<em>以及</em> simple NT。
+  - `token`：matcher 的原子元素；即标识符、运算符、开/闭分隔符，*以及* simple NT。
   - `token tree`：由 token（叶子）、complex NT 和 token tree 的有限序列形成的树结构。
   - `delimiter token`：用于分隔一个 fragment 的结尾和下一个 fragment 的开头的 token。
   - `separator token`：complex NT 中可选的 delimiter token，用于分隔匹配到的 repetition 中每一对元素。
@@ -38,7 +38,7 @@ r[macro.ambiguity.convention.matcher]
 `(start $foo:expr $($i:ident),* end)` 是一个 matcher。整个 matcher 是一个 delimited sequence（带有开分隔符 `(` 和闭分隔符 `)`），而 `$foo` 和 `$i` 是 simple NT，其各自的 fragment specifier 分别为 `expr` 和 `ident`。
 
 r[macro.ambiguity.convention.complex-nt]
-`$(i:ident),*` is *also* an NT; it is a complex NT that matches a comma-separated repetition of identifiers. The `,` is the separator token for the complex NT; it occurs in between each pair of elements (if any) of the matched fragment.
+`$(i:ident),*` *也是* 一个 NT；它是一个 complex NT，匹配由逗号分隔的标识符 repetition。`,` 是该 complex NT 的 separator token；它出现在匹配到的 fragment 中每一对元素（如果有）之间。
 
 complex NT 的另一个例子是 `$(hi $e:expr ;)+`，它匹配形式为 `hi <expr>; hi <expr>; ...` 的任何 fragment，其中 `hi <expr>;` 至少出现一次。注意，这个 complex NT 没有专用的 separator token。
 
@@ -53,13 +53,13 @@ r[macro.ambiguity.convention.set]
 r[macro.ambiguity.convention.sequence-vars]
 希腊字母 "α" "β" "γ" "δ" 表示可能为空的 token-tree 序列。（不过，希腊字母 "ε"（epsilon）在此表述中具有特殊角色，并不表示 token-tree 序列。）
 
-  * 这种希腊字母约定通常只在序列的存在属于技术细节时使用；特别是，当我们希望<em>强调</em>正在操作 token-tree 序列时，会使用 "tt ..." 这一记号表示该序列，而不是使用希腊字母。
+  * 这种希腊字母约定通常只在序列的存在属于技术细节时使用；特别是，当我们希望 *强调* 正在操作 token-tree 序列时，会使用 "tt ..." 这一记号表示该序列，而不是使用希腊字母。
 
 注意，matcher 只不过是一个 token tree。如上所述，"simple NT" 是元变量 NT；因此它不是 repetition。例如，`$foo:ty` 是 simple NT，但 `$($foo:ty)+` 是 complex NT。
 
-还要注意，在此形式化体系的上下文中，术语 "token" 通常<em>包括</em> simple NT。
+还要注意，在此形式化体系的上下文中，术语 "token" 通常 *包括* simple NT。
 
-最后，读者最好记住，按照此形式化体系的定义，没有 simple NT 会匹配空片段，同样也没有 token 会匹配 Rust 语法中的空片段。（因此，<em>唯一</em>能够匹配空片段的 NT 是 complex NT。）这实际上并不正确，因为 `vis` matcher 可以匹配空片段。因此，出于形式化体系的目的，我们会把 `$v:vis` 视为实际上是 `$($v:vis)?`，并要求该 matcher 匹配空片段。
+最后，读者最好记住，按照此形式化体系的定义，没有 simple NT 会匹配空片段，同样也没有 token 会匹配 Rust 语法中的空片段。（因此，*唯一* 能够匹配空片段的 NT 是 complex NT。）这实际上并不正确，因为 `vis` matcher 可以匹配空片段。因此，出于形式化体系的目的，我们会把 `$v:vis` 视为实际上是 `$($v:vis)?`，并要求该 matcher 匹配空片段。
 
 r[macro.ambiguity.invariant]
 ### matcher 不变式
@@ -142,14 +142,14 @@ r[macro.ambiguity.sets.def.first.token]
 r[macro.ambiguity.sets.def.first.complex]
   * 否则，M 是以 complex NT 开头的 token-tree 序列：`M = $( tt ... ) OP α`，或 `M = $( tt ... ) SEP OP α`，（其中 `α` 是 matcher 其余部分的 token tree 序列，可能为空）。
 
-      * 令 SEP\_SET(M) = { SEP }，如果 SEP 存在且 ε ∈ FIRST(`tt ...`)；否则 SEP\_SET(M) = {}。
+      * 令 SEP_SET(M) = { SEP }，如果 SEP 存在且 ε ∈ FIRST(`tt ...`)；否则 SEP_SET(M) = {}。
 
-  * 令 ALPHA\_SET(M) = FIRST(`α`)，如果 OP = `*` 或 `?`；如果 OP = `+`，则 ALPHA\_SET(M) = {}。
-  * FIRST(M) = (FIRST(`tt ...`) \\ {ε}) ∪ SEP\_SET(M) ∪ ALPHA\_SET(M)。
+  * 令 ALPHA_SET(M) = FIRST(`α`)，如果 OP = `*` 或 `?`；如果 OP = `+`，则 ALPHA_SET(M) = {}。
+  * FIRST(M) = (FIRST(`tt ...`) \ {ε}) ∪ SEP_SET(M) ∪ ALPHA_SET(M)。
 
-complex NT 的定义值得作一些说明。SEP\_SET(M) 定义了 separator 可能是 M 的有效首 token 的可能性，这发生在定义了 separator 且重复 fragment 可能为空时。ALPHA\_SET(M) 定义了 complex NT 可能为空的可能性，意味着 M 的有效首 token 是后续 token-tree 序列 `α` 的首 token。使用 `*` 或 `?` 时会出现这种情况，因为可能存在零次重复。理论上，如果 `+` 与可能为空的 repeating fragment 一起使用，也可能出现这种情况，但第三个不变式禁止这样做。
+complex NT 的定义值得作一些说明。SEP_SET(M) 定义了 separator 可能是 M 的有效首 token 的可能性，这发生在定义了 separator 且重复 fragment 可能为空时。ALPHA_SET(M) 定义了 complex NT 可能为空的可能性，意味着 M 的有效首 token 是后续 token-tree 序列 `α` 的首 token。使用 `*` 或 `?` 时会出现这种情况，因为可能存在零次重复。理论上，如果 `+` 与可能为空的 repeating fragment 一起使用，也可能出现这种情况，但第三个不变式禁止这样做。
 
-由此可见，FIRST(M) 显然可以包含 SEP\_SET(M) 或 ALPHA\_SET(M) 中的任何 token；如果 complex NT 匹配结果非空，那么 FIRST(`tt ...`) 中作为起始的任何 token 也可以起作用。最后要考虑的是 ε。SEP\_SET(M) 和 FIRST(`tt ...`) \ {ε} 不能包含 ε，但 ALPHA\_SET(M) 可以。因此，当且仅当 ε ∈ ALPHA\_SET(M) 时，此定义才允许 M 接受 ε。这是正确的，因为在 complex NT 情况下，要让 M 接受 ε，complex NT 和 α 都必须接受它。如果 OP = `+`，意味着 complex NT 不能为空，那么根据定义 ε ∉ ALPHA\_SET(M)。否则，complex NT 可以接受零次重复，于是 ALPHA\_SET(M) = FOLLOW(`α`)。所以这个定义对于 \varepsilon 也是正确的。
+由此可见，FIRST(M) 显然可以包含 SEP_SET(M) 或 ALPHA_SET(M) 中的任何 token；如果 complex NT 匹配结果非空，那么 FIRST(`tt ...`) 中作为起始的任何 token 也可以起作用。最后要考虑的是 ε。SEP_SET(M) 和 FIRST(`tt ...`) \ {ε} 不能包含 ε，但 ALPHA_SET(M) 可以。因此，当且仅当 ε ∈ ALPHA_SET(M) 时，此定义才允许 M 接受 ε。这是正确的，因为在 complex NT 情况下，要让 M 接受 ε，complex NT 和 α 都必须接受它。如果 OP = `+`，意味着 complex NT 不能为空，那么根据定义 ε ∉ ALPHA_SET(M)。否则，complex NT 可以接受零次重复，于是 ALPHA_SET(M) = FOLLOW(`α`)。所以这个定义对于 \varepsilon 也是正确的。
 
 r[macro.ambiguity.sets.def.last]
 #### LAST
@@ -247,10 +247,10 @@ r[macro.ambiguity.sets.def.follow.intro]
 最后，FOLLOW(M) 的定义按如下方式构建。pat、expr 等表示带有给定 fragment specifier 的 simple nonterminal。
 
 r[macro.ambiguity.sets.def.follow.pat]
-  * FOLLOW(pat) = {`=>`, `,`, `=`, `|`, `if`, `in`}`.
+  * FOLLOW(pat) = {`=>`, `,`, `=`, `|`, `if`, `in`}`。
 
 r[macro.ambiguity.sets.def.follow.expr-stmt]
-  * FOLLOW(expr) = FOLLOW(expr_2021) = FOLLOW(stmt) =  {`=>`, `,`, `;`}`.
+  * FOLLOW(expr) = FOLLOW(expr_2021) = FOLLOW(stmt) =  {`=>`, `,`, `;`}`。
 
 r[macro.ambiguity.sets.def.follow.ty-path]
   * FOLLOW(ty) = FOLLOW(path) = {`{`, `[`, `,`, `=>`, `:`, `=`, `>`, `>>`, `;`, `|`, `as`, `where`, block nonterminal}。

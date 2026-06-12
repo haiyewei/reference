@@ -20,7 +20,7 @@ StructBase -> `..` Expression
 ```
 
 r[expr.struct.intro]
-_结构体表达式_创建 struct、enum 或 union 值。它由指向 [struct](../items/structs.md)、[枚举变体](../items/enumerations.md)或 [union](../items/unions.md) 项的路径，后跟该项各字段的值组成。
+*结构体表达式*创建 struct、enum 或 union 值。它由指向 [struct](../items/structs.md)、[枚举变体](../items/enumerations.md)或 [union](../items/unions.md) 项的路径，后跟该项各字段的值组成。
 
 以下是结构体表达式的示例：
 
@@ -36,13 +36,13 @@ Enum::Variant {};
 ```
 
 > [!NOTE]
-> 元组结构体和元组枚举变体通常使用[调用表达式](call-expr.md#r-expr.call)实例化，该调用表达式引用[值命名空间中的构造器](../items/structs.md#r-items.struct.tuple)。这不同于使用花括号、引用类型命名空间中的构造器的结构体表达式。
+> 元组结构体和元组枚举变体通常使用[调用表达式][expr.call]实例化，该调用表达式引用[值命名空间中的构造器][items.struct.tuple]。这不同于使用花括号、引用类型命名空间中的构造器的结构体表达式。
 >
 > ```rust
 > struct Position(i32, i32, i32);
-> Position(0, 0, 0);  // Typical way of creating a tuple struct.
-> let c = Position;  // `c` is a function that takes 3 arguments.
-> let pos = c(8, 6, 7);  // Creates a `Position` value.
+> Position(0, 0, 0);  // 创建元组结构体的典型方式。
+> let c = Position;  // `c` 是一个接受 3 个实参的函数。
+> let pos = c(8, 6, 7);  // 创建一个 `Position` 值。
 >
 > enum Version { Triple(i32, i32, i32) };
 > Version::Triple(0, 0, 0);
@@ -60,19 +60,19 @@ Enum::Variant {};
 > enum Enum { Tuple() }
 >
 > // <Unit as Tr>::T(); // causes an error -- `::T` is a type, not a value
-> <Enum as Tr>::T::Tuple(); // OK
+> <Enum as Tr>::T::Tuple(); // 可以
 > ```
 >
 > ----
 >
-> 单元结构体和单元枚举变体通常使用[路径表达式](path-expr.md#r-expr.path)实例化，该路径表达式引用[值命名空间中的常量](../items/structs.md#r-items.struct.unit)。
+> 单元结构体和单元枚举变体通常使用[路径表达式][expr.path]实例化，该路径表达式引用[值命名空间中的常量][items.struct.unit]。
 >
 > ```rust
 > struct Gamma;
-> // Gamma unit value, referring to the const in the value namespace.
+> // Gamma 单元值，指向值命名空间中的 const。
 > let a = Gamma;
-> // Exact same value as `a`, but constructed using a struct expression
-> // referring to the type namespace.
+> // 与 `a` 完全相同的值，但使用结构体表达式构造
+> // 指向类型命名空间。
 > let b = Gamma {};
 >
 > enum ColorSpace { Oklch }
@@ -108,7 +108,7 @@ r[expr.struct.update.visibility-constraint]
 # struct Point3d { x: i32, y: i32, z: i32 }
 let mut base = Point3d {x: 1, y: 2, z: 3};
 let y_ref = &mut base.y;
-Point3d {y: 0, z: 10, .. base}; // OK, only base.x is accessed
+Point3d {y: 0, z: 10, .. base}; // OK，仅访问 base.x
 drop(y_ref);
 ```
 
@@ -120,9 +120,9 @@ r[expr.struct.tuple-field]
 
 ```rust
 struct Color(u8, u8, u8);
-let c1 = Color(0, 0, 0);  // Typical way of creating a tuple struct.
-let c2 = Color{0: 255, 1: 127, 2: 0};  // Specifying fields by index.
-let c3 = Color{1: 0, ..c2};  // Fill out all other fields using a base struct.
+let c1 = Color(0, 0, 0);  // 创建元组结构体的典型方式。
+let c2 = Color{0: 255, 1: 127, 2: 0};  // 按索引指定字段。
+let c3 = Color{1: 0, ..c2};  // 使用基结构体填充所有其他字段。
 ```
 
 r[expr.struct.field.named]

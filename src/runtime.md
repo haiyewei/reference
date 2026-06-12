@@ -8,7 +8,7 @@ r[runtime.global_allocator]
 ## `global_allocator` 属性
 
 r[runtime.global_allocator.intro]
-_`global_allocator` [属性](attributes.md#r-attributes)_ 会选择一个[内存分配器](../std/alloc/index.html)。
+*`global_allocator` [属性][attributes]* 会选择一个[内存分配器][std::alloc]。
 
 > [!EXAMPLE]
 > ```rust
@@ -31,10 +31,10 @@ _`global_allocator` [属性](attributes.md#r-attributes)_ 会选择一个[内存
 > ```
 
 r[runtime.global_allocator.syntax]
-`global_allocator` 属性使用 [MetaWord](attributes.md#grammar-MetaWord) 语法。
+`global_allocator` 属性使用 [MetaWord] 语法。
 
 r[runtime.global_allocator.allowed-positions]
-`global_allocator` 属性只能应用于类型实现 [`GlobalAlloc`](../core/alloc/global/trait.GlobalAlloc.html) trait 的[静态项](items/static-items.md)。
+`global_allocator` 属性只能应用于类型实现 [`GlobalAlloc`](alloc::alloc::GlobalAlloc) trait 的[静态项](items/static-items.md)。
 
 r[runtime.global_allocator.duplicates]
 `global_allocator` 属性在一个项上只能使用一次。
@@ -43,14 +43,14 @@ r[runtime.global_allocator.single]
 `global_allocator` 属性在 crate 图中只能使用一次。
 
 r[runtime.global_allocator.stdlib]
-`global_allocator` 属性从[标准库 prelude](../core/prelude/v1/index.html)中导出。
+`global_allocator` 属性从[标准库 prelude][core::prelude::v1]中导出。
 
 <!-- template:attributes -->
 r[runtime.windows_subsystem]
 ## `windows_subsystem` 属性
 
 r[runtime.windows_subsystem.intro]
-_`windows_subsystem` [属性](attributes.md#r-attributes)_ 会在链接 Windows 目标时设置[子系统](https://msdn.microsoft.com/en-us/library/fcc1zstk.aspx)。
+*`windows_subsystem` [属性][attributes]* 会在链接 Windows 目标时设置[子系统](https://msdn.microsoft.com/en-us/library/fcc1zstk.aspx)。
 
 > [!EXAMPLE]
 > ```rust
@@ -58,7 +58,7 @@ _`windows_subsystem` [属性](attributes.md#r-attributes)_ 会在链接 Windows 
 > ```
 
 r[runtime.windows_subsystem.syntax]
-`windows_subsystem` 属性使用 [MetaNameValueStr](attributes.md#grammar-MetaNameValueStr) 语法。接受的值为 `"console"` 和 `"windows"`。
+`windows_subsystem` 属性使用 [MetaNameValueStr] 语法。接受的值为 `"console"` 和 `"windows"`。
 
 r[runtime.windows_subsystem.allowed-positions]
 `windows_subsystem` 属性只能应用于 crate 根。

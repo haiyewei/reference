@@ -48,7 +48,7 @@ r[type.fn-pointer.qualifiers]
 `unsafe` 限定符表示该类型的值是一个 [unsafe 函数](../unsafe-keyword.md)，而 `extern` 限定符表示它是一个 [extern 函数](../items/functions.md#extern-function-qualifier)。
 
 r[type.fn-pointer.constraint-variadic]
-要使函数成为变参函数，它的 `extern` ABI 必须是 [items.extern.variadic.conventions](../items/external-blocks.md#r-items.extern.variadic.conventions) 中列出的 ABI 之一。
+要使函数成为变参函数，它的 `extern` ABI 必须是 [items.extern.variadic.conventions] 中列出的 ABI 之一。
 
 r[type.fn-pointer.attributes]
 ## 函数指针形参上的属性

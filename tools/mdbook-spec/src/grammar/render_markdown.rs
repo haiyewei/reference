@@ -153,8 +153,11 @@ fn render_expression(expr: &Expression, cx: &RenderCtx, output: &mut String) {
             write!(output, "<sup>{name}</sup>").unwrap();
         }
         ExpressionKind::Nt(nt) => {
-            let dest = cx.md_link_map.get(nt).map_or("missing", |d| d.as_str());
-            write!(output, "<span class=\"grammar-text\">[{nt}]({dest})</span>").unwrap();
+            if let Some(dest) = cx.md_link_map.get(nt) {
+                write!(output, "<span class=\"grammar-text\">[{nt}]({dest})</span>").unwrap();
+            } else {
+                write!(output, "<span class=\"grammar-text\">{nt}</span>").unwrap();
+            }
         }
         ExpressionKind::Terminal(t) => {
             write!(
@@ -215,8 +218,11 @@ fn charset_render_markdown(cx: &RenderCtx, set: &[Characters], output: &mut Stri
 fn render_characters(chars: &Characters, cx: &RenderCtx, output: &mut String) {
     match chars {
         Characters::Named(s) => {
-            let dest = cx.md_link_map.get(s).map_or("missing", |d| d.as_str());
-            write!(output, "[{s}]({dest})").unwrap();
+            if let Some(dest) = cx.md_link_map.get(s) {
+                write!(output, "[{s}]({dest})").unwrap();
+            } else {
+                output.push_str(s);
+            }
         }
         Characters::Terminal(s) => write!(
             output,

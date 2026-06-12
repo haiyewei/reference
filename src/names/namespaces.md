@@ -2,7 +2,7 @@ r[names.namespaces]
 # 命名空间
 
 r[names.namespaces.intro]
-_命名空间_是对已声明[名称](../names.md)的逻辑分组。名称会根据该名称所指称的实体种类而被分隔到不同的命名空间中。命名空间允许一个命名空间中出现的名称不与另一个命名空间中的同名名称冲突。
+*命名空间*是对已声明[名称](../names.md)的逻辑分组。名称会根据该名称所指称的实体种类而被分隔到不同的命名空间中。命名空间允许一个命名空间中出现的名称不与另一个命名空间中的同名名称冲突。
 
 存在若干不同的命名空间，每个命名空间都包含不同种类的实体。名称的使用会根据上下文，在不同命名空间中查找该名称的声明，如[名称解析](name-resolution.md)一章所述。
 
@@ -38,20 +38,19 @@ r[names.namespaces.kinds]
     * [内置属性](../attributes.md#built-in-attributes-index)
     * [工具属性](../attributes.md#tool-attributes)
     * [类函数过程宏](../procedural-macros.md#the-proc_macro-attribute)
-    * [Derive 宏](../procedural-macros.md#r-macro.proc.derive)
+    * [Derive 宏](macro.proc.derive)
     * [Derive 宏辅助属性](../procedural-macros.md#derive-macro-helper-attributes)
     * [属性宏](../procedural-macros.md#the-proc_macro_attribute-attribute)
 * 生命周期命名空间
     * [泛型生命周期参数](../items/generics.md)
 * 标签命名空间
     * [循环标签](../expressions/loop-expr.md#loop-labels)
-    * [块标签](../expressions/loop-expr.md#r-expr.loop.block-labels)
+    * [块标签](expr.loop.block-labels)
 
 以下示例展示了不同命名空间中的重叠名称如何能被无歧义地使用：
 
 ```rust
-// Foo introduces a type in the type namespace and a constructor in the value
-// namespace.
+// Foo 在类型命名空间中引入一个类型，并在值命名空间中引入一个构造器。
 struct Foo(u32);
 
 // `Foo` 宏声明在宏命名空间中。
@@ -59,8 +58,8 @@ macro_rules! Foo {
     () => {};
 }
 
-// `Foo` in the `f` parameter type refers to `Foo` in the type namespace.
-// `'Foo` introduces a new lifetime in the lifetime namespace.
+// `f` 参数类型中的 `Foo` 指称类型命名空间中的 `Foo`。
+// `'Foo` 在生命周期命名空间中引入一个新的生命周期。
 fn example<'Foo>(f: Foo) {
     // `Foo` 指称值命名空间中的 `Foo` 构造器。
     let ctor = Foo;
@@ -68,8 +67,8 @@ fn example<'Foo>(f: Foo) {
     Foo!{}
     // `'Foo` 在标签命名空间中引入一个标签。
     'Foo: loop {
-        // `'Foo` refers to the `'Foo` lifetime parameter, and `Foo`
-        // refers to the type namespace.
+        // `'Foo` 指称 `'Foo` 生命周期参数，而 `Foo`
+        // 指称类型命名空间。
         let x: &'Foo Foo;
         // `'Foo` 指称该标签。
         break 'Foo;
@@ -110,7 +109,7 @@ r[names.namespaces.sub-namespaces.intro]
 >     () => {};
 > }
 >
-> use myattr::mymac; // error[E0252]: the name `mymac` is defined multiple times.
+> use myattr::mymac; // error[E0252]: 名称 `mymac` 被定义了多次。
 > ```
 
 [`cfg` attribute]: ../conditional-compilation.md#the-cfg-attribute

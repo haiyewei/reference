@@ -7,13 +7,13 @@ FieldExpression -> Expression `.` IDENTIFIER
 ```
 
 r[expr.field.intro]
-_字段表达式_是[位置表达式](../expressions.md#place-expressions-and-value-expressions)，其求值结果为 [struct](../items/structs.md) 或 [union](../items/unions.md) 的字段位置。
+*字段表达式*是[位置表达式](../expressions.md#place-expressions-and-value-expressions)，其求值结果为[结构体](../items/structs.md)或[联合体](../items/unions.md)的字段位置。
 
 r[expr.field.mut]
 当操作数是[可变的](../expressions.md#mutability)时，字段表达式也是可变的。
 
 r[expr.field.form]
-字段表达式的语法是一个称为_容器操作数_的表达式，随后是一个 `.`，最后是一个[标识符](../identifiers.md)。
+字段表达式的语法是一个称为*容器操作数*的表达式，随后是一个 `.`，最后是一个[标识符](../identifiers.md)。
 
 r[expr.field.not-method-call]
 字段表达式后面不能跟随一个用括号括起、以逗号分隔的表达式列表，因为那会改为解析为[方法调用表达式](method-call-expr.md)。也就是说，它们不能作为[调用表达式](call-expr.md)的函数操作数。
@@ -25,10 +25,10 @@ r[expr.field.not-method-call]
 > # struct HoldsCallable<F: Fn()> { callable: F }
 > let holds_callable = HoldsCallable { callable: || () };
 >
-> // Invalid: Parsed as calling the method "callable"
+> // 无效：被解析为调用方法 "callable"
 > // holds_callable.callable();
 >
-> // Valid
+> // 有效
 > (holds_callable.callable)();
 > ```
 
@@ -39,13 +39,13 @@ r[expr.field.not-method-call]
 mystruct.myfield;
 foo().x;
 (Struct {a: 10, b: 20}).a;
-(mystruct.function_field)() // Call expression containing a field expression
+(mystruct.function_field)() // 包含字段表达式的调用表达式
 ```
 
 r[expr.field.autoref-deref]
 ## 自动解引用
 
-如果容器操作数的类型根据该操作数是否[可变](../expressions.md#mutability)而实现了 [`Deref`](../special-types-and-traits.md#deref-and-derefmut) 或 [`DerefMut`](../special-types-and-traits.md#deref-and-derefmut)，则它会被_自动解引用_所需的次数，以使字段访问成为可能。这个过程也简称为 _autoderef_。
+如果容器操作数的类型根据该操作数是否[可变](../expressions.md#mutability)而实现了 [`Deref`](../special-types-and-traits.md#deref-and-derefmut) 或 [`DerefMut`](../special-types-and-traits.md#deref-and-derefmut)，则它会被*自动解引用*所需的次数，以使字段访问成为可能。这个过程也简称为 _autoderef_。
 
 r[expr.field.borrow]
 ## 借用
@@ -60,10 +60,10 @@ let mut x: A;
 #     f2: "f2".to_string(),
 #     f3: "f3".to_string()
 # };
-let a: &mut String = &mut x.f1; // x.f1 borrowed mutably
-let b: &String = &x.f2;         // x.f2 borrowed immutably
-let c: &String = &x.f2;         // Can borrow again
-let d: String = x.f3;           // Move out of x.f3
+let a: &mut String = &mut x.f1; // x.f1 被可变借用
+let b: &String = &x.f2;         // x.f2 被不可变借用
+let c: &String = &x.f2;         // 可以再次借用
+let d: String = x.f3;           // 从 x.f3 中移出
 ```
 
 [`Box`]: ../special-types-and-traits.md#boxt

@@ -58,7 +58,7 @@ r[coerce.site.constructor]
   ```
 
 r[coerce.site.return]
-* Function results&mdash;either the final line of a block if it is not semicolon-terminated or any expression in a `return` statement
+* 函数结果，即块中未以分号结束时的最后一行，或 `return` 语句中的任何表达式
 
   例如，在下面的代码中，`x` 被强制转换为类型 `&dyn Display`：
 
@@ -104,10 +104,10 @@ r[coerce.types.intro]
 下列类型之间允许强制转换：
 
 r[coerce.types.reflexive]
-* 如果 `T` 是 `U` 的[子类型](subtyping.md)，则从 `T` 到 `U`（_自反情形_）
+* 如果 `T` 是 `U` 的[子类型](subtyping.md)，则从 `T` 到 `U`（*自反情形*）
 
 r[coerce.types.transitive]
-* 从 `T_1` 到 `T_3`，其中 `T_1` 强制转换到 `T_2`，且 `T_2` 强制转换到 `T_3`（_传递情形_）
+* 从 `T_1` 到 `T_3`，其中 `T_1` 强制转换到 `T_2`，且 `T_2` 强制转换到 `T_3`（*传递情形*）
 
     注意，这尚未得到完全支持。
 
@@ -145,7 +145,7 @@ r[coerce.types.deref]
 
   fn main() {
       let x = &mut CharContainer { value: 'y' };
-      foo(x); //&mut CharContainer is coerced to &char.
+      foo(x); //&mut CharContainer 被强制转换为 &char。
   }
   ```
 
@@ -162,7 +162,9 @@ r[coerce.types.unsize]
 
     且其中 `U` 可以通过[非定长强制转换](#unsized-coercions)从 `T` 获得。
 
-    <!--In the future, coerce_inner will be recursively extended to tuples and structs. In addition, coercions from subtraits to supertraits will be added. See [RFC 401] for more details.-->
+    <!--In the future, coerce_inner will be recursively extended to tuples and
+    structs. In addition, coercions from subtraits to supertraits will be
+    added. See [RFC 401] for more details.-->
 
 r[coerce.types.fn]
 * 函数项类型到 `fn` 指针
@@ -180,7 +182,7 @@ r[coerce.unsize.intro]
 以下强制转换称为 `unsized coercions`（非定长强制转换），因为它们涉及将类型转换为非定长类型，并且如上所述，在少数其他强制转换不被允许的情形中也被允许。它们仍然可以在强制转换可以发生的其他任何位置发生。
 
 r[coerce.unsize.trait]
-两个 trait，[`Unsize`](../core/marker/trait.Unsize.html) 和 [`CoerceUnsized`](../core/ops/unsize/trait.CoerceUnsized.html)，用于辅助这一过程，并将其暴露给库使用。以下强制转换是内建的；如果 `T` 可以通过其中之一强制转换为 `U`，则会为 `T` 提供 `Unsize<U>` 的实现：
+两个 trait，[`Unsize`](std::marker::Unsize) 和 [`CoerceUnsized`](std::ops::CoerceUnsized)，用于辅助这一过程，并将其暴露给库使用。以下强制转换是内建的；如果 `T` 可以通过其中之一强制转换为 `U`，则会为 `T` 提供 `Unsize<U>` 的实现：
 
 r[coerce.unsize.slice]
 * `[T; n]` 到 `[T]`。
@@ -199,7 +201,7 @@ r[coerce.unsized.composite]
     * `T` 实现 `Unsize<U>`。
     * `Foo` 的最后一个字段具有涉及 `T` 的类型。
     * 如果该字段的类型为 `Bar<T>`，则 `Bar<T>` 实现 `Unsize<Bar<U>>`。
-    * `T` 不是任何其他字段类型的一部分。
+    * T 不是任何其他字段类型的一部分。
 
 r[coerce.unsized.pointer]
 此外，当 `T` 实现 `Unsize<U>` 或 `CoerceUnsized<Foo<U>>` 时，类型 `Foo<T>` 可以实现 `CoerceUnsized<Foo<U>>`。这允许它提供到 `Foo<U>` 的非定长强制转换。
@@ -216,8 +218,8 @@ r[coerce.least-upper-bound.intro]
 + 为一系列 if 分支寻找共同类型。
 + 为一系列 match 分支寻找共同类型。
 + 为数组元素寻找共同类型。
-+ 为[带标签块表达式](expressions/loop-expr.md#r-expr.loop.block-labels)在 break 操作数和最终块操作数之间寻找共同类型。
-+ 为[带 break 表达式的 `loop` 表达式](expressions/loop-expr.md#r-expr.loop.break-value)在各 break 操作数之间寻找共同类型。
++ 为[带标签块表达式](expr.loop.block-labels)在 break 操作数和最终块操作数之间寻找共同类型。
++ 为[带 break 表达式的 `loop` 表达式](expr.loop.break-value)在各 break 操作数之间寻找共同类型。
 + 为具有多个 return 语句的闭包的返回类型寻找类型。
 + 为具有多个 return 语句的函数的返回类型检查类型。
 
@@ -240,7 +242,7 @@ r[coerce.least-upper-bound.computation-unify]
 
 ```rust
 # let (a, b, c) = (0, 1, 2);
-// For if branches
+// 对于 if 分支
 let bar = if true {
     a
 } else if false {
@@ -249,17 +251,17 @@ let bar = if true {
     c
 };
 
-// For match arms
+// 对于 match 分支
 let baw = match 42 {
     0 => a,
     1 => b,
     _ => c,
 };
 
-// For array elements
+// 对于数组元素
 let bax = [a, b, c];
 
-// For closure with multiple return statements
+// 对于带有多个 return 语句的闭包
 let clo = || {
     if true {
         a
@@ -271,7 +273,7 @@ let clo = || {
 };
 let baz = clo();
 
-// For type checking of function with multiple return statements
+// 用于对具有多个 return 语句的函数进行类型检查
 fn foo() -> i32 {
     let (a, b, c) = (0, 1, 2);
     match 42 {

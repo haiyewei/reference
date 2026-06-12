@@ -2,21 +2,21 @@ r[names]
 # 名称
 
 r[names.intro]
-_实体_是源程序中可以通过某种方式引用的语言构造，通常经由[路径](paths.md)引用。实体包括[类型](types.md)、[项](items.md)、[泛型参数](items/generics.md)、[变量绑定](patterns.md)、[循环标签](expressions/loop-expr.md#loop-labels)、[生命周期](tokens.md#lifetimes-and-loop-labels)、[字段](expressions/field-expr.md)、[属性](attributes.md)和 [lint](attributes/diagnostics.md#lint-check-attributes)。
+*实体*是一种语言构造，可以在源程序中以某种方式引用，通常经由[路径](paths.md)引用。实体包括[类型](types.md)、[项](items.md)、[泛型参数](items/generics.md)、[变量绑定](patterns.md)、[循环标签](expressions/loop-expr.md#loop-labels)、[生命周期](tokens.md#lifetimes-and-loop-labels)、[字段](expressions/field-expr.md)、[属性](attributes.md)和 [lint](attributes/diagnostics.md#lint-check-attributes)。
 
-_声明_是一种可以引入_名称_来指代实体的语法构造。实体名称在[_作用域_](names/scopes.md)内有效 --- 作用域是源文本中可以引用该名称的一片区域。
+*声明*是一种可以引入*名称*来指代实体的语法构造。实体名称在[*作用域*](names/scopes.md)内有效 --- 作用域是源文本中可以引用该名称的一片区域。
 
-有些实体在源代码中[显式声明](#explicitly-declared-entities)，有些实体则作为语言或编译器扩展的一部分[隐式声明](#implicitly-declared-entities)。
+有些实体在源代码中[显式声明](#r-names.explicit)，有些实体则作为语言或编译器扩展的一部分[隐式声明](#r-names.implicit)。
 
-[_路径_](paths.md)用于引用实体，该实体可能位于另一个模块或类型中。
+[*路径*](paths.md)用于引用实体，该实体可能位于另一个模块或类型中。
 
 生命周期和循环标签使用带有前导引号的[专用语法](tokens.md#lifetimes-and-loop-labels)。
 
-名称被划分到不同的[_命名空间_](names/namespaces.md)中，从而允许不同命名空间中的实体共享同一名称而不发生冲突。
+名称被划分到不同的[*命名空间*](names/namespaces.md)中，从而允许不同命名空间中的实体共享同一名称而不发生冲突。
 
-[_名称解析_](names/name-resolution.md)是在编译时将路径、标识符和标签关联到实体声明的过程。
+[*名称解析*](names/name-resolution.md)是在编译时将路径、标识符和标签关联到实体声明的过程。
 
-对某些名称的访问可以根据其[_可见性_](visibility-and-privacy.md)而受到限制。
+对某些名称的访问可以根据其[*可见性*](visibility-and-privacy.md)而受到限制。
 
 r[names.explicit]
 ## 显式声明的实体
@@ -64,7 +64,7 @@ r[names.explicit.macro_export]
 * [`macro_export` 属性](macros-by-example.md#the-macro_export-attribute)可以将宏的别名引入到 crate 根中
 
 r[names.explicit.macro-invocation]
-此外，[宏调用](macros.md#macro-invocation)和[属性](attributes.md)可以通过展开为上述项之一来引入名称。
+此外，[宏调用](macros.md#r-macro.invocation)和[属性](attributes.md)可以通过展开为上述项之一来引入名称。
 
 r[names.implicit]
 ## 隐式声明的实体
@@ -105,7 +105,7 @@ r[names.implicit.lifetime-static]
 * [`'static`](keywords.md#weak-keywords) 生命周期
 
 r[names.implicit.root]
-此外，crate 根模块没有名称，但可以用某些[路径限定符](paths.md#path-qualifiers)或别名引用。
+此外，crate 根模块没有名称，但可以通过某些[路径限定符](paths.md#r-paths.qualifiers)或别名引用。
 
 [*Name resolution*]: names/name-resolution.md
 [*namespaces*]: names/namespaces.md

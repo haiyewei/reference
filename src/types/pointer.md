@@ -67,10 +67,10 @@ r[type.pointer.validity]
 ## 位有效性
 
 r[type.pointer.validity.pointer-fragment]
-尽管在大多数平台生成的机器码中，指针和引用与 `usize` 类似，但将引用或指针类型转换为非指针类型的语义目前尚未确定。因此，将指针或引用类型 `P` 转换为 `[u8; size_of::<P>()]` 可能不是有效的。
+尽管在大多数平台生成的机器码中，指针和引用与 `usize` 类似，但将引用或指针类型转换为非指针类型的语义目前尚未确定。因此，将指针或引用类型 `P` 转换为 `[u8; size_of::<P>()]` 可能无效。
 
 r[type.pointer.validity.raw]
-对于薄裸指针（即当 `T: Sized` 时，`P = *const T` 或 `P = *mut T`），反方向（从整数或整数数组转换为 `P`）始终是有效的。不过，通过这种转换生成的指针不得被解引用（即使 `T` 具有[零大小](../glossary.md#r-glossary.zst)也不行）。
+对于薄裸指针（即当 `T: Sized` 时，`P = *const T` 或 `P = *mut T`），反方向（从整数或整数数组转换为 `P`）始终是有效的。不过，通过这种转换生成的指针不得被解引用（即使 `T` 具有[零大小](glossary.zst)也不行）。
 
 [Interior mutability]: ../interior-mutability.md
 [`unsafe` operation]: ../unsafety.md

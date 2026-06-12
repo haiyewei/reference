@@ -69,7 +69,9 @@ r[lex.keywords.strict.edition2018]
 > [!EDITION-2018]
 > 以下关键字是在 2018 edition 中添加的：
 >
-> - `async` - `await` - `dyn`
+> - `async`
+> - `await`
+> - `dyn`
 
 r[lex.keywords.reserved]
 ## 保留关键字
@@ -123,7 +125,7 @@ r[lex.keywords.weak.lifetime-static]
 * `'static` 用于表示静态生命周期，不能用作[泛型生命周期参数](items/generics.md)或[循环标签](expressions/loop-expr.md#loop-labels)
 
   ```compile_fail
-  // error[E0262]: invalid lifetime parameter name: `'static`
+  // error[E0262]: 无效的生命周期参数名：`'static`
   fn invalid_lifetime_parameter<'static>(s: &'static str) -> &'static str { s }
   ```
 

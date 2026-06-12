@@ -1,5 +1,5 @@
 r[expr.loop]
-# 循环和其他可 `break` 表达式
+# 循环和其他可 `break` 的表达式
 
 r[expr.loop.syntax]
 ```grammar,expressions
@@ -18,7 +18,7 @@ Rust 支持四种循环表达式：
 *   [`loop` 表达式](#infinite-loops)表示无限循环。
 *   [`while` 表达式](#predicate-loops)会循环，直到谓词为 false。
 *   [`for` 表达式](#iterator-loops)从迭代器提取值，并循环直到该迭代器为空。
-*   [带标签的块表达式](loop-expr.md#r-expr.loop.block-labels)会运行一个恰好执行一次的循环，但允许使用 `break` 提前退出该循环。
+*   [带标签的块表达式][expr.loop.block-labels]会运行一个恰好执行一次的循环，但允许使用 `break` 提前退出该循环。
 
 r[expr.loop.break-label]
 所有四种循环都支持 [`break` 表达式](#break-expressions)和[标签](#loop-labels)。
@@ -41,10 +41,10 @@ r[expr.loop.infinite.intro]
 `loop` 表达式会持续重复执行其主体：`loop { println!("I live."); }`。
 
 r[expr.loop.infinite.diverging]
-没有关联 `break` 表达式的 `loop` 表达式是[发散的](../divergence.md#r-divergence)，并具有 [`!`](../types/never.md#r-type.never) 类型。
+没有关联 `break` 表达式的 `loop` 表达式是[发散的](divergence)，并具有 [`!`](type.never) 类型。
 
 r[expr.loop.infinite.break]
-包含一个或多个关联 [`break` 表达式](#break-expressions)的 `loop` 表达式可能会终止，并且必须具有与这些 `break` 表达式的值兼容的类型。
+包含一个或多个关联 [`break` 表达式](#break-expressions)的 `loop` 表达式可能会终止，并且类型必须与这些 `break` 表达式的值兼容。
 
 r[expr.loop.while]
 ## 谓词循环
@@ -58,7 +58,7 @@ r[expr.loop.while.intro]
 `while` 循环表达式允许在一组条件保持为 true 时重复求值一个块。
 
 r[expr.loop.while.condition]
-条件操作数必须是具有[布尔类型](../types/boolean.md)的 [Expression](../expressions.md#grammar-Expression)，或者是条件式 `let` 匹配。如果所有条件操作数都求值为 `true`，并且所有 `let` 模式都成功匹配其[被匹配值](../glossary.md#scrutinee)，则执行循环体块。
+条件操作数必须是具有[布尔类型](../types/boolean.md)的 [Expression]，或者是条件式 `let` 匹配。如果所有条件操作数都求值为 `true`，并且所有 `let` 模式都成功匹配其[被匹配值](../glossary.md#scrutinee)，则执行循环体块。
 
 r[expr.loop.while.repeat]
 循环体成功执行之后，会重新求值条件操作数，以确定是否应再次执行主体。
@@ -105,7 +105,7 @@ r[expr.loop.while.let.desugar]
 <!-- ignore: expansion example -->
 ```rust,ignore
 'label: while let PATS = EXPR {
-    /* 循环体 */
+    /* loop body */
 }
 ```
 
@@ -127,7 +127,7 @@ r[expr.loop.while.let.or-pattern]
 ```rust
 let mut vals = vec![2, 3, 1, 2, 2];
 while let Some(v @ 1) | Some(v @ 2) = vals.pop() {
-    // 依次打印 2、2，然后 1
+    // 打印 2, 2，然后打印 1
     println!("{}", v);
 }
 ```
@@ -196,7 +196,7 @@ r[expr.loop.for.desugar]
 <!-- ignore: expansion example -->
 ```rust,ignore
 'label: for PATTERN in iter_expr {
-    /* 循环体 */
+    /* loop body */
 }
 ```
 
@@ -237,7 +237,7 @@ LoopLabel -> LIFETIME_OR_LABEL `:`
 ```
 
 r[expr.loop.label.intro]
-循环表达式可以带有一个可选的_标签_。标签写作位于循环表达式之前的生命周期，如 `'foo: loop { break 'foo; }`、`'bar: while false {}`、`'humbug: for _ in 0..0 {}`。
+循环表达式可以带有一个可选的*标签*。标签写作位于循环表达式之前的生命周期，如 `'foo: loop { break 'foo; }`、`'bar: while false {}`、`'humbug: for _ in 0..0 {}`。
 
 r[expr.loop.label.control-flow]
 如果存在标签，则嵌套在此循环内的带标签 `break` 和 `continue` 表达式可以退出此循环，或将控制流返回到其首部。见 [break 表达式](#break-expressions)和 [continue 表达式](#continue-expressions)。
@@ -280,7 +280,7 @@ assert_eq!(last, 12);
 ```
 
 r[expr.loop.break.diverging]
-`break` 表达式是[发散的](../divergence.md#r-divergence)，并具有 [`!`](../types/never.md#r-type.never) 类型。
+`break` 表达式是[发散的](divergence)，并具有 [`!`](type.never) 类型。
 
 r[expr.loop.break.label]
 `break` 表达式通常与包含该 `break` 表达式的最内层 `loop`、`for` 或 `while` 循环关联，但可以使用[标签](#loop-labels)指定受影响的外围循环。示例：
@@ -297,7 +297,7 @@ r[expr.loop.break.value]
 `break` 表达式只允许出现在循环体内，并具有 `break`、`break 'label` 或（[见下文](#break-and-loop-values)）`break EXPR` 或 `break 'label EXPR` 这些形式之一。
 
 r[expr.loop.break-value.implicit-value]
-在[带有 `break` 表达式的 `loop`](loop-expr.md#r-expr.loop.break-value)或[带标签的块表达式](loop-expr.md#r-expr.loop.block-labels)中，不带表达式的 `break` 等价于 `break ()`。
+在[带有 `break` 表达式的 `loop`][expr.loop.break-value]或[带标签的块表达式](expr.loop.block-labels)中，不带表达式的 `break` 等价于 `break ()`。
 
 r[expr.loop.block-labels]
 ## 带标签的块表达式
@@ -311,10 +311,10 @@ r[expr.loop.block-labels.intro]
 带标签的块表达式与块表达式完全相同，只是它们允许在块内使用 `break` 表达式。
 
 r[expr.loop.block-labels.break]
-不同于循环，带标签的块表达式内部的 `break` 表达式_必须_带有标签（即标签不是可选的）。
+不同于循环，带标签的块表达式内部的 `break` 表达式 *必须* 带有标签（即标签不是可选的）。
 
 r[expr.loop.block-labels.label-required]
-类似地，带标签的块表达式_必须_以标签开头。
+类似地，带标签的块表达式 *必须* 以标签开头。
 
 ```rust
 # fn do_thing() {}
@@ -336,7 +336,7 @@ let result = 'block: {
 ```
 
 r[expr.loop.block-labels.type]
-带标签的块表达式的类型是所有 `break` 操作数和最终操作数的[最小上界](../type-coercions.md#r-coerce.least-upper-bound)。如果省略最终操作数，则最终操作数的类型默认为[单元类型](../types/tuple.md#r-type.tuple.unit)，除非该块[发散](block-expr.md#r-expr.block.diverging)，此时为 [never 类型](../types/never.md#r-type.never)。
+带标签的块表达式的类型是所有 `break` 操作数和最终操作数的[最小上界](coerce.least-upper-bound)。如果省略最终操作数，则最终操作数的类型默认为[单元类型](type.tuple.unit)，除非该块[发散][expr.block.diverging]，此时为[never 类型](type.never)。
 
 > [!EXAMPLE]
 > ```rust
@@ -345,9 +345,9 @@ r[expr.loop.block-labels.type]
 >
 >     let _: &str = 'block: {
 >         if condition {
->             break 'block &s;  // &String coerced to &str via Deref
+>             break 'block &s;  // &String 通过 Deref 强制转换为 &str
 >         }
->         break 'block "literal";  // &'static str coerced to &str
+>         break 'block "literal";  // &'static str 强制转换为 &str
 >     };
 > }
 > ```
@@ -361,10 +361,10 @@ ContinueExpression -> `continue` LIFETIME_OR_LABEL?
 ```
 
 r[expr.loop.continue.intro]
-遇到 `continue` 时，会立即终止关联循环体的当前迭代，并把控制流返回到循环_首部_。
+遇到 `continue` 时，会立即终止关联循环体的当前迭代，并把控制流返回到循环*首部*。
 
 r[expr.loop.continue.diverging]
-`continue` 表达式是[发散的](../divergence.md#r-divergence)，并具有 [`!`](../types/never.md#r-type.never) 类型。
+`continue` 表达式是[发散的](divergence)，并具有 [`!`](type.never) 类型。
 
 r[expr.loop.continue.while]
 对于 `while` 循环，首部是控制该循环的条件操作数。
@@ -394,12 +394,12 @@ let result = loop {
     a = b;
     b = c;
 };
-// Fibonacci 数列中第一个超过 10 的数：
+// Fibonacci 序列中大于 10 的第一个数：
 assert_eq!(result, 13);
 ```
 
 r[expr.loop.break-value.type]
-带有关联 `break` 表达式的 `loop` 的类型是所有 `break` 操作数的[最小上界](../type-coercions.md#r-coerce.least-upper-bound)。
+带有关联 `break` 表达式的 `loop` 的类型是所有 `break` 操作数的[最小上界](coerce.least-upper-bound)。
 
 > [!EXAMPLE]
 > ```rust
@@ -408,20 +408,20 @@ r[expr.loop.break-value.type]
 >
 >     let _: &str = loop {
 >         if condition {
->             break &s; // &String coerced to &str via Deref
+>             break &s; // &String 通过 Deref 强制转换为 &str
 >         }
->         break "literal"; // &'static str coerced to &str
+>         break "literal"; // &'static str 强制转换为 &str
 >     };
 > }
 > ```
 
 r[expr.loop.break-value.diverging]
-如果任何 `break` 操作数不发散，则带有关联 `break` 表达式的 `loop` 不会[发散](../divergence.md#r-divergence)。如果所有 `break` 操作数都发散，那么该 `loop` 表达式也会发散。
+如果任何 `break` 操作数不发散，则带有关联 `break` 表达式的 `loop` 不会[发散](divergence)。如果所有 `break` 操作数都发散，那么该 `loop` 表达式也会发散。
 
 > [!EXAMPLE]
 > ```rust
 > fn diverging_loop_with_break(condition: bool) -> ! {
->     // 此循环是发散的，因为所有 `break` 操作数都发散。
+>     // 此循环是发散的，因为所有 `break` 操作数都是发散的。
 >     loop {
 >         if condition {
 >             break loop {};
@@ -434,7 +434,7 @@ r[expr.loop.break-value.diverging]
 >
 > ```rust,compile_fail,E0308
 > fn loop_with_non_diverging_break(condition: bool) -> ! {
->     // 此循环的类型是 i32，即使其中一个 `break` 是
+>     // 此循环的类型是 i32，尽管其中一个 break 是
 >     // 发散的。
 >     loop {
 >         if condition {
@@ -442,7 +442,7 @@ r[expr.loop.break-value.diverging]
 >         } else {
 >             break 123i32;
 >         }
->     } // ERROR: expected `!`, found `i32`
+>     } // 错误：预期为 `!`，却找到 `i32`
 > }
 > ```
 

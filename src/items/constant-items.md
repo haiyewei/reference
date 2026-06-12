@@ -8,7 +8,7 @@ ConstantItem ->
 ```
 
 r[items.const.intro]
-_常量项_ 是一个可以有名称也可以没有名称的 _[常量值](../const_eval.md#constant-expressions)_，它不与程序中的特定内存位置关联。
+*常量项*是一个可以有名称也可以没有名称的 *[常量值](../const_eval.md#constant-expressions)*，它不与程序中的特定内存位置关联。
 
 r[items.const.behavior]
 常量本质上会在使用处内联，也就是说，使用常量时会将它们直接复制到相关上下文中。这包括来自外部 crate 的常量以及非 [`Copy`](../special-types-and-traits.md#copy) 类型。对同一常量的引用不一定保证指向同一内存地址。
@@ -20,7 +20,7 @@ r[items.const.static]
 常量必须显式标注类型。其类型必须具有 `'static` 生命周期：初始化式中的任何引用都必须具有 `'static` 生命周期。常量类型中的引用默认采用 `'static` 生命周期；参见[static 生命周期省略](../lifetime-elision.md#const-and-static-elision)。
 
 r[items.const.static-temporary]
-如果常量值符合[提升](../destructors.md#r-destructors.scope.const-promotion)条件，对该常量的引用将具有 `'static` 生命周期；否则，将创建一个临时值。
+如果常量值符合[提升](destructors.scope.const-promotion)条件，对该常量的引用将具有 `'static` 生命周期；否则，将创建一个临时值。
 
 ```rust
 const BIT1: u32 = 1 << 0;
@@ -61,8 +61,8 @@ const ZERO_WITH_DESTRUCTOR: TypeWithDestructor = TypeWithDestructor(0);
 
 fn create_and_drop_zero_with_destructor() {
     let x = ZERO_WITH_DESTRUCTOR;
-    // x gets dropped at end of function, calling drop.
-    // prints "Dropped. Held 0.".
+    // x 在函数结束时被丢弃，调用 drop。
+    // 打印 "Dropped. Held 0."。
 }
 ```
 
@@ -75,7 +75,7 @@ r[items.const.unnamed.intro]
 ```rust
 const _: () =  { struct _SameNameTwice; };
 
-// OK although it is the same name as above:
+// OK，虽然它与上面的名称相同：
 const _: () =  { struct _SameNameTwice; };
 ```
 
@@ -88,7 +88,7 @@ macro_rules! m {
 }
 
 m!(const _: () = (););
-// This expands to:
+// 这会展开为：
 // const _: () = ();
 // const _: () = ();
 ```
@@ -99,11 +99,11 @@ r[items.const.eval]
 [自由](../glossary.md#free-item)常量总是在编译时[求值](../const_eval.md)以暴露 panic。即使位于未使用的函数中也是如此：
 
 ```rust,compile_fail
-// Compile-time panic
+// 编译时 panic
 const PANIC: () = std::unimplemented!();
 
 fn unused_generic_function<T>() {
-    // A failing compile-time assertion
+    // 一个失败的编译时断言
     const _: () = assert!(usize::BITS == 0);
 }
 ```

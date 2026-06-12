@@ -17,13 +17,13 @@ ConstParam ->
 ```
 
 r[items.generics.syntax.intro]
-[函数](functions.md)、[类型别名](type-aliases.md)、[结构体](structs.md)、[枚举](enumerations.md)、[联合体](unions.md)、[trait](traits.md) 和[实现](implementations.md)可以按类型、常量和生命周期进行_参数化_。这些参数列在尖括号 <span class="parenthetical">（`<...>`）</span> 中，通常紧跟在项的名称之后、定义之前。对于没有名称的实现，它们直接位于 `impl` 之后。
+[函数](functions.md)、[类型别名](type-aliases.md)、[结构体](structs.md)、[枚举](enumerations.md)、[联合体](unions.md)、[trait](traits.md) 和[实现](implementations.md)可以按类型、常量和生命周期进行*参数化*。这些参数列在尖括号 <span class="parenthetical">（`<...>`）</span> 中，通常紧跟在项的名称之后、定义之前。对于没有名称的实现，它们直接位于 `impl` 之后。
 
 r[items.generics.syntax.decl-order]
 泛型参数的顺序受限为先是生命周期参数，然后是类型参数和 const 参数交错排列。
 
 r[items.generics.syntax.duplicate-params]
-同一参数名不得在 [GenericParams](generics.md#grammar-GenericParams) 列表中声明多次。
+同一参数名不得在 [GenericParams] 列表中声明多次。
 
 下面是带有类型、const 和生命周期参数的项的一些示例：
 
@@ -36,10 +36,10 @@ struct EitherOrderWorks<const N: bool, U>(U);
 ```
 
 r[items.generics.syntax.scope]
-泛型参数在其声明所在的项定义内处于作用域中。对于函数体内声明的项，它们不在作用域内，如[项声明](../statements.md#item-declarations)中所述。更多细节见[泛型参数作用域](../names/scopes.md#generic-parameter-scopes)。
+泛型参数在其声明所在的项定义内处于作用域中。对于函数体内声明的项，它们不在作用域内，如[项声明](../statements.md#r-statement.item)中所述。更多细节见[泛型参数作用域](../names/scopes.md#r-names.scopes.generic-parameters)。
 
 r[items.generics.builtin-generic-types]
-[引用](../types/pointer.md#shared-references-)、[裸指针](../types/pointer.md#raw-pointers-const-and-mut)、[数组](../types/array.md)、[切片](../types/slice.md)、[元组](../types/tuple.md)和[函数指针](../types/function-pointer.md)也有生命周期或类型参数，但不会使用路径语法引用它们。
+[引用](../types/pointer.md#r-type.pointer.reference.shared)、[裸指针](../types/pointer.md#r-type.pointer.raw)、[数组](../types/array.md)、[切片](../types/slice.md)、[元组](../types/tuple.md)和[函数指针](../types/function-pointer.md)也有生命周期或类型参数，但不会使用路径语法引用它们。
 
 r[items.generics.invalid-lifetimes]
 `'_` 和 `'static` 不是有效的生命周期参数名。
@@ -48,7 +48,7 @@ r[items.generics.const]
 ### const 泛型
 
 r[items.generics.const.intro]
-_const 泛型参数_允许项在常量值上泛型化。
+*const 泛型参数*允许项针对常量值泛型化。
 
 r[items.generics.const.namespace]
 const 标识符会在[值命名空间](../names/namespaces.md)中为常量参数引入一个名称，并且该项的所有实例都必须以给定类型的值实例化。
@@ -57,7 +57,7 @@ r[items.generics.const.allowed-types]
 const 参数唯一允许的类型是 `u8`、`u16`、`u32`、`u64`、`u128`、`usize`、`i8`、`i16`、`i32`、`i64`、`i128`、`isize`、`char` 和 `bool`。
 
 r[items.generics.const.use]
-const 参数可以用在 [const 项](constant-items.md)可用的任何位置，但在[类型](../types.md)或[数组重复表达式](../expressions/array-expr.md)中使用时例外，它必须是独立的（如下所述）。也就是说，它们允许出现在以下位置：
+const 参数可以用在 [const 项](constant-items.md)可用的任何位置，但在[类型](../types.md)或[数组重复表达式](../expressions/array-expr.md)中使用时例外，它必须独立出现（如下所述）。也就是说，它们允许出现在以下位置：
 
 1. 作为应用到某个类型上的 const 实参，而该类型构成所讨论项签名的一部分。
 2. 作为用于定义[关联 const](associated-items.md#associated-constants) 的 const 表达式的一部分，或作为[关联类型](associated-items.md#associated-types)的参数。
@@ -72,7 +72,7 @@ const 参数可以用在 [const 项](constant-items.md)可用的任何位置，�
 fn foo<const N: usize>(arr: [i32; N]) {
     // 在函数体内用作类型。
     let x: [i32; N];
-    // Used as an expression.
+    // 用作表达式。
     println!("{}", N * 2);
 }
 
@@ -114,8 +114,8 @@ r[items.generics.const.standalone]
 ```rust,compile_fail
 // 不可以使用 const 参数的示例。
 
-// Not allowed to combine in other expressions in types, such as the
-// arithmetic expression in the return type here.
+// 不允许在类型中与其他表达式组合，例如这里返回类型中的
+// 算术表达式。
 fn bad_function<const N: usize>() -> [u8; {N + 1}] {
     // 同样，也不允许用于数组重复表达式。
     [1; {N + 1}]
@@ -126,7 +126,7 @@ r[items.generics.const.argument]
 [路径](../paths.md)中的 const 实参指定该项要使用的 const 值。
 
 r[items.generics.const.argument.const-expr]
-该实参必须要么是[推断 const](generics.md#r-items.generics.const.inferred)，要么是该 const 参数所标注类型的 [const 表达式](../const_eval.md#constant-expressions)。除非它是单段路径（[IDENTIFIER](../identifiers.md#grammar-IDENTIFIER)）或[字面量](../expressions/literal-expr.md)（可能带有前导 `-` token），否则 const 表达式必须是[块表达式](../expressions/block-expr.md)（用花括号包围）。
+该实参必须要么是[推断 const](items.generics.const.inferred)，要么是该 const 参数所标注类型的 [const 表达式](../const_eval.md#r-const-eval.const-expr)。除非它是单段路径（[IDENTIFIER]）或[字面量](../expressions/literal-expr.md)（可能带有前导 `-` token），否则 const 表达式必须是[块表达式](../expressions/block-expr.md)（用花括号包围）。
 
 > [!NOTE]
 > 这种语法限制是必要的，以避免在类型内部解析表达式时需要无限前瞻。
@@ -136,20 +136,20 @@ struct S<const N: i64>;
 const C: i64 = 1;
 fn f<const N: i64>() -> S<N> { S }
 
-let _ = f::<1>(); // Literal.
-let _ = f::<-1>(); // Negative literal.
-let _ = f::<{ 1 + 2 }>(); // Constant expression.
-let _ = f::<C>(); // Single segment path.
-let _ = f::<{ C + 1 }>(); // Constant expression.
-let _: S<1> = f::<_>(); // Inferred const.
-let _: S<1> = f::<(((_)))>(); // Inferred const.
+let _ = f::<1>(); // 字面量。
+let _ = f::<-1>(); // 负字面量。
+let _ = f::<{ 1 + 2 }>(); // 常量表达式。
+let _ = f::<C>(); // 单段路径。
+let _ = f::<{ C + 1 }>(); // 常量表达式。
+let _: S<1> = f::<_>(); // 推断 const。
+let _: S<1> = f::<(((_)))>(); // 推断 const。
 ```
 
 > [!NOTE]
-> 在泛型实参列表中，[推断 const][inferred const] 会被解析为[推断类型][InferredType]，但随后在语义上被视为一种单独的 [const 泛型实参][const generic argument]。
+> 在泛型实参列表中，[推断 const](items.generics.const.inferred) 会被解析为[推断类型][InferredType]，但随后在语义上被视为一种单独的 [const 泛型实参](items.generics.const.argument)。
 
 r[items.generics.const.inferred]
-在预期 const 实参的位置，可以改用 `_`（可选地由任意数量匹配的括号包围），称为_推断 const_（[路径规则](../paths.md#r-paths.expr.complex-const-params)、[数组表达式规则](../expressions/array-expr.md#r-expr.array.length-restriction)）。这会请求编译器在可能时基于周围信息推断该 const 实参。
+在预期 const 实参的位置，可以改用 `_`（可选地由任意数量匹配的括号包围），称为*推断 const*（[路径规则][paths.expr.complex-const-params]、[数组表达式规则][expr.array.length-restriction]）。这会请求编译器在可能时基于周围信息推断该 const 实参。
 
 ```rust
 fn make_buf<const N: usize>() -> [u8; N] {
@@ -161,7 +161,7 @@ let _: [u8; 1024] = make_buf::<_>();
 ```
 
 > [!NOTE]
-> [推断 const](generics.md#r-items.generics.const.inferred) 在语义上不是[表达式](../expressions.md#grammar-Expression)，因此不接受在花括号内使用。
+> [推断 const](items.generics.const.inferred) 在语义上不是[表达式][Expression]，因此不接受在花括号内使用。
 >
 > ```rust,compile_fail
 > fn f<const N: usize>() -> [u8; N] { [0; _] }
@@ -186,14 +186,14 @@ r[items.generics.const.type-ambiguity]
 type N = u32;
 struct Foo<const N: usize>;
 // 下面会出错，因为 `N` 被解释为类型别名 `N`。
-fn foo<const N: usize>() -> Foo<N> { todo!() } // ERROR
-// Can be fixed by wrapping in braces to force it to be interpreted as the `N`
-// const parameter:
+fn foo<const N: usize>() -> Foo<N> { todo!() } // 错误
+// 可以通过用花括号包裹来修复，以强制将其解释为 `N`
+// const 参数：
 fn bar<const N: usize>() -> Foo<{ N }> { todo!() } // ok
 ```
 
 r[items.generics.const.variance]
-不同于类型参数和生命周期参数，const 参数可以在参数化项内部未被使用的情况下声明，但[泛型实现](implementations.md#generic-implementations)中所述的实现除外：
+不同于类型参数和生命周期参数，const 参数可以在参数化项内部未被使用的情况下声明，但[泛型实现](implementations.md#r-items.impl.generics)中所述的实现除外：
 
 ```rust,compile_fail
 // ok
@@ -208,7 +208,7 @@ impl<const N: usize> Unconstrained {}
 ```
 
 r[items.generics.const.exhaustiveness]
-解析 trait 约束义务时，在判断约束是否满足时，不会考虑 const 参数上的所有实现是否穷尽。例如，在下面示例中，即使 `bool` 类型的所有可能 const 值都已实现，trait 约束不满足仍然是错误：
+解析 trait 约束义务时，在判断约束是否满足时，不会考虑 const 参数的所有实现是否穷尽。例如，在下面示例中，即使 `bool` 类型的所有可能 const 值都已实现，trait 约束不满足仍然是错误：
 
 ```rust,compile_fail
 struct Foo<const B: bool>;
@@ -219,7 +219,7 @@ impl Bar for Foo<false> {}
 fn needs_bar(_: impl Bar) {}
 fn generic<const B: bool>() {
     let v = Foo::<B>;
-    needs_bar(v); // ERROR: trait bound `Foo<B>: Bar` is not satisfied
+    needs_bar(v); // 错误：trait 约束 `Foo<B>: Bar` 不满足
 }
 ```
 
@@ -240,18 +240,18 @@ TypeBoundWhereClauseItem -> ForLifetimes? Type `:` Bounds?
 ```
 
 r[items.generics.where.intro]
-_where 子句_提供了另一种为类型和生命周期参数指定约束的方式，也提供了一种为非类型参数的类型指定约束的方式。
+*where 子句*提供了另一种为类型和生命周期参数指定约束的方式，也提供了一种为不是类型参数的类型指定约束的方式。
 
 r[items.generics.where.higher-ranked-lifetimes]
-`for` 关键字可用于引入[高阶生命周期](../trait-bounds.md#higher-ranked-trait-bounds)。它只允许 [LifetimeParam](generics.md#grammar-LifetimeParam) 参数。
+`for` 关键字可用于引入[高阶生命周期](../trait-bounds.md#r-bound.higher-ranked)。它只允许 [LifetimeParam] 参数。
 
 ```rust
 struct A<T>
 where
-    T: Iterator,            // Could use A<T: Iterator> instead
-    T::Item: Copy,          // Bound on an associated type
-    String: PartialEq<T>,   // Bound on `String`, using the type parameter
-    i32: Default,           // Allowed, but not useful
+    T: Iterator,            // 也可以改用 A<T: Iterator>
+    T::Item: Copy,          // 关联类型上的约束
+    String: PartialEq<T>,   // `String` 上的约束，使用类型参数
+    i32: Default,           // 允许，但没有用处
 {
     f: T,
 }
@@ -266,8 +266,8 @@ r[items.generics.attributes]
 
 <!-- ignore: requires proc macro derive -->
 ```rust,ignore
-// Assume that the derive for MyFlexibleClone declared `my_flexible_clone` as
-// an attribute it understands.
+// 假设 MyFlexibleClone 的 derive 将 `my_flexible_clone` 声明为
+// 它所理解的属性。
 #[derive(MyFlexibleClone)]
 struct Foo<#[my_flexible_clone(unbounded)] H> {
     a: *const H

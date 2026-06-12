@@ -9,7 +9,7 @@ CallParams -> Expression ( `,` Expression )* `,`?
 ```
 
 r[expr.call.intro]
-_调用表达式_调用函数。调用表达式的语法是一个称为_函数操作数_的表达式，后跟一个用括号括起、以逗号分隔的表达式列表，该列表称为_实参操作数_。
+*调用表达式*调用函数。调用表达式的语法是一个称为*函数操作数*的表达式，后跟一个用括号括起、以逗号分隔的表达式列表，该列表称为*实参操作数*。
 
 r[expr.call.convergence]
 如果函数最终返回，则该表达式完成。
@@ -17,9 +17,9 @@ r[expr.call.convergence]
 r[expr.call.trait]
 对于[非函数类型](../types/function-item.md)，表达式 `f(...)` 会根据函数操作数，使用以下 trait 之一上的方法：
 
-- [`Fn`](../../core/ops/function/trait.Fn.html) 或 [`AsyncFn`](../../core/ops/async_function/trait.AsyncFn.html) --- 共享引用。
-- [`FnMut`](../../core/ops/function/trait.FnMut.html) 或 [`AsyncFnMut`](../../core/ops/async_function/trait.AsyncFnMut.html) --- 可变引用。
-- [`FnOnce`](../../core/ops/function/trait.FnOnce.html) 或 [`AsyncFnOnce`](../../core/ops/async_function/trait.AsyncFnOnce.html) --- 值。
+- [`Fn`] 或 [`AsyncFn`] --- 共享引用。
+- [`FnMut`] 或 [`AsyncFnMut`] --- 可变引用。
+- [`FnOnce`] 或 [`AsyncFnOnce`] --- 值。
 
 r[expr.call.autoref-deref]
 如果需要，将进行自动借用。函数操作数也会按需被[自动解引用](field-expr.md#automatic-dereferencing)。
@@ -49,7 +49,7 @@ r[expr.call.desugar.limits]
 
 * 多个作用域内的 trait 为相同类型定义了同名方法
 * 不希望发生自动 `deref`；例如，要区分智能指针本身上的方法和该指针所指对象上的方法
-* 不接受实参并返回某个类型属性的方法，例如 [`default()`](../../core/default/trait.Default.html#tymethod.default) 和 [`size_of()`](../../core/mem/fn.size_of.html)
+* 不接受实参并返回某个类型属性的方法，例如 [`default()`](std::default::Default::default) 和 [`size_of()`](std::mem::size_of)
 
 r[expr.call.desugar.explicit-path]
 为解决歧义，程序员可以使用更具体的路径、类型或 trait 来指称所需的方法或函数。
@@ -82,17 +82,17 @@ fn main() {
     let f = Foo;
     let b = Bar;
 
-    // we can do this because we only have one item called `print` for `Foo`s
+    // 我们可以这样做，因为对于 `Foo`，只有一个名为 `print` 的项
     f.print();
-    // more explicit, and, in the case of `Foo`, not necessary
+    // 更显式，而且对于 `Foo` 来说不是必需的
     Foo::print(&f);
-    // if you're not into the whole brevity thing
+    // 如果你不喜欢过于简短的写法
     <Foo as Pretty>::print(&f);
 
     // b.print(); // Error: multiple 'print' found
     // Bar::print(&b); // Still an error: multiple `print` found
 
-    // necessary because of in-scope items defining `print`
+    // 由于作用域内有定义 `print` 的项，因此必要
     <Bar as Pretty>::print(&b);
 }
 ```

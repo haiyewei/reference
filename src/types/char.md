@@ -12,7 +12,7 @@ r[type.char.intro]
 > ```
 
 > [!NOTE]
-> 有关 `char` 类型的 impl 信息，请参见 [标准库文档](../../std/primitive.char.html)。
+> 有关 `char` 类型的 impl 信息，请参见 [标准库文档][`char`]。
 
 r[type.char.value]
 `char` 类型的值表示为一个 32 位无符号字，位于 0x0000 到 0xD7FF 或 0xE000 到 0x10FFFF 范围内。创建落在此范围之外的 `char` 会立即导致 [未定义行为](../behavior-considered-undefined.md)。

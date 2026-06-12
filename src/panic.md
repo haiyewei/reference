@@ -2,7 +2,7 @@ r[panic]
 # Panic
 
 r[panic.intro]
-Rust 提供了一种机制，用于阻止函数正常返回，转而发生“panic”；panic 是对一种错误条件的响应，而这种错误通常不预期能在遇到该错误的上下文中恢复。
+Rust 提供了一种机制，用于阻止函数正常返回，转而发生 "panic"；panic 是对一种错误条件的响应，而这种错误通常不预期能在遇到该错误的上下文中恢复。
 
 r[panic.lang-ops]
 某些语言构造会自动 panic，例如越界的[数组索引](expressions/array-expr.md#array-and-slice-indexing-expressions)。
@@ -14,19 +14,19 @@ r[panic.control]
 * [FFI ABIs](items/functions.md#unwinding) 可以改变 panic 的行为方式。
 
 > [!NOTE]
-> 标准库提供了通过 [`panic!` macro](../std/macro.panic.html) 显式 panic 的能力。
+> 标准库提供了通过 [`panic!` 宏][panic!] 显式 panic 的能力。
 
 r[panic.panic_handler]
 ## `panic_handler` 属性
 
 r[panic.panic_handler.intro]
-_`panic_handler` 属性_可以应用于函数，以定义 panic 的行为。
+*`panic_handler` 属性*可以应用于函数，以定义 panic 的行为。
 
 r[panic.panic_handler.allowed-positions]
 `panic_handler` 属性只能应用于签名为 `fn(&PanicInfo) -> !` 的函数。
 
 > [!NOTE]
-> [`PanicInfo`](../core/panic/panic_info/struct.PanicInfo.html) 结构体包含有关 panic 位置的信息。
+> [`PanicInfo`](core::panic::PanicInfo) 结构体包含有关 panic 位置的信息。
 
 r[panic.panic_handler.unique]
 依赖图中必须有且只有一个 `panic_handler` 函数。
@@ -57,7 +57,7 @@ struct Sink {
 fn panic(info: &PanicInfo) -> ! {
     let mut sink = Sink::new();
 
-    // logs "panicked at '$reason', src/main.rs:27:4" to some `sink`
+    // 将 "panicked at '$reason', src/main.rs:27:4" 记录到某个 `sink`
     let _ = writeln!(sink, "{}", info);
 
     loop {}
@@ -78,7 +78,7 @@ r[panic.panic_handler.std.kinds]
 > [!NOTE]
 > 与 `std` 链接时使用的 panic handler 可以通过 [`-C panic`](../rustc/codegen-options/index.html#panic) CLI 标志设置。大多数目标的默认值是 `unwind`。
 >
-> 标准库的 panic 行为可以在运行时通过 [`std::panic::set_hook`](../std/panicking/fn.set_hook.html) 函数修改。
+> 标准库的 panic 行为可以在运行时通过 [`std::panic::set_hook`] 函数修改。
 
 r[panic.panic_handler.std.no_std]
 链接 [`no_std`](names/preludes.md#the-no_std-attribute) 二进制文件、dylib、cdylib 或 staticlib 时，需要指定你自己的 panic handler。
@@ -87,7 +87,7 @@ r[panic.strategy]
 ## Panic 策略
 
 r[panic.strategy.intro]
-_panic 策略_定义 crate 在构建时支持哪种 panic 行为。
+*panic 策略*定义 crate 在构建时支持哪种 panic 行为。
 
 > [!NOTE]
 > 可以在 `rustc` 中通过 [`-C panic`](../rustc/codegen-options/index.html#panic) CLI 标志选择 panic 策略。
@@ -98,13 +98,13 @@ _panic 策略_定义 crate 在构建时支持哪种 panic 行为。
 > 使用 `abort` panic 策略编译代码时，优化器可以假定不可能跨 Rust 栈帧展开，这可能同时带来代码大小和运行时速度的改进。
 
 > [!NOTE]
-> 关于链接具有不同 panic 策略的 crate 时的限制，请参见 [link.unwinding](linkage.md#r-link.unwinding)。其一个推论是，使用 `unwind` 策略构建的 crate 可以使用 `abort` panic handler，但 `abort` 策略不能使用 `unwind` panic handler。
+> 关于链接具有不同 panic 策略的 crate 时的限制，请参见 [link.unwinding]。其一个推论是，使用 `unwind` 策略构建的 crate 可以使用 `abort` panic handler，但 `abort` 策略不能使用 `unwind` panic handler。
 
 r[panic.unwind]
 ## 展开
 
 r[panic.unwind.intro]
-panic 可以是可恢复的，也可以是不可恢复的，不过可以通过选择非展开式 panic handler 将其配置为始终不可恢复。（反过来并不成立：`unwind` handler 并不保证所有 panic 都可恢复，只保证通过 `panic!` macro 和类似标准库机制触发的 panic 是可恢复的。）
+panic 可以是可恢复的，也可以是不可恢复的，不过可以通过选择非展开式 panic handler 将其配置为始终不可恢复。（反过来并不成立：`unwind` handler 并不保证所有 panic 都可恢复，只保证通过 `panic!` 宏和类似标准库机制触发的 panic 是可恢复的。）
 
 r[panic.unwind.destruction]
 当 panic 发生时，`unwind` handler 会“展开”Rust 栈帧，就像 C++ 的 `throw` 展开 C++ 栈帧一样，直到 panic 到达恢复点（例如线程边界）。这意味着当 panic 穿过 Rust 栈帧时，这些栈帧中仍存活且[实现 `Drop`](destructors.md) 的对象会调用其 `drop` 方法。因此，当正常执行恢复时，不再可访问的对象已经被“清理”，就像它们正常离开作用域一样。
@@ -113,7 +113,7 @@ r[panic.unwind.destruction]
 > 只要保留这种资源清理保证，“展开”可以在不实际使用目标平台上 C++ 所用机制的情况下实现。
 
 > [!NOTE]
-> 标准库提供了两种从 panic 中恢复的机制：[`std::panic::catch_unwind`](../std/panic/fn.catch_unwind.html)（允许在发生 panic 的线程内恢复）和 [`std::thread::spawn`](../std/thread/functions/fn.spawn.html)（会为生成的线程自动设置 panic 恢复，使其他线程可以继续运行）。
+> 标准库提供了两种从 panic 中恢复的机制：[`std::panic::catch_unwind`]（允许在发生 panic 的线程内恢复）和 [`std::thread::spawn`]（会为生成的线程自动设置 panic 恢复，使其他线程可以继续运行）。
 
 r[panic.unwind.ffi]
 ### 跨 FFI 边界展开
@@ -128,10 +128,10 @@ r[panic.unwind.ffi.undefined]
 * 从不支持展开的代码中调用会展开的 Rust `extern` 函数（带有 `extern "C-unwind"` 或另一个允许展开的 ABI），例如使用 GCC 或 Clang 并带 `-fno-exceptions` 编译的代码
 
 r[panic.unwind.ffi.catch-foreign]
-使用 [`std::panic::catch_unwind`](../std/panic/fn.catch_unwind.html)、[`std::thread::JoinHandle::join`](../std/thread/join_handle/struct.JoinHandle.html#method.join) 捕获外部展开操作（例如 C++ 异常），或者让它传播超过 Rust `main()` 函数或线程根，会产生以下两种行为之一，具体发生哪一种是未指定的：
+使用 [`std::panic::catch_unwind`]、[`std::thread::JoinHandle::join`] 捕获外部展开操作（例如 C++ 异常），或者让它传播超过 Rust `main()` 函数或线程根，会产生以下两种行为之一，具体发生哪一种是未指定的：
 
 * 进程中止。
-* 函数返回包含不透明类型的 [`Result::Err`](../core/result/enum.Result.html#variant.Err)。
+* 函数返回包含不透明类型的 [`Result::Err`]。
 
 > [!NOTE]
 > 为了此保证的目的，使用另一个 Rust 标准库实例编译或链接的 Rust 代码会被视为“外部异常”。因此，一个使用 `panic!` 并链接到某个版本 Rust 标准库的库，如果由使用另一个版本标准库的应用程序调用，即使该库只在子线程中使用，也可能导致整个应用程序中止。

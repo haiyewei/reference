@@ -12,7 +12,7 @@ r[glossary.ast]
 r[glossary.abi]
 ### 应用二进制接口（ABI）
 
-_应用程序二进制接口_（ABI）定义编译后的代码如何与其他编译后的代码交互。对于 [`extern` 块](items/external-blocks.md#r-items.extern)和 [`extern fn`](items/functions.md#r-items.fn.extern)，_ABI 字符串_会影响：
+*应用程序二进制接口*（ABI）定义编译后的代码如何与其他编译后的代码交互。对于 [`extern` 块](items.extern)和 [`extern fn`](items.fn.extern)，*ABI 字符串*会影响：
 
 - **调用约定**：函数实参如何传递、值如何返回（例如在寄存器中或在栈上），以及由谁负责清理栈。
 - **展开**：是否允许栈展开。例如，`"C-unwind"` ABI 允许跨 FFI 边界展开，而 `"C"` ABI 不允许。
@@ -47,7 +47,7 @@ crate 是编译和链接的单位。crate 有不同的 [crate 类型](linkage.md
 
 ### 分派
 
-分派是在涉及多态时，确定实际运行代码的哪个具体版本的机制。分派的两种主要形式是静态分派和动态分派。Rust 通过使用 [trait 对象](types/trait-object.md#r-type.trait-object)支持动态分派。
+分派是在涉及多态时，确定实际运行代码的哪个具体版本的机制。分派的两种主要形式是静态分派和动态分派。Rust 通过使用[trait 对象][type.trait-object]支持动态分派。
 
 ### 动态大小类型
 
@@ -55,7 +55,7 @@ crate 是编译和链接的单位。crate 有不同的 [crate 类型](linkage.md
 
 ### 实体
 
-[_实体_](names.md)是一种语言构造，可在源程序中以某种方式引用，通常是通过[路径](paths.md)引用。实体包括[类型](types.md)、[项](items.md)、[泛型参数](items/generics.md)、[变量绑定](patterns.md)、[循环标签](tokens.md#lifetimes-and-loop-labels)、[生命周期](tokens.md#lifetimes-and-loop-labels)、[字段](expressions/field-expr.md)、[属性](attributes.md)和 [lint](attributes/diagnostics.md#lint-check-attributes)。
+[*实体*](names.md)是一种语言构造，可在源程序中以某种方式引用，通常是通过[路径](paths.md)引用。实体包括[类型](types.md)、[项](items.md)、[泛型参数](items/generics.md)、[变量绑定](patterns.md)、[循环标签](tokens.md#lifetimes-and-loop-labels)、[生命周期](tokens.md#lifetimes-and-loop-labels)、[字段](expressions/field-expr.md)、[属性](attributes.md)和 [lint](attributes/diagnostics.md#lint-check-attributes)。
 
 ### 表达式
 
@@ -65,7 +65,7 @@ crate 是编译和链接的单位。crate 有不同的 [crate 类型](linkage.md
 
 ### 自由项
 
-不属于[实现](items/implementations.md)成员的[项](items.md)，例如_自由函数_或_自由 const_。对比[关联项](#associated-item)。
+不属于[实现](items/implementations.md)成员的[项](items.md)，例如*自由函数*或*自由 const*。对比[关联项](#associated-item)。
 
 ### 基本 trait
 
@@ -107,15 +107,15 @@ crate 是编译和链接的单位。crate 有不同的 [crate 类型](linkage.md
 
 ### 名称
 
-[_名称_](names.md)是指称某个[实体](#entity)的[标识符](identifiers.md)或[生命周期或循环标签](tokens.md#lifetimes-and-loop-labels)。当实体声明引入一个与该实体关联的标识符或标签时，就形成了_名称绑定_。[路径](paths.md)、标识符和标签用于指称实体。
+[*名称*](names.md)是指称某个[实体](#entity)的[标识符](identifiers.md)或[生命周期或循环标签](tokens.md#lifetimes-and-loop-labels)。当实体声明引入一个与该实体关联的标识符或标签时，就形成了*名称绑定*。[路径](paths.md)、标识符和标签用于指称实体。
 
 ### 名称解析
 
-[_名称解析_](names/name-resolution.md)是在编译时将[路径](paths.md)、[标识符](identifiers.md)和[标签](tokens.md#lifetimes-and-loop-labels)关联到[实体](#entity)声明的过程。
+[*名称解析*](names/name-resolution.md)是在编译时将[路径](paths.md)、[标识符](identifiers.md)和[标签](tokens.md#lifetimes-and-loop-labels)关联到[实体](#entity)声明的过程。
 
 ### 命名空间
 
-_命名空间_是根据名称所指称的[实体](#entity)种类，对已声明[名称](#name)进行的逻辑分组。命名空间允许一个命名空间中出现的名称不与另一个命名空间中的同名名称冲突。
+*命名空间*是根据名称所指称的[实体](#entity)种类，对已声明[名称](#name)进行的逻辑分组。命名空间允许一个命名空间中出现的名称不与另一个命名空间中的同名名称冲突。
 
 在一个命名空间内，名称按层次结构组织，该层次结构的每一级都有自己的具名实体集合。
 
@@ -125,13 +125,13 @@ _命名空间_是根据名称所指称的[实体](#entity)种类，对已声明[
 
 ### dyn 兼容 trait
 
-可用于 [trait 对象类型](types/trait-object.md)（`dyn Trait`）的 [trait](items/traits.md)。只有遵循特定[规则](items/traits.md#dyn-compatibility)的 trait 才是 _dyn 兼容_ 的。
+可用于 [trait 对象类型](types/trait-object.md)（`dyn Trait`）的 [trait](items/traits.md)。只有遵循特定[规则](items/traits.md#dyn-compatibility)的 trait 才是 *dyn 兼容* 的。
 
 这些过去称为 _object safe_ trait（对象安全 trait）。
 
 ### 路径
 
-[_路径_](paths.md)是由一个或多个路径段组成的序列，用于指称当前作用域或[命名空间](#namespace)层次结构其他层级中的[实体](#entity)。
+[*路径*](paths.md)是由一个或多个路径段组成的序列，用于指称当前作用域或[命名空间](#namespace)层次结构其他层级中的[实体](#entity)。
 
 ### Prelude
 
@@ -139,7 +139,7 @@ Prelude，或称 The Rust Prelude，是一小组项（主要是 trait），会�
 
 ### 作用域
 
-[_作用域_](names/scopes.md)是源文本中的区域，在该区域内，可以用某个名称引用具名[实体](#entity)。
+[*作用域*](names/scopes.md)是源文本中的区域，在该区域内，可以用某个名称引用具名[实体](#entity)。
 
 ### 被匹配值
 
@@ -216,15 +216,15 @@ r[glossary.zst]
 
 如果某个类型的大小为 0，则它是零大小类型（ZST）。这类类型最多只有一个可能的值。例子包括：
 
-- [单元类型](types/tuple.md#r-type.tuple.unit)（见 [layout.tuple.unit](type-layout.md#r-layout.tuple.unit)）。
-- [函数项](types/function-item.md#r-type.fn-item)（见 [type.fn-item.intro](types/function-item.md#r-type.fn-item.intro)）。
-- [类元组结构体](items/structs.md#r-items.struct.tuple)的构造器（见 [type.fn-item.intro](types/function-item.md#r-type.fn-item.intro)）。
-- [类元组 enum 变体](items/enumerations.md#r-items.enum.constructor-namespace)的构造器（见 [type.fn-item.intro](types/function-item.md#r-type.fn-item.intro)）。
-- 无字段或所有字段均为零大小的 `repr(C)` [结构体](items/structs.md)（见 [layout.repr.c.struct.size-field-offset](type-layout.md#r-layout.repr.c.struct.size-field-offset)）。
-- 无字段或所有字段均为零大小的 `repr(transparent)` [结构体](items/structs.md)（见 [layout.repr.transparent.layout-abi](type-layout.md#r-layout.repr.transparent.layout-abi)）。
-- 零大小类型的[数组](types/array.md#r-type.array)（见 [layout.array](type-layout.md#r-layout.array)）。
-- 长度为零的[数组](types/array.md#r-type.array)（见 [layout.array](type-layout.md#r-layout.array)）。
-- 由零大小类型组成的[联合体](items/unions.md)（见 [items.union.common-storage](items/unions.md#r-items.union.common-storage)）。
+- [单元类型](type.tuple.unit)（见 [layout.tuple.unit]）。
+- [函数项](type.fn-item)（见 [type.fn-item.intro]）。
+- [类元组结构体](items.struct.tuple)的构造器（见 [type.fn-item.intro]）。
+- [类元组 enum 变体](items.enum.constructor-namespace)的构造器（见 [type.fn-item.intro]）。
+- 无字段或所有字段均为零大小的 `repr(C)` [结构体](items/structs.md)（见 [layout.repr.c.struct.size-field-offset]）。
+- 无字段或所有字段均为零大小的 `repr(transparent)` [结构体](items/structs.md)（见 [layout.repr.transparent.layout-abi]）。
+- 零大小类型的[数组](type.array)（见 [layout.array]）。
+- 长度为零的[数组](type.array)（见 [layout.array]）。
+- 由零大小类型组成的[联合体](items/unions.md)（见 [items.union.common-storage]）。
 
 ```rust
 # use core::mem::{size_of, size_of_val};

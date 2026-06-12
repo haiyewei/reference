@@ -20,7 +20,7 @@ r[safety.unsafe-call]
 - 调用 unsafe 函数。
 
 r[safety.unsafe-target-feature-call]
-- 从一个没有 `target_feature` 属性来启用相同特性的函数中，调用标记了 [`target_feature`](attributes/codegen.md#r-attributes.codegen.target_feature) 的安全函数（参见 [attributes.codegen.target_feature.safety-restrictions](attributes/codegen.md#r-attributes.codegen.target_feature.safety-restrictions)）。
+- 从一个没有启用相同特性的 `target_feature` 属性的函数中，调用标记了 [`target_feature`][attributes.codegen.target_feature] 的安全函数（参见 [attributes.codegen.target_feature.safety-restrictions]）。
 
 r[safety.unsafe-impl]
 - 实现 [unsafe trait](items/traits.md#unsafe-traits)。
@@ -31,7 +31,7 @@ r[safety.unsafe-extern]
 r[safety.unsafe-attribute]
 - 将 [unsafe 属性](attributes.md)应用于项。
 
-[^extern-2024]: Prior to the 2024 edition, extern blocks were allowed to be declared without `unsafe`.
+[^extern-2024]: 在 2024 edition 之前，允许在不使用 `unsafe` 的情况下声明 extern 块。
 
 [`extern`]: items/external-blocks.md
 [`union`]: items/unions.md

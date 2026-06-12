@@ -30,7 +30,7 @@ MacroItem ->
 ```
 
 r[items.intro]
-_项_ 是 crate 的组成部分。项在 crate 中由一组嵌套的[模块](items/modules.md)组织起来。每个 crate 都有一个单一的“最外层”匿名模块；crate 中的所有其他项都在该 crate 的模块树中具有[路径](paths.md)。
+*项*是 crate 的组成部分。项在 crate 中由一组嵌套的[模块](items/modules.md)组织起来。每个 crate 都有一个单一的“最外层”匿名模块；crate 中的所有其他项都在该 crate 的模块树中具有[路径](paths.md)。
 
 r[items.static-def]
 项完全在编译时确定，通常在执行期间保持固定，并且可以驻留在只读内存中。

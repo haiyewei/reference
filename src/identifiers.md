@@ -33,7 +33,7 @@ r[ident.profile]
 所使用的 UAX #31 profile 是：
 
 * Start := [`XID_Start`](http://unicode.org/cldr/utility/list-unicodeset.jsp?a=%5B%3AXID_Start%3A%5D&abb=on&g=&i=)，加上下划线字符 (U+005F)
-* Continue := [`XID_Continue`](http://unicode.org/cldr/utility/list-unicodeset.jsp?a=%5B%3AXID_Continue%3A%5D&abb=on&g=&i=)
+* Continue := [`XID_Continue`]
 * Medial := 空
 
 > [!NOTE]
@@ -48,9 +48,9 @@ r[ident.zero-width-chars]
 r[ident.ascii-limitations]
 在以下情形中，标识符被限制为 [`XID_Start`](http://unicode.org/cldr/utility/list-unicodeset.jsp?a=%5B%3AXID_Start%3A%5D&abb=on&g=&i=) 和 [`XID_Continue`](http://unicode.org/cldr/utility/list-unicodeset.jsp?a=%5B%3AXID_Continue%3A%5D&abb=on&g=&i=) 的 ASCII 子集：
 
-* [`extern crate`](items/extern-crates.md) 声明（[AsClause](items/extern-crates.md#grammar-AsClause) 标识符除外）
+* [`extern crate`](items/extern-crates.md) 声明（[AsClause] 标识符除外）
 * [路径](paths.md)中引用的外部 crate 名称
-* 在没有 [`path` 属性](items/modules.md#the-path-attribute)的情况下从文件系统加载的[模块](items/modules.md)名称
+* 在没有 [`path` 属性](items/modules.md#r-items.mod.outlined.path)的情况下从文件系统加载的[模块](items/modules.md)名称
 * 带有 [`no_mangle`](abi.md#the-no_mangle-attribute) 属性的项
 * [外部块](items/external-blocks.md)中的项名称
 
@@ -71,7 +71,7 @@ r[ident.raw.allowed]
 与普通标识符不同，原始标识符可以是任意严格关键字或保留关键字，但上面对 `RAW_IDENTIFIER` 列出的那些除外。
 
 r[ident.raw.reserved]
-使用 [RESERVED_RAW_IDENTIFIER](identifiers.md#grammar-RESERVED_RAW_IDENTIFIER) 词法单元是错误。
+使用 [RESERVED_RAW_IDENTIFIER] token 是错误。
 
 [`extern crate`]: items/extern-crates.md
 [`no_mangle`]: abi.md#the-no_mangle-attribute

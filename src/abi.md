@@ -11,7 +11,7 @@ r[abi.used]
 ## `used` 属性
 
 r[abi.used.intro]
-_`used` [属性](attributes.md)_强制将 [static](items/static-items.md) 保留在输出目标文件（.o、.rlib 等，不包括最终二进制文件）中，即使它从未被 crate 中的任何其他项使用或引用。不过，链接器仍然可以移除它。
+*`used` [属性](attributes.md)*强制将 [static](items/static-items.md) 保留在输出目标文件（.o、.rlib 等，不包括最终二进制文件）中，即使它从未被 crate 中的任何其他项使用或引用。不过，链接器仍然可以移除它。
 
 > [!EXAMPLE]
 > ```rust
@@ -50,10 +50,10 @@ _`used` [属性](attributes.md)_强制将 [static](items/static-items.md) 保留
 > ```
 
 r[abi.used.syntax]
-`used` 属性使用 [MetaWord](attributes.md#grammar-MetaWord) 语法。
+`used` 属性使用 [MetaWord] 语法。
 
 r[abi.used.allowed-positions]
-`used` 属性只能应用于 [`static` 项](items/static-items.md#r-items.static)。
+`used` 属性只能应用于 [`static` 项](items.static)。
 
 r[abi.used.duplicates]
 在一个项上，只有第一次使用 `used` 会生效。
@@ -65,10 +65,10 @@ r[abi.no_mangle]
 ## `no_mangle` 属性
 
 r[abi.no_mangle.intro]
-_`no_mangle` 属性_可用于任何[项](items.md)，以禁用标准符号名修饰。该项的符号将是项名称的标识符。
+*`no_mangle` 属性*可用于任何[项](items.md)，以禁用标准符号名修饰。该项的符号将是项名称的标识符。
 
 r[abi.no_mangle.publicly-exported]
-此外，类似于 [`used` 属性](#the-used-attribute)，该项将从生成的库或目标文件中公开导出。
+此外，类似于 [`used` 属性](#r-abi.used)，该项将从生成的库或目标文件中公开导出。
 
 r[abi.no_mangle.unsafe]
 此属性是 unsafe 的，因为未修饰的符号可能会与同名的另一个符号（或知名符号）发生冲突，从而导致未定义行为。
@@ -86,10 +86,10 @@ r[abi.link_section]
 ## `link_section` 属性
 
 r[abi.link_section.intro]
-_`link_section` 属性_指定[函数](items/functions.md)或 [static](items/static-items.md) 的内容将被放入目标文件的哪个节。
+*`link_section` 属性*指定[函数](items/functions.md)或 [static](items/static-items.md) 的内容将被放入目标文件的哪个节。
 
 r[abi.link_section.syntax]
-`link_section` 属性使用 [MetaNameValueStr](attributes.md#grammar-MetaNameValueStr) 语法来指定节名称。
+`link_section` 属性使用 [MetaNameValueStr] 语法来指定节名称。
 
 <!-- no_run: don't link. The format of the section name is platform-specific. -->
 ```rust,no_run
@@ -117,10 +117,10 @@ r[abi.export_name]
 ## `export_name` 属性
 
 r[abi.export_name.intro]
-_`export_name` 属性_指定将在[函数](items/functions.md)或 [static](items/static-items.md) 上导出的符号名称。
+*`export_name` 属性*指定将在[函数](items/functions.md)或 [static](items/static-items.md) 上导出的符号名称。
 
 r[abi.export_name.syntax]
-`export_name `属性使用 [MetaNameValueStr](attributes.md#grammar-MetaNameValueStr) 语法来指定符号名称。
+`export_name` 属性使用 [MetaNameValueStr] 语法来指定符号名称。
 
 ```rust
 #[unsafe(export_name = "exported_symbol_name")]

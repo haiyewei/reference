@@ -2,10 +2,10 @@ r[variable]
 # 变量
 
 r[variable.intro]
-_变量_是栈帧的一个组成部分，可以是具名函数形参、匿名[临时量](expressions.md#temporaries)，或具名局部变量。
+*变量*是栈帧的一个组成部分，可以是具名函数形参、匿名[临时量](expressions.md#temporaries)，或具名局部变量。
 
 r[variable.local]
-_局部变量_（或_栈局部_分配）直接持有一个值，该值分配在栈的内存中。该值是栈帧的一部分。
+*局部变量*（或*栈局部*分配）直接持有一个值，该值分配在栈的内存中。该值是栈帧的一部分。
 
 r[variable.local-mut]
 局部变量是不可变的，除非另有声明。例如：`let mut x = ...`。

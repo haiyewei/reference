@@ -4,9 +4,9 @@ r[unsafe]
 r[unsafe.intro]
 `unsafe` 关键字用于创建或履行证明某事物安全的义务。具体而言：
 
-- 它用于标记_定义_额外安全条件的代码，这些条件必须在别处得到维护。
+- 它用于标记*定义*额外安全条件的代码，这些条件必须在别处得到维护。
   - 这包括 `unsafe fn`、`unsafe static` 和 `unsafe trait`。
-- 它用于标记程序员_断言_满足别处所定义安全条件的代码。
+- 它用于标记程序员*断言*满足别处所定义安全条件的代码。
   - 这包括 `unsafe {}`、`unsafe impl`、没有 [`unsafe_op_in_unsafe_fn`](../rustc/lints/listing/allowed-by-default.html#unsafe-op-in-unsafe-fn) 的 `unsafe fn`、`unsafe extern` 和 `#[unsafe(attr)]`。
 
 下文讨论这些情形中的每一种。若要查看一些说明性示例，请参见[关键字文档](../std/keyword.unsafe.html)。
@@ -26,7 +26,7 @@ r[unsafe.fn]
 ## Unsafe 函数（`unsafe fn`）
 
 r[unsafe.fn.intro]
-unsafe 函数是在并非所有上下文和/或并非所有可能输入下都安全的函数。我们说它们具有_额外安全条件_，这些条件是所有调用者都必须维护、且编译器不会检查的要求。例如，[`get_unchecked`](../std/primitive.slice.html#method.get_unchecked) 具有索引必须在边界内这一额外安全条件。unsafe 函数应当附带说明这些额外安全条件是什么的文档。
+unsafe 函数是在并非所有上下文和/或并非所有可能输入下都安全的函数。我们说它们具有*额外安全条件*，这些条件是所有调用者都必须维护、且编译器不会检查的要求。例如，[`get_unchecked`](slice::get_unchecked) 具有索引必须在边界内这一额外安全条件。unsafe 函数应当附带说明这些额外安全条件是什么的文档。
 
 r[unsafe.fn.safety]
 这样的函数必须以关键字 `unsafe` 作为前缀，并且只能从 `unsafe` 块内部调用，或者在没有 [`unsafe_op_in_unsafe_fn`](../rustc/lints/listing/allowed-by-default.html#unsafe-op-in-unsafe-fn) lint 的 `unsafe fn` 内部调用。
@@ -54,7 +54,7 @@ r[unsafe.trait]
 ## Unsafe trait（`unsafe trait`）
 
 r[unsafe.trait.intro]
-unsafe trait 是带有额外安全条件的 trait，这些条件必须由该 trait 的_实现_来维护。unsafe trait 应当附带说明这些额外安全条件是什么的文档。
+unsafe trait 是带有额外安全条件的 trait，这些条件必须由该 trait 的*实现*来维护。unsafe trait 应当附带说明这些额外安全条件是什么的文档。
 
 r[unsafe.trait.safety]
 这样的 trait 必须以关键字 `unsafe` 作为前缀，并且只能由 `unsafe impl` 块实现。

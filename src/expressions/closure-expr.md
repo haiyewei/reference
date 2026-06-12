@@ -14,10 +14,10 @@ ClosureParameters -> ClosureParam (`,` ClosureParam)* `,`?
 ClosureParam -> OuterAttribute* PatternNoTopAlt ( `:` Type )?
 ```
 
-[^cl-async-edition]: The `async` qualifier is not allowed in the 2015 edition.
+[^cl-async-edition]: 2015 edition 中不允许使用 `async` 限定符。
 
 r[expr.closure.intro]
-_闭包表达式_，也称为 lambda 表达式或 lambda，定义一个[闭包类型](../types/closure.md)，并求值为该类型的值。闭包表达式的语法为：一个可选的 `async` 关键字、一个可选的 `move` 关键字，然后是一个由管道符号（`|`）分隔的、以逗号分隔的[模式](../patterns.md)列表，称为_闭包形参_，其中每个形参都可以可选地跟随一个 `:` 和一个类型；然后是一个可选的 `->` 和类型，称为_返回类型_；最后是一个表达式，称为_闭包体操作数_。
+*闭包表达式*，也称为 lambda 表达式或 lambda，定义一个[闭包类型](../types/closure.md)，并求值为该类型的值。闭包表达式的语法为：一个可选的 `async` 关键字、一个可选的 `move` 关键字，然后是一个由管道符号（`|`）括定的、以逗号分隔的[模式](../patterns.md)列表，称为*闭包形参*，每个形参都可后接一个 `:` 和一个类型；然后是一个可选的 `->` 和类型，称为*返回类型*；最后是一个表达式，称为*闭包体操作数*。
 
 r[expr.closure.param-type]
 每个模式之后的可选类型是该模式的类型标注。
@@ -32,7 +32,7 @@ r[expr.closure.unique-type]
 每个闭包表达式都有一个唯一的匿名类型。
 
 r[expr.closure.captures]
-重要的是，闭包表达式会_捕获其环境_，而普通的[函数定义](../items/functions.md)不会。
+重要的是，闭包表达式会*捕获其环境*，而普通的[函数定义](../items/functions.md)不会。
 
 r[expr.closure.capture-inference]
 没有 `move` 关键字时，闭包表达式会[推断如何从其环境中捕获每个变量](../types/closure.md#capture-modes)，并优先以共享引用进行捕获，实际上会借用闭包体中提到的所有外部变量。
@@ -52,10 +52,10 @@ r[expr.closure.async]
 ## async 闭包
 
 r[expr.closure.async.intro]
-用 `async` 关键字标记的闭包表示它们以类似于 [async 函数](../items/functions.md#r-items.fn.async)的方式是异步的。
+用 `async` 关键字标记的闭包表示它们以类似于 [async 函数][items.fn.async] 的方式是异步的。
 
 r[expr.closure.async.future]
-调用 async 闭包不会执行任何工作，而是求值为一个实现 [`Future`](../../core/future/future/trait.Future.html) 的值，该值对应于闭包体的计算。
+调用 async 闭包不会执行任何工作，而是求值为一个实现 [`Future`] 的值，该值对应于闭包体的计算。
 
 ```rust
 async fn takes_async_callback(f: impl AsyncFn(u64)) {
@@ -87,7 +87,7 @@ fn ten_times<F>(f: F) where F: Fn(i32) {
 }
 
 ten_times(|j| println!("hello, {}", j));
-// With type annotations
+// 带有类型标注
 ten_times(|j: i32| -> () { println!("hello, {}", j) });
 
 let word = "konnichiwa".to_owned();

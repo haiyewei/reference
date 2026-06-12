@@ -25,7 +25,7 @@ PatternWithoutModernRange ->
     | ObsoleteRangePattern[^obsolete-range-edition]
 ```
 
-[^obsolete-range-edition]: [ObsoleteRangePattern] 语法在 2021 edition 及之后在语义上无效。
+[^obsolete-range-edition]: [ObsoleteRangePattern] 语法在 2021 edition 及以后版本中在语义上无效。
 
 r[patterns.intro]
 模式用于将值与结构相匹配，并可选地把变量绑定到这些结构内部的值。它们也用于变量声明以及函数和闭包的参数。
@@ -89,10 +89,10 @@ r[patterns.destructure]
 ## 解构
 
 r[patterns.destructure.intro]
-模式可以用来_解构_ [struct](items/structs.md)、[enum](items/enumerations.md) 和[元组](types/tuple.md)。解构会把一个值拆分为它的组成部分。所用语法几乎与创建这些值时相同。
+模式可以用来*解构* [struct](items/structs.md)、[enum](items/enumerations.md) 和[元组](types/tuple.md)。解构会把一个值拆分为它的组成部分。所用语法几乎与创建这些值时相同。
 
 r[patterns.destructure.wildcard]
-在[被匹配值](glossary.md#scrutinee)表达式具有 `struct`、`enum` 或 `tuple` 类型的模式中，[通配符模式](#wildcard-pattern)（`_`）代表_单个_数据字段，而 [et cetera](#grammar-StructPatternEtCetera) 或[剩余模式](patterns.md#r-patterns.rest)（`..`）代表某个特定变体的_所有_剩余字段。
+在[被匹配值](glossary.md#scrutinee)表达式具有 `struct`、`enum` 或 `tuple` 类型的模式中，[通配符模式](#wildcard-pattern)（`_`）代表*单个*数据字段，而 [et cetera](#grammar-StructPatternEtCetera) 或[剩余模式][patterns.rest]（`..`）代表某个特定变体的*所有*剩余字段。
 
 r[patterns.destructure.named-field-shorthand]
 解构带有命名字段（但不是编号字段）的数据结构时，允许将 `fieldname` 写作 `fieldname: fieldname` 的简写。
@@ -119,14 +119,14 @@ match message {
 r[patterns.refutable]
 ## 可反驳性
 
-当一个模式有可能不匹配它所匹配的值时，称该模式是_可反驳的_。另一方面，_不可反驳的_模式始终匹配它所匹配的值。示例：
+当一个模式有可能不匹配它所匹配的值时，称该模式是*可反驳的*。另一方面，*不可反驳的*模式始终匹配它所匹配的值。示例：
 
 ```rust
-let (x, y) = (1, 2);               // "(x, y)" is an irrefutable pattern
+let (x, y) = (1, 2);               // "(x, y)" 是不可驳模式
 
-if let (a, 3) = (1, 2) {           // "(a, 3)" is refutable, and will not match
+if let (a, 3) = (1, 2) {           // "(a, 3)" 是可驳模式，并且不会匹配
     panic!("Shouldn't reach here");
-} else if let (a, 4) = (3, 4) {    // "(a, 4)" is refutable, and will match
+} else if let (a, 4) = (3, 4) {    // "(a, 4)" 是可驳模式，并且会匹配
     println!("Matched ({}, 4)", a);
 }
 ```
@@ -140,7 +140,7 @@ LiteralPattern -> `-`? LiteralExpression
 ```
 
 r[patterns.literal.intro]
-_字面量模式_精确匹配由该字面量创建的同一个值。由于负数不是[字面量](expressions/literal-expr.md)，模式中的字面量可以带有一个可选的前置减号，其作用类似于取负运算符。
+*字面量模式*精确匹配由该字面量创建的同一个值。由于负数不是[字面量](expressions/literal-expr.md)，模式中的字面量可以带有一个可选的前置减号，其作用类似于取负运算符。
 
 > [!WARNING]
 > 字面量模式接受 C 字符串和原始 C 字符串字面量，但 `&CStr` 没有实现结构相等性（`#[derive(Eq, PartialEq)]`），因此任何这类针对 `&CStr` 的 `match` 都会因类型错误而被拒绝。
@@ -170,7 +170,7 @@ IdentifierPattern -> `ref`? `mut`? IDENTIFIER ( `@` PatternNoTopAlt )?
 ```
 
 r[patterns.ident.intro]
-标识符模式会把它们匹配的值绑定到[值命名空间](names/namespaces.md#r-names.namespaces.kinds)中的一个变量。
+标识符模式会把它们匹配的值绑定到[值命名空间](names.namespaces.kinds)中的一个变量。
 
 r[patterns.ident.unique]
 该标识符在模式中必须是唯一的。
@@ -248,26 +248,26 @@ r[patterns.ident.precedent]
 [路径模式](#path-patterns)优先于标识符模式。
 
 > [!NOTE]
-> 当一个模式是单段标识符时，语法上无法确定它表示 [IdentifierPattern](patterns.md#grammar-IdentifierPattern) 还是 [PathPattern](patterns.md#grammar-PathPattern)。这种歧义只能在[名称解析](names/name-resolution.md)之后解决。
+> 当一个模式是单段标识符时，语法上无法确定它表示 [IdentifierPattern] 还是 [PathPattern]。这种歧义只能在[名称解析](names/name-resolution.md)之后解决。
 >
 > ```rust
 > const EXPECTED_VALUE: u8 = 42;
-> //    ^^^^^^^^^^^^^^ That this constant is in scope affects how the
-> //                   patterns below are treated.
+> //    ^^^^^^^^^^^^^^ 此常量在作用域内会影响
+> //                   以下模式会被处理。
 >
 > fn check_value(x: u8) -> Result<u8, u8> {
 >     match x {
 >         EXPECTED_VALUE => Ok(x),
->     //  ^^^^^^^^^^^^^^ Parsed as a `PathPattern` that resolves to
->     //                 the constant `42`.
+>     //  ^^^^^^^^^^^^^^ 被解析为一个 `PathPattern`，其解析为
+>     //                 常量 `42`。
 >         other_value => Err(x),
->     //  ^^^^^^^^^^^ Parsed as an `IdentifierPattern`.
+>     //  ^^^^^^^^^^^ 被解析为一个 `IdentifierPattern`。
 >     }
 > }
 >
-> // If `EXPECTED_VALUE` were treated as an `IdentifierPattern` above,
-> // that pattern would always match, making the function always return
-> // `Ok(_) regardless of the input.
+> // 如果上面的 `EXPECTED_VALUE` 被视为一个 `IdentifierPattern`，
+> // 那么该模式总会匹配，使函数总是返回
+> // `Ok(_)`，无论输入是什么。
 > assert_eq!(check_value(42), Ok(42));
 > assert_eq!(check_value(43), Err(43));
 > ```
@@ -282,20 +282,20 @@ r[patterns.ident.binding]
 ### 绑定模式
 
 r[patterns.ident.binding.intro]
-为了改善易用性，模式会以不同的_绑定模式_运行，以便更容易将引用绑定到值。当一个引用值由非引用模式匹配时，它会被自动视为 `ref` 或 `ref mut` 绑定。示例：
+为了改善易用性，模式会以不同的*绑定模式*运行，以便更容易将引用绑定到值。当一个引用值由非引用模式匹配时，它会被自动视为 `ref` 或 `ref mut` 绑定。示例：
 
 ```rust
 let x: &Option<i32> = &Some(3);
 if let Some(y) = x {
-    // y was converted to `ref y` and its type is &i32
+    // y 被转换为 `ref y`，其类型为 &i32
 }
 ```
 
 r[patterns.ident.binding.non-reference]
-_非引用模式_包括除绑定、[通配符模式](#wildcard-pattern)（`_`）、引用类型的 [`const` 模式](#path-patterns)以及[引用模式](#reference-patterns)之外的所有模式。
+*非引用模式*包括除绑定、[通配符模式](#wildcard-pattern)（`_`）、引用类型的 [`const` 模式](#path-patterns)以及[引用模式](#reference-patterns)之外的所有模式。
 
 r[patterns.ident.binding.default-mode]
-如果一个绑定型模式没有显式带有 `ref`、`ref mut` 或 `mut`，则它会使用_默认绑定模式_来确定变量如何绑定。
+如果一个绑定型模式没有显式带有 `ref`、`ref mut` 或 `mut`，则它会使用*默认绑定模式*来确定变量如何绑定。
 
 r[patterns.ident.binding.move]
 默认绑定模式从 "move" 模式开始，该模式使用移动语义。
@@ -342,7 +342,7 @@ r[patterns.ident.binding.mode-limitations-reference.edition2024]
 r[patterns.ident.binding.mixed]
 移动绑定和引用绑定可以混合出现在同一个模式中。这样做会导致被绑定对象发生部分移动，该对象之后不能再使用。只有当该类型不能被复制时，这一点才适用。
 
-在下面的示例中，`name` 被从 `person` 中移出。尝试把 `person` 作为整体使用或使用 `person.name` 会因为_部分移动_而导致错误。
+在下面的示例中，`name` 被从 `person` 中移出。尝试把 `person` 作为整体使用或使用 `person.name` 会因为*部分移动*而导致错误。
 
 示例：
 
@@ -352,7 +352,7 @@ r[patterns.ident.binding.mixed]
 #    age: u8,
 # }
 # let person = Person{ name: String::from("John"), age: 23 };
-// `name` is moved from person and `age` referenced
+// `name` 从 person 移出，`age` 被引用
 let Person { name, ref age } = person;
 ```
 
@@ -365,7 +365,7 @@ WildcardPattern -> `_`
 ```
 
 r[patterns.wildcard.intro]
-_通配符模式_（下划线符号）匹配任何值。它用于忽略无关紧要的值。
+*通配符模式*（下划线符号）匹配任何值。它用于忽略无关紧要的值。
 
 r[patterns.wildcard.struct-matcher]
 在其他模式内部，它匹配单个数据字段（相对于匹配剩余字段的 `..`）。
@@ -377,13 +377,13 @@ r[patterns.wildcard.no-binding]
 
 ```rust
 # let x = 20;
-let (a, _) = (10, x);   // the x is always matched by _
+let (a, _) = (10, x);   // x 总是由 _ 匹配
 # assert_eq!(a, 10);
 
-// ignore a function/closure param
+// 忽略函数/闭包参数
 let real_part = |a: f64, _: f64| { a };
 
-// ignore a field from a struct
+// 忽略 struct 中的一个字段
 # struct RGBA {
 #    r: f32,
 #    g: f32,
@@ -396,7 +396,7 @@ let RGBA{r: red, g: green, b: blue, a: _} = color;
 # assert_eq!(color.g, green);
 # assert_eq!(color.b, blue);
 
-// accept any Some, with any value
+// 接受任何 Some，带有任何值
 # let x = Some(10);
 if let Some(_) = x {}
 ```
@@ -413,7 +413,7 @@ RestPattern -> `..`
 ```
 
 r[patterns.rest.intro]
-_剩余模式_（`..` token）作为可变长度模式，匹配其前后尚未被匹配的零个或多个元素。
+*剩余模式*（`..` token）作为可变长度模式，匹配其前后尚未被匹配的零个或多个元素。
 
 r[patterns.rest.allowed-patterns]
 它只可以用于[元组](#tuple-patterns)、[元组结构体](#tuple-struct-patterns)和[切片](#slice-patterns)模式，并且在这些模式中只能作为其中一个元素出现一次。它也允许出现在[标识符模式](#identifier-patterns)中，但仅限于[切片模式](#slice-patterns)。
@@ -433,16 +433,16 @@ match slice {
 }
 
 match slice {
-    // Ignore everything but the last element, which must be "!".
+    // 忽略除最后一个元素以外的所有元素，最后一个元素必须是 "!"。
     [.., "!"] => println!("!!!"),
 
-    // `start` is a slice of everything except the last element, which must be "z".
+    // `start` 是除最后一个元素之外所有内容的切片，而最后一个元素必须是 "z"。
     [start @ .., "z"] => println!("starts with: {:?}", start),
 
-    // `end` is a slice of everything but the first element, which must be "a".
+    // `end` 是除第一个元素之外所有内容的切片，而第一个元素必须是 "a"。
     ["a", end @ ..] => println!("ends with: {:?}", end),
 
-    // 'whole' is the entire slice and `last` is the final element
+    // 'whole' 是整个切片，`last` 是最后一个元素
     whole @ [.., last] => println!("the last element of {:?} is {}", whole, last),
 
     rest => println!("{:?}", rest),
@@ -453,8 +453,8 @@ if let [.., penultimate, _] = slice {
 }
 
 # let tuple = (1, 2, 3, 4, 5);
-// The rest pattern may also be used in tuple and tuple
-// struct patterns.
+// 剩余模式也可以用在元组和元组
+// struct 模式中。
 match tuple {
     (1, .., y, z) => println!("y={} z={}", y, z),
     (.., 5) => println!("tail must be 5"),
@@ -498,40 +498,40 @@ RangePatternBound ->
 ```
 
 r[patterns.range.intro]
-_范围模式_匹配由其边界定义的范围内的标量值。它们由一个 _sigil_（符号标记，`..` 或 `..=`）以及一侧或两侧的边界组成。
+*范围模式*匹配由其边界定义的范围内的标量值。它们由一个 _sigil_（符号标记，`..` 或 `..=`）以及一侧或两侧的边界组成。
 
-该 sigil 左侧的边界称为_下界_。右侧的边界称为_上界_。
+该 sigil 左侧的边界称为*下界*。右侧的边界称为*上界*。
 
 r[patterns.range.exclusive]
-_排除上界的范围模式_匹配从下界开始直到上界、但不包括上界的所有值。它写作下界，后接 `..`，再后接上界。
+*排除上界的范围模式*匹配从下界开始直到上界、但不包括上界的所有值。它写作下界，后接 `..`，再后接上界。
 
 例如，模式 `'m'..'p'` 只会匹配 `'m'`、`'n'` 和 `'o'`，明确**不**包括 `'p'`。
 
 r[patterns.range.inclusive]
-_包含上界的范围模式_匹配从下界开始直到并包括上界的所有值。它写作下界，后接 `..=`，再后接上界。
+*包含上界的范围模式*匹配从下界开始直到并包括上界的所有值。它写作下界，后接 `..=`，再后接上界。
 
 例如，模式 `'m'..='p'` 只会匹配值 `'m'`、`'n'`、`'o'` 和 `'p'`。
 
 r[patterns.range.from]
-_起始范围模式_匹配所有大于或等于下界的值。它写作下界后接 `..`。
+*起始范围模式*匹配所有大于或等于下界的值。它写作下界后接 `..`。
 
 例如，`1..` 会匹配任何大于或等于 1 的整数，例如 1、9、9001，或者 9007199254740991（如果它的大小合适），但不匹配 0；对于有符号整数，也不匹配负数。
 
 r[patterns.range.to-exclusive]
-_排除终止范围模式_匹配所有小于上界的值。它写作 `..` 后接上界。
+*排除终止范围模式*匹配所有小于上界的值。它写作 `..` 后接上界。
 
 例如，`..10` 会匹配任何小于 10 的整数，例如 9、1、0；对于有符号整数类型，还会匹配所有负值。
 
 r[patterns.range.to-inclusive]
-_包含终止范围模式_匹配所有小于或等于上界的值。它写作 `..=` 后接上界。
+*包含终止范围模式*匹配所有小于或等于上界的值。它写作 `..=` 后接上界。
 
 例如，`..=10` 会匹配任何小于或等于 10 的整数，例如 10、1、0；对于有符号整数类型，还会匹配所有负值。
 
 r[patterns.range.constraint-nonempty]
 范围模式必须非空；它必须覆盖其类型的可能值集合中的至少一个值。换言之：
 
-* In `a..=b`, a &le; b must be the case. For example, it is an error to have a range pattern `10..=0`, but `10..=10` is allowed.
-* In `a..b`, a &lt; b must be the case. For example, it is an error to have a range pattern `10..0` or `10..10`.
+* 在 `a..=b` 中，必须满足 a ≤ b。例如，范围模式 `10..=0` 是错误，但允许 `10..=10`。
+* 在 `a..b` 中，必须满足 a \< b。例如，范围模式 `10..0` 或 `10..10` 是错误。
 * 在 `..b` 中，b 不得是其类型的最小值。例如，范围模式 `..-128i8` 或 `..f64::NEG_INFINITY` 是错误。
 
 r[patterns.range.bound]
@@ -543,7 +543,7 @@ r[patterns.range.bound]
 
 > [!NOTE]
 >
-> 对于 _[RangePatternBound](patterns.md#grammar-RangePatternBound)_，我们在语法上接受的内容多于这些。其他内容随后会在语义上被拒绝。
+> 对于 _[RangePatternBound]_，我们在语法上接受的内容多于这些。其他内容随后会在语义上被拒绝。
 
 r[patterns.range.constraint-bound-path]
 如果边界写作路径，则在宏解析之后，该路径必须解析为类型为 `char`、整数类型或浮点数类型的常量项。
@@ -588,7 +588,7 @@ match uint {
     1.. => "positive number!",
 };
 
-// using paths to constants:
+// 使用指向常量的路径：
 # const TROPOSPHERE_MIN : u8 = 6;
 # const TROPOSPHERE_MAX : u8 = 20;
 #
@@ -629,7 +629,7 @@ if let size @ binary::MEGA..=binary::GIGA = n_items * bytes_per_item {
 # impl MaxValue for u32 {
 #     const MAX: u64 = (1 << 32) - 1;
 # }
-// using qualified paths:
+// 使用限定路径：
 println!("{}", match 0xfacade {
     0 ..= <u8 as MaxValue>::MAX => "fits in a u8",
     0 ..= <u16 as MaxValue>::MAX => "fits in a u16",
@@ -648,7 +648,7 @@ r[patterns.range.refutable-char]
 `char` 类型的取值范围恰好是包含所有 Unicode 标量值的那些范围：`'\u{0000}'..='\u{D7FF}'` 和 `'\u{E000}'..='\u{10FFFF}'`。
 
 r[patterns.range.constraint-slice]
-[RangeFromPattern](patterns.md#grammar-RangeFromPattern) 不能用作[切片模式](#slice-patterns)中子模式的顶层模式。例如，模式 `[1.., _]` 不是有效模式。
+[RangeFromPattern] 不能用作[切片模式](#slice-patterns)中子模式的顶层模式。例如，模式 `[1.., _]` 不是有效模式。
 
 r[patterns.range.edition2021]
 > [!EDITION-2021]
@@ -728,7 +728,7 @@ r[patterns.struct.ignore-rest]
 #
 match s {
     Point {x: 10, y: 20} => (),
-    Point {y: 10, x: 20} => (),    // order doesn't matter
+    Point {y: 10, x: 20} => (),    // 顺序无关紧要
     Point {x: 10, ..} => (),
     Point {..} => (),
 }
@@ -741,7 +741,7 @@ match s {
 #
 match t {
     PointTuple {0: 10, 1: 20} => (),
-    PointTuple {1: 10, 0: 20} => (),   // order doesn't matter
+    PointTuple {1: 10, 0: 20} => (),   // 顺序无关紧要
     PointTuple {0: 10, ..} => (),
     PointTuple {..} => (),
 }
@@ -783,7 +783,7 @@ r[patterns.struct.constraint-union]
 用于匹配 union 的结构体模式必须恰好指定一个字段（见 [union 上的模式匹配](items/unions.md#pattern-matching-on-unions)）。
 
 r[patterns.struct.binding-shorthand]
-[IDENTIFIER](identifiers.md#grammar-IDENTIFIER) 语法匹配任何值，并将其绑定到与给定字段同名的变量。它是 `fieldname: fieldname` 的简写。可以包含 `ref` 和 `mut` 限定符，其行为如 [patterns.ident.ref](patterns.md#r-patterns.ident.ref) 所述。
+[IDENTIFIER] 语法匹配任何值，并将其绑定到与给定字段同名的变量。它是 `fieldname: fieldname` 的简写。可以包含 `ref` 和 `mut` 限定符，其行为如 [patterns.ident.ref] 所述。
 
 ```rust
 # struct Struct {
@@ -797,10 +797,10 @@ let Struct { a, b, c } = struct_value;
 ```
 
 r[patterns.struct.refutable]
-如果 [PathInExpression](paths.md#grammar-PathInExpression) 解析到具有多个变体的 enum 的构造器，或者其某个子模式是可反驳的，则结构体模式是可反驳的。
+如果 [PathInExpression] 解析到具有多个变体的 enum 的构造器，或者其某个子模式是可反驳的，则结构体模式是可反驳的。
 
 r[patterns.struct.namespace]
-结构体模式匹配其构造器由 [PathInExpression](paths.md#grammar-PathInExpression) 在[类型命名空间](names/namespaces.md#r-names.namespaces.kinds)中解析得到的 struct、union 或 enum 变体。更多细节见 [patterns.tuple-struct.namespace](patterns.md#r-patterns.tuple-struct.namespace)。
+结构体模式匹配其构造器由 [PathInExpression] 在[类型命名空间](names.namespaces.kinds)中解析得到的 struct、union 或 enum 变体。更多细节见 [patterns.tuple-struct.namespace]。
 
 r[patterns.tuple-struct]
 ## 元组结构体模式
@@ -816,43 +816,43 @@ r[patterns.tuple-struct.intro]
 元组结构体模式匹配满足其子模式所定义全部条件的元组结构体和 enum 值。它们也用于[解构](#destructuring)元组结构体或 enum 值。
 
 r[patterns.tuple-struct.refutable]
-如果 [PathInExpression](paths.md#grammar-PathInExpression) 解析到具有多个变体的 enum 的构造器，或者其某个子模式是可反驳的，则元组结构体模式是可反驳的。
+如果 [PathInExpression] 解析到具有多个变体的 enum 的构造器，或者其某个子模式是可反驳的，则元组结构体模式是可反驳的。
 
 r[patterns.tuple-struct.namespace]
-元组结构体模式匹配其构造器由 [PathInExpression](paths.md#grammar-PathInExpression) 在[值命名空间](names/namespaces.md#r-names.namespaces.kinds)中解析得到的元组结构体或[类元组 enum 变体](items/enumerations.md#r-items.enum.tuple-expr)。
+元组结构体模式匹配其构造器由 [PathInExpression] 在[值命名空间](names.namespaces.kinds)中解析得到的元组结构体或[类元组 enum 变体](items.enum.tuple-expr)。
 
 > [!NOTE]
-> 反过来，用于元组结构体或[类元组 enum 变体](items/enumerations.md#r-items.enum.tuple-expr)的结构体模式，例如 `S { 0: _ }`，会匹配其构造器在[类型命名空间](names/namespaces.md#r-names.namespaces.kinds)中解析得到的元组结构体或变体。
+> 反过来，用于元组结构体或[类元组 enum 变体](items.enum.tuple-expr)的结构体模式，例如 `S { 0: _ }`，会匹配其构造器在[类型命名空间](names.namespaces.kinds)中解析得到的元组结构体或变体。
 >
 > ```rust,no_run
 > enum E1 { V(u16) }
 > enum E2 { V(u32) }
 >
-> // Import `E1::V` from the type namespace only.
+> // 仅从类型命名空间导入 `E1::V`。
 > mod _0 {
->     const V: () = (); // For namespace masking.
+>     const V: () = (); // 用于命名空间遮蔽。
 >     pub(super) use super::E1::*;
 > }
 > use _0::*;
 >
-> // Import `E2::V` from the value namespace only.
+> // 仅从值命名空间导入 `E2::V`。
 > mod _1 {
->     struct V {} // For namespace masking.
+>     struct V {} // 用于命名空间遮蔽。
 >     pub(super) use super::E2::*;
 > }
 > use _1::*;
 >
 > fn f() {
->     // This struct pattern matches against the tuple-like
->     // enum variant whose constructor was found in the type
->     // namespace.
+>     // 此结构体模式匹配类元组形式的 enum 变体，
+>     // 其构造器是在类型
+>     // 命名空间中找到的。
 >     let V { 0: ..=u16::MAX } = (loop {}) else { loop {} };
->     // This tuple struct pattern matches against the tuple-like
->     // enum variant whose constructor was found in the value
->     // namespace.
+>     // 此元组结构体模式匹配类元组形式的 enum 变体，
+>     // 其构造器是在值
+>     // 命名空间中找到的。
 >     let V(..=u32::MAX) = (loop {}) else { loop {} };
 > }
-> # // Required due to the odd behavior of `super` within functions.
+> # // 这是必需的，因为 `super` 在函数内的行为比较特殊。
 > # fn main() {}
 > ```
 >
@@ -875,7 +875,7 @@ r[patterns.tuple.intro]
 元组模式匹配满足其子模式所定义全部条件的元组值。它们也用于[解构](#destructuring)元组。
 
 r[patterns.tuple.rest-syntax]
-带有单个 [RestPattern](patterns.md#grammar-RestPattern) 的形式 `(..)` 是一种特殊形式，它不需要逗号，并匹配任意大小的元组。
+带有单个 [RestPattern] 的形式 `(..)` 是一种特殊形式，它不需要逗号，并匹配任意大小的元组。
 
 r[patterns.tuple.refutable]
 当元组模式的某个子模式可反驳时，该元组模式是可反驳的。
@@ -923,7 +923,7 @@ r[patterns.slice.intro]
 切片模式既可以匹配固定大小的数组，也可以匹配动态大小的切片。
 
 ```rust
-// Fixed size
+// 固定大小
 let arr = [1, 2, 3];
 match arr {
     [1, _, _] => "starts with one",
@@ -931,7 +931,7 @@ match arr {
 };
 ```
 ```rust
-// Dynamic size
+// 动态大小
 let v = vec![1, 2, 3];
 match v[..] {
     [a, b] => { /* this arm will not apply because the length doesn't match */ }
@@ -944,7 +944,7 @@ r[patterns.slice.refutable-array]
 匹配数组时，只要每个元素都是不可反驳的，切片模式就是不可反驳的。
 
 r[patterns.slice.refutable-slice]
-匹配切片时，只有带有单个 `..` [剩余模式](patterns.md#r-patterns.rest)的形式，或以 `..` 剩余模式作为子模式的[标识符模式](#identifier-patterns)，才是不可反驳的。
+匹配切片时，只有带有单个 `..` [剩余模式][patterns.rest]的形式，或以 `..` 剩余模式作为子模式的[标识符模式](#identifier-patterns)，才是不可反驳的。
 
 r[patterns.slice.restriction]
 在切片内部，没有同时具备下界和上界的范围模式必须括在圆括号中，如 `(a..)`，以明确它意在匹配单个切片元素。像 `a..=b` 这样同时具有下界和上界的范围模式不需要括在圆括号中。
@@ -958,7 +958,7 @@ PathPattern -> PathExpression
 ```
 
 r[patterns.path.intro]
-_路径模式_是指向常量值，或者指向没有字段的 struct 或 enum 变体的模式。
+*路径模式*是指向常量值，或者指向没有字段的 struct 或 enum 变体的模式。
 
 r[patterns.path.unqualified]
 非限定路径模式可以指向：
@@ -981,7 +981,7 @@ r[patterns.const.partial-eq]
 当类型为 `T` 的常量 `C` 被用作模式时，我们首先检查 `T: PartialEq`。
 
 r[patterns.const.structural-equality]
-此外，我们要求 `C` 的值_具有（递归的）结构相等性_，其递归定义如下：
+此外，我们要求 `C` 的值*具有（递归的）结构相等性*，其递归定义如下：
 
 r[patterns.const.primitive]
 - 整数以及 `str`、`bool` 和 `char` 值始终具有结构相等性。
@@ -1016,7 +1016,7 @@ r[patterns.const.translation]
 r[patterns.or]
 ## Or-patterns（或模式）
 
-_Or-patterns_（或模式）是匹配两个或更多子模式之一的模式（例如 `A | B | C`）。它们可以任意嵌套。在语法上，除 `let` 绑定以及函数和闭包参数（由 [PatternNoTopAlt] 产生式表示）之外，所有允许其他模式的位置（由 [Pattern] 产生式表示）都允许或模式。
+*Or-patterns（或模式）*是匹配两个或多个子模式之一的模式（例如 `A | B | C`）。它们可以任意嵌套。在语法上，or-patterns 可以出现在允许其他模式出现的任何位置（由 [Pattern] 产生式表示），但 `let`-绑定以及函数和闭包参数例外（由 [PatternNoTopAlt] 产生式表示）。
 
 r[patterns.constraints]
 ### 静态语义
@@ -1036,7 +1036,7 @@ r[patterns.constraints.match-type-check]
 r[patterns.constraints.exhaustiveness-or-pattern]
 3. 就穷尽性检查而言，模式 `p | q` 被认为既覆盖 `p`，也覆盖 `q`。对于某个构造器 `c(x, ..)`，分配律适用，使得 `c(p | q, ..rest)` 覆盖与 `c(p, ..rest) | c(q, ..rest)` 相同的值集合。这可以递归应用，直到除了位于顶层的 `p | q` 形式模式之外，不再存在嵌套的这类模式。
 
-   注意，所谓 _"构造器"_ 并不是指元组结构体模式，而是指任何积类型的模式。这包括 enum 变体、元组结构体、带命名字段的 struct、数组、元组和切片。
+   注意，所谓 *"构造器"* 并不是指元组结构体模式，而是指任何积类型的模式。这包括 enum 变体、元组结构体、带命名字段的 struct、数组、元组和切片。
 
 r[patterns.behavior]
 ### 动态语义

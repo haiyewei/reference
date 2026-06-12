@@ -47,10 +47,10 @@ fn with_impl_trait(arg: impl Trait) {
 ```
 
 r[type.impl-trait.param.generic]
-也就是说，实参位置中的 `impl Trait` 是类似 `<T: Trait>` 的泛型类型形参的语法糖，只不过该类型是匿名的，并且不会出现在 [GenericParams](../items/generics.md#grammar-GenericParams) 列表中。
+也就是说，实参位置中的 `impl Trait` 是类似 `<T: Trait>` 的泛型类型形参的语法糖，只不过该类型是匿名的，并且不会出现在 [GenericParams] 列表中。
 
 > [!NOTE]
-> 对于函数形参，泛型类型形参和 `impl Trait` 并不完全等价。对于像 `<T: Trait>` 这样的泛型形参，调用者可以选择在调用点使用 [GenericArgs](../paths.md#grammar-GenericArgs) 显式指定 `T` 的泛型实参，例如 `foo::<usize>(1)`。将一个形参从其中一种形式改为另一种形式，可能构成对函数调用者的破坏性变更，因为这会改变泛型实参的数量。
+> 对于函数形参，泛型类型形参和 `impl Trait` 并不完全等价。对于像 `<T: Trait>` 这样的泛型形参，调用者可以选择在调用点使用 [GenericArgs] 显式指定 `T` 的泛型实参，例如 `foo::<usize>(1)`。将一个形参从其中一种形式改为另一种形式，可能构成对函数调用者的破坏性变更，因为这会改变泛型实参的数量。
 
 r[type.impl-trait.return]
 ## 抽象返回类型
@@ -91,12 +91,12 @@ r[type.impl-trait.return-in-trait.intro]
 trait 中的函数也可以使用 `impl Trait` 作为匿名关联类型的语法。
 
 r[type.impl-trait.return-in-trait.desugaring]
-trait 中关联函数的返回类型里的每个 `impl Trait` 都会被脱糖为一个匿名关联类型。实现的函数签名中出现的返回类型用于确定该关联类型的值。
+trait 中关联函数返回类型里的每个 `impl Trait` 都会被脱糖为一个匿名关联类型。实现的函数签名中出现的返回类型用于确定该关联类型的值。
 
 r[type.impl-trait.generic-captures]
 ## 捕获
 
-每个返回位置 `impl Trait` 抽象类型背后都有某个隐藏的具体类型。要让这个具体类型使用某个泛型形参，该泛型形参必须被该抽象类型_捕获_。
+每个返回位置 `impl Trait` 抽象类型背后都有某个隐藏的具体类型。要让这个具体类型使用某个泛型形参，该泛型形参必须被该抽象类型 *捕获*。
 
 r[type.impl-trait.generic-capture.auto]
 ## 自动捕获
@@ -112,12 +112,12 @@ r[type.impl-trait.generic-capture.precise]
 ## 精确捕获
 
 r[type.impl-trait.generic-capture.precise.use]
-返回位置 `impl Trait` 抽象类型所捕获的泛型形参集合，可以通过 [`use<..>` 约束](../trait-bounds.md#use-bounds)显式控制。如果存在该约束，则只有列在 `use<..>` 约束中的泛型形参会被捕获。例如：
+返回位置 `impl Trait` 抽象类型所捕获的泛型形参集合，可以通过 [`use<..>` 约束](../trait-bounds.md#r-bound.use)显式控制。如果存在该约束，则只有列在 `use<..>` 约束中的泛型形参会被捕获。例如：
 
 ```rust
 fn capture<'a, 'b, T>(x: &'a (), y: T) -> impl Sized + use<'a, T> {
   //                                      ~~~~~~~~~~~~~~~~~~~~~~~
-  //                                     Captures `'a` and `T` only.
+  //                                     只捕获 `'a` 和 `T`。
   (x, y)
 }
 ```

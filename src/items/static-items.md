@@ -7,13 +7,13 @@ StaticItem ->
     ItemSafety?[^extern-safety] `static` `mut`? IDENTIFIER `:` Type ( `=` Expression )? `;`
 ```
 
-[^extern-safety]: The `safe` and `unsafe` function qualifiers are only allowed semantically within `extern` blocks.
+[^extern-safety]: `safe` 和 `unsafe` 函数限定符在语义上只允许出现在 `extern` 块内。
 
 r[items.static.intro]
-_静态项_ 类似于[常量](constant-items.md)，但它表示程序中的一块分配，该分配由初始化式初始化。指向该静态项的所有引用和裸指针都指向同一块分配。
+*静态项*类似于[常量](constant-items.md)，但它表示程序中的一块分配，该分配由初始化式初始化。指向该静态项的所有引用和裸指针都指向同一块分配。
 
 r[items.static.lifetime]
-静态项具有 `static` 生命周期，它比 Rust 程序中的所有其他生命周期都长。静态项不会在程序结束时调用 [`drop`](../destructors.md)。
+静态项具有 `static` 生命周期，它覆盖 Rust 程序中的所有其他生命周期。静态项不会在程序结束时调用 [`drop`](../destructors.md)。
 
 r[items.static.storage-disjointness]
 如果该 `static` 的大小至少为 1 字节，则这块分配与所有其他此类 `static` 分配、堆分配以及栈分配变量互不重叠。然而，不可变 `static` 项的存储可以与自身没有唯一地址的分配重叠，例如[提升值](../destructors.md#constant-promotion)和 [`const` 项](constant-items.md)。
@@ -31,7 +31,7 @@ r[items.static.safety]
 对静态项的所有访问都是安全的，但静态项有若干限制：
 
 r[items.static.sync]
-* 该类型必须满足 [`Sync`](../../core/marker/trait.Sync.html) trait 约束，以允许线程安全访问。
+* 该类型必须满足 [`Sync`](std::marker::Sync) trait 约束，以允许线程安全访问。
 
 r[items.static.init.omission]
 在[外部块](external-blocks.md)中必须省略初始化式；对于自由静态项，必须提供初始化式。
@@ -102,8 +102,8 @@ r[items.static.mut.extern]
 
 static mut LEVELS: u32 = 0;
 
-// This violates the idea of no shared state, and this doesn't internally
-// protect against races, so this function is `unsafe`
+// 这违反了无共享状态的理念，并且其内部没有
+// 防止竞争，因此此函数是 `unsafe`
 unsafe fn bump_levels_unsafe() -> u32 {
     unsafe {
         let ret = LEVELS;
@@ -112,12 +112,12 @@ unsafe fn bump_levels_unsafe() -> u32 {
     }
 }
 
-// As an alternative to `bump_levels_unsafe`, this function is safe, assuming
-// that we have an atomic_add function which returns the old value. This
-// function is safe only if no other code accesses the static in a non-atomic
-// fashion. If such accesses are possible (such as in `bump_levels_unsafe`),
-// then this would need to be `unsafe` to indicate to the caller that they
-// must still guard against concurrent access.
+// 作为 `bump_levels_unsafe` 的替代方案，如果我们有一个会返回旧值的
+// atomic_add 函数，则此函数是安全的。只有在没有其他代码以
+// 非原子方式访问该 static 时，此函数才是安全的。如果此类访问是可能的
+// （例如在 `bump_levels_unsafe` 中），那么它就需要是 `unsafe`，
+// 以向调用者表明他们仍然必须防范
+// 并发访问。
 fn bump_levels_safe() -> u32 {
     unsafe {
         return atomic_add(&raw mut LEVELS, 1);

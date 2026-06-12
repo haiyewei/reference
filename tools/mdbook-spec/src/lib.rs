@@ -107,11 +107,7 @@ impl Spec {
                 format!("[{rule_id}]: {}#r-{rule_id}\n", relative)
             })
             .collect();
-        format!(
-            "{}\n\
-            {definitions}",
-            chapter.content
-        )
+        format!("{}\n\n{definitions}", chapter.content.trim_end())
     }
 }
 

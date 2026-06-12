@@ -21,16 +21,16 @@ r[notation.grammar.syntax]
 | x<sup>n:a..=b</sup> | `#`<sup>n:1..=255</sup> | x 重复 a 到 b 次（包含 b），并将计数绑定到名称 n |
 | x<sup>n</sup> | `#`<sup>n</sup> | x 重复此前带标签重复绑定到 n 的次数 |
 | Rule1 Rule2 | `fn` _Name_ _Parameters_ | 规则按顺序组成的序列 |
-| \ |  | `u8` \ | `u16`, Block \ | 项 | 其中之一 |
+| \| | `u8` \| `u16`, Block \| Item | 其中之一 |
 | ! | !COMMENT | 若该表达式未在当前位置随后出现则匹配，且不消耗任何输入 |
-| \[ \] | \[`b` `B`\] | 列出的任意字符 |
-| \[ - \] | \[`a`-`z`] | 范围内的任意字符 |
-| ~\[ \] | ~\[`b` `B`\] | 除列出字符之外的任意字符 |
+| \[ ] | \[`b` `B`] | 列出的任意字符 |
+| \[ - ] | \[`a`-`z`] | 范围内的任意字符 |
+| ~\[ ] | ~\[`b` `B`] | 除列出字符之外的任意字符 |
 | ~`string` | ~`\n`, ~`*/` | 除该序列之外的任意字符 |
 | ( ) | (`,` _Parameter_)<sup>?</sup> | 将项分组 |
 | ^ | `b'` ^ ASCII_FOR_CHAR | 序列剩余部分必须匹配，否则解析无条件失败（[hard cut 运算符](notation.md#the-hard-cut-operator)） |
 | U+xxxx..xxxxxx | U+0060 | 单个 Unicode 字符 |
-| \<text\> | \<除 CR 外的任意 ASCII 字符\> | 应匹配内容的英文描述 |
+| \<text\> | \<any ASCII char except CR\> | 应匹配内容的英文描述 |
 | Rule <sub>suffix</sub> | IDENTIFIER_OR_KEYWORD <sub>_except `crate`_</sub> | 对前一条规则的修饰 |
 | // 注释。 | // 单行注释。 | 延伸到行尾的注释。 |
 
@@ -48,9 +48,10 @@ hard cut 运算符是必要的，因为 Rust 中有些 token 以一个本身也�
 r[notation.grammar.string-tables]
 ### 字符串表产生式
 
-Some rules in the grammar &mdash; notably [unary operators], [binary operators], and [keywords] &mdash; are given in a simplified form: as a listing of printable strings. These cases form a subset of the rules regarding the [token][tokens] rule, and are assumed to be the result of a lexical-analysis phase feeding the parser, driven by a <abbr title="Deterministic Finite Automaton">DFA</abbr>, operating over the disjunction of all such string table entries.
+语法中的某些规则，尤其是[一元运算符](expressions/operator-expr.md#borrow-operators)、[二元运算符](expressions/operator-expr.md#arithmetic-and-logical-binary-operators)和[关键字](keywords.md)，以一种简化形式给出：即可打印字符串列表。这些情况构成关于 [token](tokens.md) 规则的规则子集，并被假定为词法分析阶段向解析器供给的结果；该阶段由在所有此类字符串表项的析取上运行的 <abbr title="Deterministic Finite
+Automaton">DFA</abbr> 驱动。
 
-当这样的等宽字体字符串出现在语法内部时，它就是对此类字符串表产生式中单个成员的隐式引用。更多信息见 [token](tokens.md)。
+当这样的 `monospace` 字体字符串出现在语法内部时，它就是对此类字符串表产生式中单个成员的隐式引用。更多信息见 [token](tokens.md)。
 
 r[notation.grammar.visualizations]
 ### 语法可视化

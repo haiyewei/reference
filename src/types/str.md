@@ -10,7 +10,7 @@ let greeting2: &str = "你好，世界";
 ```
 
 > [!NOTE]
-> 有关 `str` 类型的 impl 信息，请参见 [标准库文档](../../std/primitive.str.html)。
+> 有关 `str` 类型的 impl 信息，请参见 [标准库文档][`str`]。
 
 r[type.str.value]
 `str` 类型的值以与 `[u8]` 相同的方式表示，即一个 8 位无符号字节的切片。

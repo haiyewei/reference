@@ -2,7 +2,7 @@ r[asm]
 # 内联汇编
 
 r[asm.intro]
-内联汇编支持由 [`asm!`](../core/arch/macro.asm.html)、[`naked_asm!`](../core/arch/macro.naked_asm.html) 和 [`global_asm!`](../core/arch/macro.global_asm.html) 宏提供。它可用于将手写汇编嵌入编译器生成的汇编输出中。
+内联汇编支持由 [`asm!`](core::arch::asm)、[`naked_asm!`](core::arch::naked_asm) 和 [`global_asm!`](core::arch::global_asm) 宏提供。它可用于将手写汇编嵌入编译器生成的汇编输出中。
 
 [`asm!`]: core::arch::asm
 [`naked_asm!`]: core::arch::naked_asm
@@ -27,7 +27,7 @@ r[asm.example]
 # #[cfg(target_arch = "x86_64")] {
 use std::arch::asm;
 
-// Multiply x by 6 using shifts and adds
+// 使用移位和加法将 x 乘以 6
 let mut x: u64 = 4;
 unsafe {
     asm!(
@@ -148,7 +148,7 @@ r[asm.ts-args]
 ## 模板字符串参数
 
 r[asm.ts-args.syntax]
-汇编器模板使用与[格式字符串](../alloc/fmt/index.html#syntax)相同的语法（即，占位符由花括号指定）。
+汇编器模板使用与[格式字符串](std::fmt#syntax)相同的语法（即，占位符由花括号指定）。
 
 r[asm.ts-args.order]
 对应的参数会按顺序、按索引或按名称访问。
@@ -158,11 +158,11 @@ r[asm.ts-args.order]
 let x: i64;
 let y: i64;
 let z: i64;
-// 这样
+// 这个
 unsafe { core::arch::asm!("mov {}, {}", out(reg) x, in(reg) 5); }
-// ... 这样
+// ... 这个
 unsafe { core::arch::asm!("mov {0}, {1}", out(reg) y, in(reg) 5); }
-// ... 以及这样
+// ... 以及这个
 unsafe { core::arch::asm!("mov {out}, {in}", out = out(reg) z, in = in(reg) 5); }
 // 都具有相同的行为
 assert_eq!(x, y);
@@ -189,7 +189,7 @@ r[asm.ts-args.one-or-more]
 # #[cfg(target_arch = "x86_64")] {
 let x: i64;
 let y: i64;
-// 可以分开写多个字符串，就像它们写在一起一样
+// 可以把多个字符串分开写，就像它们写在一起一样
 unsafe { core::arch::asm!("mov eax, 5", "mov ecx, eax", out("rax") x, out("rcx") y); }
 assert_eq!(x, y);
 # }
@@ -214,16 +214,16 @@ r[asm.ts-args.positional-first]
 # #[cfg(target_arch = "x86_64")] {
 // 命名操作数需要位于位置操作数之后
 unsafe { core::arch::asm!("/* {x} {} */", x = const 5, in(reg) 5); }
-// ERROR：位置参数不能跟在命名参数或显式寄存器参数之后
+// ERROR: positional arguments cannot follow named arguments or explicit register arguments
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
 
 ```rust,compile_fail
 # #[cfg(target_arch = "x86_64")] {
-// 也不能把显式寄存器放在位置操作数之前
+// 也不能将显式寄存器放在位置操作数之前
 unsafe { core::arch::asm!("/* {} */", in("eax") 0, in(reg) 5); }
-// ERROR：位置参数不能跟在命名参数或显式寄存器参数之后
+// ERROR: positional arguments cannot follow named arguments or explicit register arguments
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -235,7 +235,7 @@ r[asm.ts-args.register-operands]
 # #[cfg(target_arch = "x86_64")] {
 // 显式寄存器操作数不会被替换，请在字符串中显式使用 `eax`
 unsafe { core::arch::asm!("/* {} */", in("eax") 5); }
-// ERROR：对索引 0 处参数的引用无效
+// ERROR: invalid reference to argument at index 0
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -247,7 +247,7 @@ r[asm.ts-args.at-least-once]
 # #[cfg(target_arch = "x86_64")] {
 // 必须在格式字符串中命名所有操作数
 unsafe { core::arch::asm!("", in(reg) 5, x = const 5); }
-// ERROR：多个未使用的 asm 参数
+// ERROR: multiple unused asm arguments
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -287,8 +287,8 @@ r[asm.attributes.starts-with-template]
 从语法上讲，在第一个操作数之前必须至少有一个模板字符串。
 
 ```rust,compile_fail
-// This is rejected because `a = out(reg) x` does not parse as a
-// template string.
+// 这会被拒绝，因为 `a = out(reg) x` 不会被解析为
+// 模板字符串。
 core::arch::asm!(
     #[cfg(false)]
     a = out(reg) x, // ERROR.
@@ -313,7 +313,7 @@ r[asm.operand-type.supported-operands.in]
 
 ```rust
 # #[cfg(target_arch = "x86_64")] {
-// ``in` 可用于向内联汇编传递值...
+// ``in` 可用于把值传入内联汇编...
 unsafe { core::arch::asm!("/* {} */", in(reg) 5); }
 # }
 ```
@@ -331,7 +331,7 @@ r[asm.operand-type.supported-operands.out]
 ```rust
 # #[cfg(target_arch = "x86_64")] {
 let x: i64;
-// 而 `out` 可用于将值传回 Rust。
+// 而 `out` 可用于把值传回 Rust。
 unsafe { core::arch::asm!("/* {} */", out(reg) x); }
 # }
 ```
@@ -344,9 +344,9 @@ r[asm.operand-type.supported-operands.lateout]
 ```rust
 # #[cfg(target_arch = "x86_64")] {
 let x: i64;
-// `lateout` is the same as `out`
-// but the compiler knows we don't care about the value of any inputs by the
-// time we overwrite it.
+// `lateout` 与 `out` 相同，
+// 但编译器知道，到我们覆盖它时，
+// 我们已经不关心任何输入的值。
 unsafe { core::arch::asm!("mov {}, 5", lateout(reg) x); }
 assert_eq!(x, 5)
 # }
@@ -361,7 +361,7 @@ r[asm.operand-type.supported-operands.inout]
 ```rust
 # #[cfg(target_arch = "x86_64")] {
 let mut x: i64 = 4;
-// `inout` 可用于在寄存器内修改值
+// `inout` 可用于在寄存器中修改值
 unsafe { core::arch::asm!("inc {}", inout(reg) x); }
 assert_eq!(x, 5);
 # }
@@ -377,7 +377,7 @@ r[asm.operand-type.supported-operands.inout-arrow]
 ```rust
 # #[cfg(target_arch = "x86_64")] {
 let x: i64;
-// `inout` 还可将值移动到不同位置
+// `inout` 也可以把值移动到不同位置
 unsafe { core::arch::asm!("inc {}", inout(reg) 4u64=>x); }
 assert_eq!(x, 5);
 # }
@@ -409,8 +409,8 @@ r[asm.operand-type.supported-operands.sym]
 extern "C" fn foo() {
     println!("Hello from inline assembly")
 }
-// `sym` can be used to refer to a function (even if it doesn't have an
-// external name we can directly write)
+// `sym` 可用于引用函数（即使它没有
+// 可供我们直接书写的外部名称）
 unsafe { core::arch::asm!("call {}", sym foo, clobber_abi("C")); }
 # }
 ```
@@ -427,7 +427,7 @@ r[asm.operand-type.supported-operands.const]
 const SHUFFLE: u8 = 0b01_00_10_11;
 let x: core::arch::x86_64::__m128 = unsafe { core::mem::transmute([0u32, 1u32, 2u32, 3u32]) };
 let y: core::arch::x86_64::__m128;
-// 将常量值传入像 `pshufd` 这样期望立即数的指令
+// 将常量值传入期望像 `pshufd` 这样的立即数的指令
 unsafe {
     core::arch::asm!("pshufd {xmm}, {xmm}, {shuffle}",
         xmm = inlateout(xmm_reg) x=>y,
@@ -476,10 +476,10 @@ r[asm.operand-type.global_asm-restriction]
 
 ```rust,compile_fail
 # fn main() {}
-// 不允许使用寄存器操作数，因为我们不在函数内
+// 这里不在函数中，因此不允许使用寄存器操作数
 # #[cfg(target_arch = "x86_64")]
 core::arch::global_asm!("", in(reg) 5);
-// 错误：`in` 操作数不能与 `global_asm!` 一起使用
+// ERROR: the `in` operand cannot be used with `global_asm!`
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
 
@@ -501,8 +501,8 @@ r[asm.register-operands.register-or-class]
 ```rust
 # #[cfg(target_arch = "x86_64")] {
 let mut y: i64;
-// We can name both `reg`, or an explicit register like `eax` to get an
-// integer register
+// 可以命名 `reg`，也可以命名像 `eax` 这样的显式寄存器，
+// 以获得整数寄存器
 unsafe { core::arch::asm!("mov eax, {:e}", in(reg) 5, lateout("eax") y); }
 assert_eq!(y, 5);
 # }
@@ -516,17 +516,17 @@ r[asm.register-operands.error-two-operands]
 
 ```rust,compile_fail
 # #[cfg(target_arch = "x86_64")] {
-// 不能两次指定 eax
+// 不能两次命名 eax
 unsafe { core::arch::asm!("", in("eax") 5, in("eax") 4); }
-// 错误：寄存器 `eax` 与寄存器 `eax` 冲突
+// ERROR: register `eax` conflicts with register `eax`
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
 ```rust,compile_fail
 # #[cfg(target_arch = "x86_64")] {
-// ... 即使使用不同别名也不行
+// ... 即使使用不同的别名也不行
 unsafe { core::arch::asm!("", in("ax") 5, in("rax") 4); }
-// 错误：寄存器 `rax` 与寄存器 `ax` 冲突
+// ERROR: register `rax` conflicts with register `ax`
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -536,9 +536,9 @@ r[asm.register-operands.error-overlapping]
 
 ```rust,compile_fail
 # #[cfg(target_arch = "x86_64")] {
-// al 与 ax 重叠，所以不能同时指定二者。
+// al 与 ax 重叠，所以不能同时命名它们。
 unsafe { core::arch::asm!("", in("ax") 5, in("al") 4i8); }
-// 错误：寄存器 `al` 与寄存器 `ax` 冲突
+// ERROR: register `al` conflicts with register `ax`
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -555,11 +555,11 @@ r[asm.register-operands.allowed-types]
 # #[cfg(target_arch = "x86_64")] {
 extern "C" fn foo() {}
 
-// 整数是允许的...
+// 允许使用整数...
 let y: i64 = 5;
 unsafe { core::arch::asm!("/* {} */", in(reg) y); }
 
-// 指针也可以...
+// 也允许使用指针...
 let py = &raw const y;
 unsafe { core::arch::asm!("/* {} */", in(reg) py); }
 
@@ -580,9 +580,9 @@ unsafe { core::arch::asm!("/* {} */", in(xmm_reg) z); }
 # #[cfg(target_arch = "x86_64")] {
 struct Foo;
 let x: Foo = Foo;
-// 像结构体这样的复杂类型不允许使用
+// 不允许使用像 struct 这样的复杂类型
 unsafe { core::arch::asm!("/* {} */", in(reg) x); }
-// 错误：不能将类型为 `Foo` 的值用于内联汇编
+// ERROR: cannot use value of type `Foo` for inline assembly
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -645,7 +645,10 @@ r[asm.register-operands.supported-register-classes]
 | PowerPC/PowerPC64 | `xer` | `xer` | 仅用于 clobber |
 
 > [!NOTE]
-> - On x86 we treat `reg_byte` differently from `reg` because the compiler can allocate `al` and `ah` separately whereas `reg` reserves the whole register. - On x86-64 the high byte registers (e.g. `ah`) are not available in the `reg_byte` register class. - Some register classes are marked as "Only clobbers" which means that registers in these classes cannot be used for inputs or outputs, only clobbers of the form `out(<explicit register>) _` or `lateout(<explicit register>) _`. - The `spe_acc` register is only available on PowerPC SPE targets.
+> - 在 x86 上，我们对待 `reg_byte` 和 `reg` 的方式不同，因为编译器可以分别分配 `al` 和 `ah`，而 `reg` 会保留整个寄存器。
+> - 在 x86-64 上，高字节寄存器（例如 `ah`）在 `reg_byte` 寄存器类中不可用。
+> - 某些寄存器类被标记为“仅用于 clobber”，这意味着这些类中的寄存器不能用于输入或输出，只能作为 `out(<explicit register>) _` 或 `lateout(<explicit register>) _` 形式的 clobber 使用。
+> - `spe_acc` 寄存器仅在 PowerPC SPE 目标上可用。
 
 r[asm.register-operands.value-type-constraints]
 每个寄存器类都对可以与其一起使用的值类型有约束。这是必要的，因为将值加载到寄存器中的方式取决于值的类型。例如，在大端序系统上，将 `i32x4` 和 `i8x16` 加载到 SIMD 寄存器中时，即使这两个值的按字节内存表示相同，也可能产生不同的寄存器内容。特定寄存器类支持的类型是否可用，可能取决于当前启用的目标特性。
@@ -706,8 +709,8 @@ let x = 5i32;
 let y = -1i8;
 let z = unsafe { core::arch::x86_64::_mm_set_epi64x(1, 0) };
 
-// reg is valid for `i32`, `reg_byte` is valid for `i8`, and xmm_reg is valid for `__m128i`
-// We can't use `tmm0` as an input or output, but we can clobber it.
+// reg 对 `i32` 有效，`reg_byte` 对 `i8` 有效，xmm_reg 对 `__m128i` 有效
+// 不能把 `tmm0` 用作输入或输出，但可以将其作为 clobber。
 unsafe { core::arch::asm!("/* {} {} {} */", in(reg) x, in(reg_byte) y, in(xmm_reg) z, out("tmm0") _); }
 # }
 ```
@@ -715,9 +718,9 @@ unsafe { core::arch::asm!("/* {} {} {} */", in(reg) x, in(reg_byte) y, in(xmm_re
 ```rust,compile_fail
 # #[cfg(target_arch = "x86_64")] {
 let z = unsafe { core::arch::x86_64::_mm_set_epi64x(1, 0) };
-// 我们不能将 `__m128i` 传给 `reg` 输入
+// 不能将 `__m128i` 传给 `reg` 输入
 unsafe { core::arch::asm!("/* {} */", in(reg) z); }
-// ERROR: 类型 `__m128i` 不能用于此寄存器类
+// ERROR: type `__m128i` cannot be used with this register class
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -729,12 +732,12 @@ r[asm.register-operands.smaller-value]
 ```rust,no_run
 # #[cfg(target_arch = "x86_64")] {
 let mut x: i64;
-// 将 32 位值移动到 64 位值中，哎呀。
-#[allow(asm_sub_register)] // rustc warns about this behavior
+// 将 32 位值移动到 64 位值中，糟糕。
+#[allow(asm_sub_register)] // rustc 会对此行为发出警告
 unsafe { core::arch::asm!("mov {}, {}", lateout(reg) x, in(reg) 4i32); }
 // 高 32 位是不确定的
-assert_eq!(x, 4); // This assertion is not guaranteed to succeed
-assert_eq!(x & 0xFFFFFFFF, 4); // However, this one will succeed
+assert_eq!(x, 4); // 不能保证这个断言会成功
+assert_eq!(x & 0xFFFFFFFF, 4); // 但是这个断言会成功
 # }
 ```
 
@@ -746,9 +749,9 @@ r[asm.register-operands.separate-input-output]
 // 指针和整数可以混用（只要它们大小相同）
 let x: isize = 0;
 let y: *mut ();
-// 使用内联汇编魔法将 `isize` 转换为 `*mut ()`
+// 使用内联汇编魔法将 `isize` transmute 为 `*mut ()`
 unsafe { core::arch::asm!("/*{}*/", inout(reg) x=>y); }
-assert!(y.is_null()); // Extremely roundabout way to make a null pointer
+assert!(y.is_null()); // 极其绕远地构造空指针
 # }
 ```
 
@@ -756,9 +759,9 @@ assert!(y.is_null()); // Extremely roundabout way to make a null pointer
 # #[cfg(target_arch = "x86_64")] {
 let x: i32 = 0;
 let y: f32;
-// 但我们不能像这样把 `i32` 重新解释为 `f32`
+// 但不能像这样把 `i32` 重新解释为 `f32`
 unsafe { core::arch::asm!("/* {} */", inout(reg) x=>y); }
-// ERROR: asm inout 参数的类型不兼容
+// ERROR: incompatible types for asm inout argument
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -826,7 +829,7 @@ r[asm.register-names.supported-register-aliases]
 | LoongArch | `$r3` | `$sp` |
 | LoongArch | `$r[4-11]` | `$a[0-7]` |
 | LoongArch | `$r[12-20]` | `$t[0-8]` |
-| LoongArch | `$r21` |  |
+| LoongArch | `$r21` | |
 | LoongArch | `$r22` | `$fp`, `$s9` |
 | LoongArch | `$r[23-31]` | `$s[0-8]` |
 | LoongArch | `$f[0-7]` | `$fa[0-7]` |
@@ -835,7 +838,7 @@ r[asm.register-names.supported-register-aliases]
 | PowerPC/PowerPC64 | `r1` | `sp` |
 | PowerPC/PowerPC64 | `r31` | `fp` |
 | PowerPC/PowerPC64 | `r[0-31]` | `[0-31]` |
-| PowerPC/PowerPC64 | `f[0-31]` | `fr[0-31]` |
+| PowerPC/PowerPC64 | `f[0-31]` | `fr[0-31]`|
 
 ```rust
 # #[cfg(target_arch = "x86_64")] {
@@ -870,13 +873,13 @@ r[asm.register-names.not-for-io]
 | s390x | `c[0-15]` | 由内核保留。 |
 | s390x | `a[0-1]` | 为系统使用而保留。 |
 | PowerPC/PowerPC64 | `r2`, `r13` | 这些是系统保留寄存器。 |
-| PowerPC/PowerPC64 | `vrsave` | `vrsave` 寄存器不能用作输入或输出。 |
+| PowerPC/PowerPC64 | `vrsave` | vrsave 寄存器不能用作输入或输出。 |
 
 ```rust,compile_fail
 # #[cfg(target_arch = "x86_64")] {
-// bp 已保留
+// bp 是保留的
 unsafe { core::arch::asm!("", in("bp") 5i32); }
-// ERROR: 无效寄存器 `bp`：帧指针不能用作 inline asm 的操作数
+// ERROR: invalid register `bp`: the frame pointer cannot be used as an operand for inline asm
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -897,7 +900,7 @@ r[asm.template-modifiers.only-one]
 # #[cfg(target_arch = "x86_64")] {
 // 不能同时指定 `r` 和 `e`。
 unsafe { core::arch::asm!("/* {:er}", in(reg) 5i32); }
-// ERROR：asm 模板修饰符必须是单个字符
+// ERROR: asm template modifier must be a single character
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -915,52 +918,54 @@ r[asm.template-modifiers.supported-modifiers]
 | x86 | `reg` | `x` | `ax` | `w` |
 | x86 | `reg` | `e` | `eax` | `k` |
 | x86-64 | `reg` | `r` | `rax` | `q` |
-| x86 | `reg_byte` | 无 | `al` / `ah` | 无 |
+| x86 | `reg_byte` | 无 | `al` / `ah` | None |
 | x86 | `xmm_reg` | 无 | `xmm0` | `x` |
 | x86 | `ymm_reg` | 无 | `ymm0` | `t` |
 | x86 | `zmm_reg` | 无 | `zmm0` | `g` |
 | x86 | `*mm_reg` | `x` | `xmm0` | `x` |
 | x86 | `*mm_reg` | `y` | `ymm0` | `t` |
 | x86 | `*mm_reg` | `z` | `zmm0` | `g` |
-| x86 | `kreg` | 无 | `k1` | 无 |
+| x86 | `kreg` | 无 | `k1` | None |
 | AArch64/Arm64EC | `reg` | 无 | `x0` | `x` |
 | AArch64/Arm64EC | `reg` | `w` | `w0` | `w` |
 | AArch64/Arm64EC | `reg` | `x` | `x0` | `x` |
-| AArch64/Arm64EC | `vreg` | 无 | `v0` | 无 |
+| AArch64/Arm64EC | `vreg` | 无 | `v0` | None |
 | AArch64/Arm64EC | `vreg` | `v` | `v0` | 无 |
 | AArch64/Arm64EC | `vreg` | `b` | `b0` | `b` |
 | AArch64/Arm64EC | `vreg` | `h` | `h0` | `h` |
 | AArch64/Arm64EC | `vreg` | `s` | `s0` | `s` |
 | AArch64/Arm64EC | `vreg` | `d` | `d0` | `d` |
 | AArch64/Arm64EC | `vreg` | `q` | `q0` | `q` |
-| ARM | `reg` | 无 | `r0` | 无 |
-| ARM | `sreg` | 无 | `s0` | 无 |
+| ARM | `reg` | 无 | `r0` | None |
+| ARM | `sreg` | 无 | `s0` | None |
 | ARM | `dreg` | 无 | `d0` | `P` |
 | ARM | `qreg` | 无 | `q0` | `q` |
 | ARM | `qreg` | `e` / `f` | `d0` / `d1` | `e` / `f` |
-| RISC-V | `reg` | 无 | `x1` | 无 |
-| RISC-V | `freg` | 无 | `f0` | 无 |
-| LoongArch | `reg` | 无 | `$r1` | 无 |
-| LoongArch | `freg` | 无 | `$f0` | 无 |
-| s390x | `reg` | 无 | `%r0` | 无 |
-| s390x | `reg_addr` | 无 | `%r1` | 无 |
-| s390x | `freg` | 无 | `%f0` | 无 |
-| s390x | `vreg` | 无 | `%v0` | 无 |
-| PowerPC/PowerPC64 | `reg` | 无 | `0` | 无 |
-| PowerPC/PowerPC64 | `reg_nonzero` | 无 | `3` | 无 |
-| PowerPC/PowerPC64 | `freg` | 无 | `0` | 无 |
-| PowerPC/PowerPC64 | `vreg` | 无 | `0` | 无 |
-| PowerPC/PowerPC64 | `vsreg` | 无 | `0` | 无 |
+| RISC-V | `reg` | 无 | `x1` | None |
+| RISC-V | `freg` | 无 | `f0` | None |
+| LoongArch | `reg` | 无 | `$r1` | None |
+| LoongArch | `freg` | 无 | `$f0` | None |
+| s390x | `reg` | 无 | `%r0` | None |
+| s390x | `reg_addr` | 无 | `%r1` | None |
+| s390x | `freg` | 无 | `%f0` | None |
+| s390x | `vreg` | 无 | `%v0` | None |
+| PowerPC/PowerPC64 | `reg` | 无 | `0` | None |
+| PowerPC/PowerPC64 | `reg_nonzero` | 无 | `3` | None |
+| PowerPC/PowerPC64 | `freg` | 无 | `0` | None |
+| PowerPC/PowerPC64 | `vreg` | 无 | `0` | None |
+| PowerPC/PowerPC64 | `vsreg` | 无 | `0` | None |
 
 > [!NOTE]
-> - on ARM `e` / `f`: this prints the low or high doubleword register name of a NEON quad (128-bit) register. - on x86: our behavior for `reg` with no modifiers differs from what GCC does. GCC will infer the modifier based on the operand value type, while we default to the full register size. - on x86 `xmm_reg`: the `x`, `t` and `g` LLVM modifiers are not yet implemented in LLVM (they are supported by GCC only), but this should be a simple change.
+> - 在 ARM 上，`e` / `f`：这会打印 NEON quad（128 位）寄存器的低位或高位双字寄存器名称。
+> - 在 x86 上：对于没有修饰符的 `reg`，我们的行为与 GCC 不同。GCC 会根据操作数的值类型推断修饰符，而我们默认使用完整的寄存器大小。
+> - 对于 x86 `xmm_reg`：LLVM 的 `x`、`t` 和 `g` 修饰符尚未在 LLVM 中实现（它们仅受 GCC 支持），但这应当是一个简单的改动。
 
 ```rust
 # #[cfg(target_arch = "x86_64")] {
 let mut x = 0x10u16;
 
-// u16::swap_bytes using `xchg`
-// low half of `{x}` is referred to by `{x:l}`, and the high half by `{x:h}`
+// 使用 `xchg` 实现 u16::swap_bytes
+// `{x}` 的低半部分用 `{x:l}` 表示，高半部分用 `{x:h}` 表示
 unsafe { core::arch::asm!("xchg {x:l}, {x:h}", x = inout(reg_abcd) x); }
 assert_eq!(x, 0x1000u16);
 # }
@@ -982,8 +987,8 @@ r[asm.abi-clobbers.intro]
 extern "C" fn foo() -> i32 { 0 }
 
 let z: i32;
-// To call a function, we have to inform the compiler that we're clobbering
-// callee saved registers
+// 要调用函数，必须告知编译器我们会 clobber
+// 被调用者保存寄存器
 unsafe { core::arch::asm!("call {}", sym foo, out("rax") z, clobber_abi("C")); }
 assert_eq!(z, 0);
 # }
@@ -998,8 +1003,8 @@ extern "sysv64" fn foo() -> i32 { 0 }
 extern "win64" fn bar(x: i32) -> i32 { x + 1 }
 
 let z: i32;
-// We can even call multiple functions with different conventions and
-// different saved registers
+// 甚至可以调用多个采用不同约定且
+// 保存寄存器也不同的函数
 unsafe {
     core::arch::asm!(
         "call {}",
@@ -1033,7 +1038,7 @@ unsafe {
         sym foo,
         clobber_abi("C")
     );
-    // ERROR：带有 `clobber_abi` 的 asm 必须为输出指定显式寄存器
+    // ERROR: asm with `clobber_abi` must specify explicit registers for outputs
 }
 assert_eq!(z, 0);
 # }
@@ -1059,7 +1064,8 @@ r[asm.abi-clobbers.supported-abis]
 | s390x | `"C"`, `"system"` | `r[0-5]`, `r14`, `f[0-7]`, `v[0-31]`, `a[2-15]` |
 
 > [!NOTE]
-> - On AArch64 `x18` only included in the clobber list if it is not considered as a reserved register on the target. - On RISC-V `x[16-17]` and `x[28-31]` only included in the clobber list if they are not considered as reserved registers on the target.
+> - 在 AArch64 上，只有当 `x18` 在目标上不被视为保留寄存器时，它才会被包含在 clobber 列表中。
+> - 在 RISC-V 上，只有当 `x[16-17]` 和 `x[28-31]` 在目标上不被视为保留寄存器时，它们才会被包含在 clobber 列表中。
 
 随着各个架构获得新的寄存器，rustc 中每个 ABI 的 clobber 寄存器列表也会更新：这可确保当 LLVM 开始在其生成的代码中使用这些新寄存器时，`asm!` 的 clobber 仍将保持正确。
 
@@ -1076,7 +1082,7 @@ r[asm.options.supported-options.pure]
 # #[cfg(target_arch = "x86_64")] {
 let x: i32 = 0;
 let z: i32;
-// 可以通过假定汇编没有副作用来使用 pure 进行优化
+// 可以使用 pure，并假定汇编没有副作用来进行优化
 unsafe { core::arch::asm!("inc {}", inout(reg) x => z, options(pure, nomem)); }
 assert_eq!(z, 1);
 # }
@@ -1086,10 +1092,10 @@ assert_eq!(z, 1);
 # #[cfg(target_arch = "x86_64")] {
 let x: i32 = 0;
 let z: i32;
-// Either nomem or readonly must be satisfied, to indicate whether or not
-// memory is allowed to be read
+// 必须满足 nomem 或 readonly 二者之一，以表示是否
+// 允许读取内存
 unsafe { core::arch::asm!("inc {}", inout(reg) x => z, options(pure)); }
-// ERROR: `pure` 选项必须与 `nomem` 或 `readonly` 之一组合使用
+// ERROR: the `pure` option must be combined with either `nomem` or `readonly`
 assert_eq!(z, 0);
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
@@ -1103,8 +1109,8 @@ r[asm.options.supported-options.nomem]
 # #[cfg(target_arch = "x86_64")] {
 let mut x = 0i32;
 let z: i32;
-// Accessing outside memory from assembly when `nomem` is
-// specified is disallowed
+// 指定 `nomem` 时，不允许从汇编访问
+// 外部内存
 unsafe {
     core::arch::asm!("mov {val:e}, dword ptr [{ptr}]",
         ptr = in(reg) &mut x,
@@ -1113,8 +1119,8 @@ unsafe {
     )
 }
 
-// Writing to outside memory from assembly when `nomem` is
-// specified is also undefined behaviour
+// 指定 `nomem` 时，从汇编写入
+// 外部内存也是未定义行为
 unsafe {
     core::arch::asm!("mov  dword ptr [{ptr}], {val:e}",
         ptr = in(reg) &mut x,
@@ -1129,8 +1135,8 @@ unsafe {
 # #[cfg(target_arch = "x86_64")] {
 let x: i32 = 0;
 let z: i32;
-// If we allocate our own memory, such as via `push`, however.
-// we can still use it
+// 但是，如果我们分配自己的内存，例如通过 `push`，
+// 仍然可以使用它
 unsafe {
     core::arch::asm!("push {x}", "add qword ptr [rsp], 1", "pop {x}",
         x = inout(reg) x => z,
@@ -1148,7 +1154,7 @@ r[asm.options.supported-options.readonly]
 ```rust,no_run
 # #[cfg(target_arch = "x86_64")] {
 let mut x = 0;
-// 当指定 `readonly` 时，我们不能修改外部内存
+// 指定 `readonly` 时，不能修改外部内存
 unsafe {
     core::arch::asm!("mov dword ptr[{}], 1", in(reg) &mut x, options(readonly))
 }
@@ -1159,7 +1165,7 @@ unsafe {
 # #[cfg(target_arch = "x86_64")] {
 let x: i64 = 0;
 let z: i64;
-// 不过，我们仍然可以从中读取
+// 不过仍然可以从中读取
 unsafe {
     core::arch::asm!("mov {x}, qword ptr [{x}]",
         x = inout(reg) &x => z,
@@ -1174,7 +1180,7 @@ assert_eq!(z, 0);
 # #[cfg(target_arch = "x86_64")] {
 let x: i64 = 0;
 let z: i64;
-// 与 `nomem` 相同的例外在这里也适用。
+// 与 nomem 适用相同的例外。
 unsafe {
     core::arch::asm!("push {x}", "add qword ptr [rsp], 1", "pop {x}",
         x = inout(reg) x => z,
@@ -1195,7 +1201,7 @@ r[asm.options.supported-options.noreturn]
 ```rust,no_run
 fn main() -> ! {
 # #[cfg(target_arch = "x86_64")] {
-    // 我们可以使用一条指令把执行困在一个 noreturn 块内
+    // 可以用一条指令在 noreturn 块内触发陷阱
     unsafe { core::arch::asm!("ud2", options(noreturn)); }
 # }
 # #[cfg(not(target_arch = "x86_64"))] panic!("no return");
@@ -1205,7 +1211,7 @@ fn main() -> ! {
 <!-- no_run: Test has undefined behavior at runtime -->
 ```rust,no_run
 # #[cfg(target_arch = "x86_64")] {
-// 你有责任确保执行不会越过 noreturn asm 块的末尾
+// 你有责任避免执行越过 noreturn asm 块的末尾
 unsafe { core::arch::asm!("", options(noreturn)); }
 # }
 ```
@@ -1213,7 +1219,7 @@ unsafe { core::arch::asm!("", options(noreturn)); }
 ```rust
 # #[cfg(target_arch = "x86_64")]
 let _: () = unsafe {
-    // 你仍然可以跳转到 `label` 块
+    // 仍然可以跳转到 `label` 块
     core::arch::asm!("jmp {}", label {
         println!();
     }, options(noreturn));
@@ -1221,12 +1227,12 @@ let _: () = unsafe {
 ```
 
 r[asm.options.supported-options.nostack]
-- `nostack`：该汇编代码不会将数据压入栈中，也不会写入栈 red-zone（如果目标支持）。如果 _未_ 使用该选项，那么编译器会保证栈指针在汇编代码开始时已经为函数调用进行了合适的对齐（依据目标 ABI）。
+- `nostack`：该汇编代码不会将数据压入栈中，也不会写入栈 red-zone（如果目标支持）。如果 *未* 使用该选项，那么编译器会保证栈指针在汇编代码开始时已经为函数调用进行了合适的对齐（依据目标 ABI）。
 
 <!-- no_run: Test has undefined behavior at runtime -->
 ```rust,no_run
 # #[cfg(target_arch = "x86_64")] {
-// 与 nostack 一起使用时，`push` 和 `pop` 会导致 UB
+// 将 `push` 和 `pop` 与 nostack 一起使用是 UB
 unsafe { core::arch::asm!("push rax", "pop rax", options(nostack)); }
 # }
 ```
@@ -1238,7 +1244,7 @@ r[asm.options.supported-options.att_syntax]
 # #[cfg(target_arch = "x86_64")] {
 let x: i32;
 let y = 1i32;
-// 这里我们需要使用 AT&T 语法。操作数顺序为 src, dest
+// 这里需要使用 AT&T 语法。操作数顺序为 src, dest
 unsafe {
     core::arch::asm!("mov {y:e}, {x:e}",
         x = lateout(reg) x,
@@ -1261,9 +1267,9 @@ r[asm.options.checks.mutually-exclusive]
 
 ```rust,compile_fail
 # #[cfg(target_arch = "x86_64")] {
-// nomem 严格强于 readonly，二者不能同时指定
+// nomem 严格强于 readonly，二者不能一起指定
 unsafe { core::arch::asm!("", options(nomem, readonly)); }
-// ERROR: `nomem` 和 `readonly` 选项互斥
+// ERROR: the `nomem` and `readonly` options are mutually exclusive
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -1275,7 +1281,7 @@ r[asm.options.checks.pure]
 # #[cfg(target_arch = "x86_64")] {
 // pure 块至少需要一个输出
 unsafe { core::arch::asm!("", options(pure)); }
-// ERROR: 带有 `pure` 选项的 asm 必须至少有一个输出
+// ERROR: asm with the `pure` option must have at least one output
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -1288,7 +1294,7 @@ r[asm.options.checks.noreturn]
 let z: i32;
 // noreturn 不能有输出
 unsafe { core::arch::asm!("mov {:e}, 1", out(reg) z, options(noreturn)); }
-// ERROR: 使用 `noreturn` 选项时不允许 asm 输出
+// ERROR: asm outputs are not allowed with the `noreturn` option
 # }
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -1305,7 +1311,7 @@ r[asm.options.global_asm-restriction]
 ```rust,compile_fail
 # fn main() {}
 # #[cfg(target_arch = "x86_64")]
-// nomem 对 global_asm! 没有用处
+// nomem 在 global_asm! 中没有用
 core::arch::global_asm!("", options(nomem));
 # #[cfg(not(target_arch = "x86_64"))] core::compile_error!("Test not supported on this arch");
 ```
@@ -1401,7 +1407,7 @@ r[asm.rules.x86-x87]
 pub fn fadd(x: f64, y: f64) -> f64 {
   let mut out = 0f64;
   let mut top = 0u16;
-  // we can do complex stuff with x87 if we clobber the entire x87 stack
+  // 如果 clobber 整个 x87 栈，就可以用 x87 做复杂的事情
   unsafe { core::arch::asm!(
     "fld qword ptr [{x}]",
     "fld qword ptr [{y}])",
@@ -1435,10 +1441,10 @@ r[asm.rules.arm64ec]
 r[asm.rules.only-on-exit]
 - 将栈指针和非输出寄存器恢复为原始值的要求，仅适用于退出汇编代码时。
   - 这意味着不会直落执行且不会跳转到任何 `label` 块的汇编代码，即使未标记为 `noreturn`，也不需要保留这些寄存器。
-  - 当返回到与你进入的 `asm!` 块不同的另一个 `asm!` 块的汇编代码时（例如用于上下文切换），这些寄存器必须包含进入你正在<em>退出</em>的那个 `asm!` 块时它们所具有的值。
+  - 当返回到不同于你所进入的 `asm!` 块的汇编代码时（例如用于上下文切换），这些寄存器必须包含进入你正在 *退出* 的那个 `asm!` 块时它们所具有的值。
     - 不能退出尚未进入过的 `asm!` 块的汇编代码。也不能退出其汇编代码已经被退出过的 `asm!` 块的汇编代码（除非先再次进入它）。
     - 你负责切换任何目标特定状态（例如线程局部存储、栈边界）。
-    - 不能从一个 `asm!` 块中的地址跳转到另一个 `asm!` 块中的地址，即使它们位于同一函数或同一块中也不能这样做，除非将它们的上下文视为可能不同并要求进行上下文切换。不能假定这些上下文中的任何特定值（例如当前栈指针或栈指针下方的临时值）会在两个 `asm!` 块之间保持不变。
+    - 不能从一个 `asm!` 块中的地址跳转到另一个块中的地址，即使它们位于同一函数或同一块中也不能这样做，除非将它们的上下文视为可能不同并要求进行上下文切换。不能假定这些上下文中的任何特定值（例如当前栈指针或栈指针下方的临时值）会在两个 `asm!` 块之间保持不变。
     - 你可以访问的内存位置集合，是你进入和退出的 `asm!` 块所允许访问集合的交集。
 
 r[asm.rules.not-successive]
@@ -1453,7 +1459,7 @@ r[asm.rules.x86-prefix-restriction]
 
 r[asm.rules.preserves_flags]
 > [!NOTE]
-> 一般规则是，`preserves_flags` 覆盖的标志，是执行函数调用时<em>不会</em>被保留的那些标志。
+> 一般规则是，`preserves_flags` 覆盖的标志，是执行函数调用时 *不会* 被保留的那些标志。
 
 r[asm.naked-rules]
 ## 裸内联汇编规则
@@ -1492,52 +1498,52 @@ r[asm.naked-rules.unwind]
 #[unsafe(naked)]
 extern "sysv64-unwind" fn unwinding_naked() {
     core::arch::naked_asm!(
-        // "CFI" here stands for "call frame information".
+        // 这里的 "CFI" 表示 "call frame information"（调用帧信息）。
         ".cfi_startproc",
-        // The CFA (canonical frame address) is the value of `rsp`
-        // before the `call`, i.e. before the return address, `rip`,
-        // was pushed to `rsp`, so it's eight bytes higher in memory
-        // than `rsp` upon function entry (after `rip` has been
-        // pushed).
+        // CFA（canonical frame address，规范帧地址）是 `rsp` 的值
+        // 在 `call` 之前，也就是返回地址 `rip`
+        // 被压入 `rsp` 之前，所以在函数入口处它在内存中
+        // 比 `rsp` 高 8 个字节（在 `rip` 已经
+        // 被压入之后）。
         //
-        // This is the default, so we don't have to write it.
+        // 这是默认值，所以不必写出它。
         //".cfi_def_cfa rsp, 8",
         //
-        // The traditional thing to do is to preserve the base
-        // pointer, so we'll do that.
+        // 传统做法是保留基指针，
+        // 所以这里也这样做。
         "push rbp",
-        // Since we've now extended the stack downward by 8 bytes in
-        // memory, we need to adjust the offset to the CFA from `rsp`
-        // by another 8 bytes.
+        // 由于现在已经在内存中将栈向下扩展了 8 字节，
+        // 我们需要把从 `rsp` 到 CFA 的偏移
+        // 再调整 8 字节。
         ".cfi_adjust_cfa_offset 8",
-        // We also then annotate where we've stored the caller's value
-        // of `rbp`, relative to the CFA, so that when unwinding into
-        // the caller we can find it, in case we need it to calculate
-        // the caller's CFA relative to it.
+        // 然后还要标注我们把调用者的 `rbp` 值
+        // 存放在相对于 CFA 的什么位置，这样在展开到
+        // 调用者时就能找到它，以备需要用它来计算
+        // 调用者相对于它的 CFA。
         //
-        // Here, we've stored the caller's `rbp` starting 16 bytes
-        // below the CFA.  I.e., starting from the CFA, there's first
-        // the `rip` (which starts 8 bytes below the CFA and continues
-        // up to it), then there's the caller's `rbp` that we just
-        // pushed.
+        // 这里，我们把调用者的 `rbp` 存放在 CFA
+        // 下方 16 字节处。也就是说，从 CFA 开始，
+        // 首先是 `rip`（它从 CFA 下方 8 字节处开始，
+        // 一直延续到 CFA），然后是刚刚
+        // 压入的调用者 `rbp`。
         ".cfi_offset rbp, -16",
-        // As is traditional, we set the base pointer to the value of
-        // the stack pointer.  This way, the base pointer stays the
-        // same throughout the function body.
+        // 按照传统做法，我们把基指针设为
+        // 栈指针的值。这样，基指针在整个
+        // 函数体中都保持不变。
         "mov rbp, rsp",
-        // We can now track the offset to the CFA from the base
-        // pointer.  This means we don't need to make any further
-        // adjustments until the end, as we don't change `rbp`.
+        // 现在可以从基指针跟踪到 CFA 的偏移。
+        // 这意味着不需要再做进一步调整，
+        // 因为我们不会改变 `rbp`。
         ".cfi_def_cfa_register rbp",
-        // We can now call a function that may panic.
+        // 现在可以调用一个可能 panic 的函数。
         "call {f}",
-        // Upon return, we restore `rbp` in preparation for returning
-        // ourselves.
+        // 返回后，我们恢复 `rbp`，为自己返回
+        // 做准备。
         "pop rbp",
-        // Now that we've restored `rbp`, we must specify the offset
-        // to the CFA again in terms of `rsp`.
+        // 现在已经恢复了 `rbp`，必须再次根据
+        // `rsp` 指定到 CFA 的偏移。
         ".cfi_def_cfa rsp, 8",
-        // Now we can return.
+        // 现在可以返回。
         "ret",
         ".cfi_endproc",
         f = sym may_panic,
@@ -1554,7 +1560,9 @@ extern "sysv64-unwind" fn may_panic() {
 >
 > 有关上述 `cfi` 汇编器指令的更多信息，请参阅这些资源：
 >
-> - [Using `as` - CFI directives](https://sourceware.org/binutils/docs/as/CFI-directives.html) - [DWARF Debugging Information Format Version 5](https://dwarfstd.org/doc/DWARF5.pdf) - [ImperialViolet - CFI directives in assembly files](https://www.imperialviolet.org/2017/01/18/cfi.html)
+> - [Using `as` - CFI directives](https://sourceware.org/binutils/docs/as/CFI-directives.html)
+> - [DWARF Debugging Information Format Version 5](https://dwarfstd.org/doc/DWARF5.pdf)
+> - [ImperialViolet - CFI directives in assembly files](https://www.imperialviolet.org/2017/01/18/cfi.html)
 
 r[asm.validity]
 ### 正确性和有效性
@@ -1568,7 +1576,7 @@ r[asm.validity.necessary-but-not-sufficient]
 - 一组各自正确且有效的指令，如果紧接排列，可能导致未定义行为
 
 r[asm.validity.non-exhaustive]
-因此，这些规则是<em>非穷尽的</em>。编译器不需要检查初始字符串或最终生成的汇编的正确性和有效性。汇编器可以检查正确性和有效性，但不要求这样做。使用 `asm!` 时，一个排印错误就可能足以使程序不健全，而汇编规则可能包含数千页架构参考手册。程序员应当保持适当谨慎，因为调用这种 `unsafe` 能力意味着承担不违反编译器和架构双方规则的责任。
+因此，这些规则是 *非穷尽的*。编译器不需要检查初始字符串或最终生成的汇编的正确性和有效性。汇编器可以检查正确性和有效性，但不要求这样做。使用 `asm!` 时，一个排印错误就可能足以使程序不健全，而汇编规则可能包含数千页架构参考手册。程序员应当保持适当谨慎，因为调用这种 `unsafe` 能力意味着承担不违反编译器和架构双方规则的责任。
 
 r[asm.directives]
 ### 指令支持

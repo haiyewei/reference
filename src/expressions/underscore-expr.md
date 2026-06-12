@@ -29,11 +29,11 @@ struct Position {
 
 Position { x: a, y: _ } = Position{ x: 2, y: 3 };
 
-// unused result, assignment to `_` used to declare intent and remove a warning
+// 未使用的结果，赋值给 `_` 用于声明意图并消除警告
 _ = 2 + 2;
-// triggers unused_must_use warning
+// 触发 unused_must_use 警告
 // 2 + 2;
 
-// equivalent technique using a wildcard pattern in a let-binding
+// 在 let 绑定中使用通配符模式的等价技巧
 let _ = 2 + 2;
 ```

@@ -9,7 +9,7 @@ TraitObjectTypeOneBound -> `dyn`? TraitBound
 ```
 
 r[type.trait-object.intro]
-_trait 对象_ 是实现一组 trait 的某个其他类型的不透明值。这组 trait 由一个 [dyn 兼容](../items/traits.md#dyn-compatibility)的 _基 trait_ 加任意数量的 [auto trait](../special-types-and-traits.md#auto-traits)组成。
+*trait 对象*是实现一组 trait 的某个其他类型的不透明值。这组 trait 由一个 [dyn 兼容](../items/traits.md#dyn-compatibility)的*基 trait* 加任意数量的 [auto trait](../special-types-and-traits.md#auto-traits)组成。
 
 r[type.trait-object.impls]
 trait 对象会实现基 trait、它的 auto trait，以及基 trait 的任何 [supertrait](../items/traits.md#supertraits)。
@@ -48,7 +48,7 @@ r[type.trait-object.unsized]
 由于该值属于哪个具体类型是不透明的，trait 对象是[动态大小类型](../dynamically-sized-types.md)。与所有 <abbr title="dynamically sized types">DST</abbr> 一样，trait 对象通过某种指针间接使用；例如 `&dyn SomeTrait` 或 `Box<dyn SomeTrait>`。指向 trait 对象的指针的每个实例都包含：
 
  - 一个指向类型 `T` 的实例的指针，该类型实现了 `SomeTrait`
- - 一个_虚方法表_，通常直接称为 _vtable_，它针对 `T` 所实现的 `SomeTrait` 及其 [supertrait](../items/traits.md#supertraits) 的每个方法，包含一个指向 `T` 的实现的指针（即函数指针）。
+ - 一个*虚方法表*，通常直接称为 _vtable_，它针对 `T` 所实现的 `SomeTrait` 及其 [supertrait](../items/traits.md#supertraits) 的每个方法，包含一个指向 `T` 的实现的指针（即函数指针）。
 
 trait 对象的目的是允许方法的“后期绑定”。在 trait 对象上调用方法会在运行时产生虚分派：也就是说，从 trait 对象的 vtable 中加载一个函数指针，并间接调用它。每个 vtable 条目的实际实现可以因对象而异。
 

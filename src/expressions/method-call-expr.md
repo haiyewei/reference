@@ -7,10 +7,10 @@ MethodCallExpression -> Expression `.` PathExprSegment `(`CallParams? `)`
 ```
 
 r[expr.method.intro]
-_方法调用_由一个表达式（_接收者_）后跟单个点号、一个表达式路径段以及带括号的表达式列表组成。
+*方法调用*由一个表达式（*接收者*）后跟单个点号、一个表达式路径段以及带括号的表达式列表组成。
 
 r[expr.method.target]
-方法调用会解析为特定 trait 上的关联[方法][methods]：如果左侧的确切 `self` 类型已知，则静态分派到某个方法；如果左侧表达式是间接 [trait 对象](../types/trait-object.md)，则动态分派。
+方法调用会被解析为特定 trait 上的关联[方法](../items/associated-items.md#methods)：如果左侧的确切 `self`-类型已知，则静态分派到某个方法；如果左侧表达式是间接的 [trait 对象](../types/trait-object.md)，则动态分派。
 
 ```rust
 let pi: Result<f32, _> = "3.14".parse();
@@ -74,7 +74,7 @@ r[expr.method.ambiguous-search]
 
 r[expr.method.edition2021]
 > [!EDITION-2021]
-> 在 2021 edition 之前，在搜索可见方法期间，如果候选接收者类型是[数组类型](../types/array.md)，则会忽略标准库 [`IntoIterator`](../../core/iter/traits/collect/trait.IntoIterator.html) trait 提供的方法。
+> 在 2021 edition 之前，在搜索可见方法期间，如果候选接收者类型是[数组类型](../types/array.md)，则会忽略标准库 [`IntoIterator`](std::iter::IntoIterator) trait 提供的方法。
 >
 > 为此目的使用的 edition 由表示方法名的词法单元决定。
 >

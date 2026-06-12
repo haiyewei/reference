@@ -6,7 +6,7 @@ let b: bool = true;
 ```
 
 r[type.bool.intro]
-_布尔类型_ 或 _bool_ 是一种原始数据类型，可以取两个值之一，称为 _true_ 和 _false_。
+*布尔类型* 或 _bool_ 是一种原始数据类型，可以取两个值之一，称为 _true_ 和 _false_。
 
 r[type.bool.literal]
 此类型的值可以使用 [字面量表达式](../expressions/literal-expr.md) 创建，使用关键字 `true` 和 `false`，分别对应同名的值。
@@ -36,7 +36,7 @@ r[type.bool.traits]
 与所有原始类型一样，布尔类型 [实现](../items/implementations.md) 了 [trait](../items/traits.md) [`Clone`](../special-types-and-traits.md#clone)、[`Copy`](../special-types-and-traits.md#copy)、[`Sized`](../special-types-and-traits.md#sized)、[`Send`](../special-types-and-traits.md#send) 和 [`Sync`](../special-types-and-traits.md#sync)。
 
 > [!NOTE]
-> 有关库操作，请参见 [标准库文档](../../std/primitive.bool.html)。
+> 有关库操作，请参见 [标准库文档](bool)。
 
 r[type.bool.expr]
 ## 布尔值上的操作
@@ -46,31 +46,59 @@ r[type.bool.expr]
 r[type.bool.expr.not]
 ### 逻辑非
 
-| `b` | [`!b`][op-not] | |- | - | | `true` | `false` | | `false` | `true` |
+| `b` | [`!b`][op-not] |
+|- | - |
+| `true` | `false` |
+| `false` | `true` |
 
 r[type.bool.expr.or]
 ### 逻辑或
 
-| `a` | `b` | [`a \| b`][op-or] | |- | - | - | | `true` | `true` | `true` | | `true` | `false` | `true` | | `false` | `true` | `true` | | `false` | `false` | `false` |
+| `a` | `b` | [`a \| b`][op-or] |
+|- | - | - |
+| `true` | `true` | `true` |
+| `true` | `false` | `true` |
+| `false` | `true` | `true` |
+| `false` | `false` | `false` |
 
 r[type.bool.expr.and]
 ### 逻辑与
 
-| `a` | `b` | [`a & b`][op-and] | |- | - | - | | `true` | `true` | `true` | | `true` | `false` | `false` | | `false` | `true` | `false` | | `false` | `false` | `false` |
+| `a` | `b` | [`a & b`][op-and] |
+|- | - | - |
+| `true` | `true` | `true` |
+| `true` | `false` | `false` |
+| `false` | `true` | `false` |
+| `false` | `false` | `false` |
 
 r[type.bool.expr.xor]
 ### 逻辑异或
 
-| `a` | `b` | [`a ^ b`][op-xor] | |- | - | - | | `true` | `true` | `false` | | `true` | `false` | `true` | | `false` | `true` | `true` | | `false` | `false` | `false` |
+| `a` | `b` | [`a ^ b`][op-xor] |
+|- | - | - |
+| `true` | `true` | `false` |
+| `true` | `false` | `true` |
+| `false` | `true` | `true` |
+| `false` | `false` | `false` |
 
 r[type.bool.expr.cmp]
 ### 比较
 
 r[type.bool.expr.cmp.eq]
-| `a` | `b` | [`a == b`][op-compare] | |- | - | - | | `true` | `true` | `true` | | `true` | `false` | `false` | | `false` | `true` | `false` | | `false` | `false` | `true` |
+| `a` | `b` | [`a == b`][op-compare] |
+|- | - | - |
+| `true` | `true` | `true` |
+| `true` | `false` | `false` |
+| `false` | `true` | `false` |
+| `false` | `false` | `true` |
 
 r[type.bool.expr.cmp.greater]
-| `a` | `b` | [`a > b`][op-compare] | |- | - | - | | `true` | `true` | `false` | | `true` | `false` | `true` | | `false` | `true` | `false` | | `false` | `false` | `false` |
+| `a` | `b` | [`a > b`][op-compare] |
+|- | - | - |
+| `true` | `true` | `false` |
+| `true` | `false` | `true` |
+| `false` | `true` | `false` |
+| `false` | `false` | `false` |
 
 r[type.bool.expr.cmp.not-eq]
 * `a != b` 与 `!(a == b)` 相同

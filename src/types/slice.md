@@ -19,10 +19,10 @@ r[type.slice.unsized]
 示例：
 
 ```rust
-// A heap-allocated array, coerced to a slice
+// 堆上分配的数组，被强制转换为切片
 let boxed_array: Box<[i32]> = Box::new([1, 2, 3]);
 
-// A (shared) slice into an array
+// 数组的（共享）切片
 let slice: &[i32] = &boxed_array[..];
 ```
 

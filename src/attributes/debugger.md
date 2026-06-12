@@ -8,7 +8,7 @@ r[attributes.debugger.debugger_visualizer]
 ## `debugger_visualizer` 属性
 
 r[attributes.debugger.debugger_visualizer.intro]
-_`debugger_visualizer` [属性](../attributes.md)_可用于将调试器可视化器文件嵌入到调试信息中。这会改善显示值时的调试器体验。
+*`debugger_visualizer` [属性](../attributes.md)*可用于将调试器可视化器文件嵌入到调试信息中。这会改善显示值时的调试器体验。
 
 > [!EXAMPLE]
 > <!-- ignore: requires external files-->
@@ -18,10 +18,10 @@ _`debugger_visualizer` [属性](../attributes.md)_可用于将调试器可视化
 > ```
 
 r[attributes.debugger.debugger_visualizer.syntax]
-`debugger_visualizer` 属性使用 [MetaListNameValueStr](../attributes.md#grammar-MetaListNameValueStr) 语法来指定其输入。必须指定以下键之一：
+`debugger_visualizer` 属性使用 [MetaListNameValueStr] 语法来指定其输入。必须指定以下键之一：
 
-- [`natvis_file`](debugger.md#r-attributes.debugger.debugger_visualizer.natvis)
-- [`gdb_script_file`](debugger.md#r-attributes.debugger.debugger_visualizer.gdb)
+- [`natvis_file`][attributes.debugger.debugger_visualizer.natvis]
+- [`gdb_script_file`][attributes.debugger.debugger_visualizer.gdb]
 
 r[attributes.debugger.debugger_visualizer.allowed-positions]
 `debugger_visualizer` 属性只能应用于[模块](../items/modules.md)或 crate 根。
@@ -99,14 +99,15 @@ r[attributes.debugger.debugger_visualizer.gdb]
 ### 将 `debugger_visualizer` 与 GDB 一起使用
 
 r[attributes.debugger.debugger_visualizer.gdb.pretty]
-GDB 支持使用一种结构化 Python 脚本，称为 _pretty printer（美化打印器）_，它描述一个类型应如何在调试器视图中可视化。有关 pretty printer 的详细信息，请参阅 GDB 的 [pretty printing 文档](https://sourceware.org/gdb/onlinedocs/gdb/Pretty-Printing.html)。
+GDB 支持使用一种结构化 Python 脚本，称为 *pretty printer（美化打印器）*，它描述一个类型应如何在调试器视图中可视化。有关 pretty printer 的详细信息，请参阅 GDB 的 [pretty printing 文档](https://sourceware.org/gdb/onlinedocs/gdb/Pretty-Printing.html)。
 
 > [!NOTE]
 > 在 GDB 下调试二进制文件时，嵌入的 pretty printer 不会自动加载。
 >
 > 有两种方式可以启用嵌入式 pretty printer 的自动加载：
 >
-> 1. Launch GDB with extra arguments to explicitly add a directory or binary to the auto-load safe path: `gdb -iex "add-auto-load-safe-path safe-path path/to/binary" path/to/binary` For more information, see GDB's [auto-loading documentation]. 1. Create a file named `gdbinit` under `$HOME/.config/gdb` (you may need to create the directory if it doesn't already exist). Add the following line to that file: `add-auto-load-safe-path path/to/binary`.
+> 1. 用额外参数启动 GDB，以显式地将目录或二进制文件加入自动加载安全路径：`gdb -iex "add-auto-load-safe-path safe-path path/to/binary" path/to/binary`。有关更多信息，请参阅 GDB 的[自动加载文档](https://sourceware.org/gdb/onlinedocs/gdb/Auto_002dloading-safe-path.html)。
+> 1. 在 `$HOME/.config/gdb` 下创建名为 `gdbinit` 的文件（如果该目录尚不存在，你可能需要创建它）。将以下行添加到该文件中：`add-auto-load-safe-path path/to/binary`。
 
 r[attributes.debugger.debugger_visualizer.gdb.path]
 这些脚本使用 `gdb_script_file` 键嵌入，该键是相对于源文件的路径。
@@ -161,7 +162,7 @@ r[attributes.debugger.debugger_visualizer.gdb.path]
 > "Bob" is 10 years old.
 > ```
 >
-> [^rust-gdb]: Note: This assumes you are using the `rust-gdb` script which configures pretty-printers for standard library types like `String`.
+> [^rust-gdb]: 注意：这里假定你使用的是 `rust-gdb` 脚本，该脚本会为 `String` 等标准库类型配置 pretty-printer。
 
 [auto-loading documentation]: https://sourceware.org/gdb/onlinedocs/gdb/Auto_002dloading-safe-path.html
 [attributes]: ../attributes.md
@@ -173,7 +174,7 @@ r[attributes.debugger.collapse_debuginfo]
 ## `collapse_debuginfo` 属性
 
 r[attributes.debugger.collapse_debuginfo.intro]
-_`collapse_debuginfo` [属性](../attributes.md)_控制在为调用此宏的代码生成 debuginfo 时，来自宏定义的代码位置是否折叠为与宏调用点关联的单一位置。
+*`collapse_debuginfo` [属性](../attributes.md)*控制在为调用此宏的代码生成 debuginfo 时，来自宏定义的代码位置是否折叠为与宏调用点关联的单一位置。
 
 > [!EXAMPLE]
 > ```rust

@@ -42,10 +42,10 @@ MatchGuardScrutinee -> Expression _except [ExcludedMatchConditions]_
 <!-- TODO: The exception above isn't accurate, see https://github.com/rust-lang/reference/issues/569 -->
 
 r[expr.match.intro]
-_`match` 表达式_会基于模式进行分支。实际发生的匹配的确切形式取决于[模式](../patterns.md)。
+*`match` 表达式*会基于模式进行分支。实际发生的匹配的确切形式取决于[模式](../patterns.md)。
 
 r[expr.match.scrutinee]
-`match` 表达式有一个 _[被匹配值](../glossary.md#scrutinee)表达式_，它是要与模式比较的值。
+`match` 表达式有一个 *[被匹配值](../glossary.md#scrutinee)表达式*，它是要与模式比较的值。
 
 r[expr.match.scrutinee-constraint]
 被匹配值表达式和模式必须具有相同的类型。
@@ -57,7 +57,7 @@ r[expr.match.scrutinee-value]
 如果被匹配值表达式是[值表达式](../expressions.md#place-expressions-and-value-expressions)，会先将它求值到一个临时位置中，然后将结果值按顺序与各个分支中的模式比较，直到找到匹配。第一个具有匹配模式的分支会被选为 `match` 的分支目标，模式绑定的任何变量都会被赋给该分支块中的局部变量，然后控制流进入该块。
 
 r[expr.match.scrutinee-place]
-当被匹配值表达式是[位置表达式](../expressions.md#place-expressions-and-value-expressions)时，`match` 不会分配临时位置；但是，按值绑定可以从该内存位置复制或移动。在可能的情况下，最好匹配位置表达式，因为这些匹配的生命周期继承位置表达式的生命周期，而不是被限制在 `match` 内部。
+当被匹配值表达式是[位置表达式](../expressions.md#place-expressions-and-value-expressions)时，`match` 不会分配临时位置；但是，按值绑定可以从该内存位置复制或移动。在可能的情况下，最好匹配位置表达式，因为这种匹配的生命周期会继承位置表达式的生命周期，而不是被限制在 `match` 内部。
 
 `match` 表达式的示例：
 
@@ -93,7 +93,7 @@ let message = match x {
 
 assert_eq!(message, "a few");
 
-// Demonstration of pattern match order.
+// 模式匹配顺序的演示。
 struct S(i32, i32);
 
 match S(1, 2) {
@@ -112,10 +112,10 @@ r[expr.match.binding-restriction]
 每个同名绑定都必须具有相同类型，并且具有相同的绑定模式。
 
 r[expr.match.type]
-整个 `match` 表达式的类型是各个 match 分支的[最小上界](../type-coercions.md#r-coerce.least-upper-bound)。
+整个 `match` 表达式的类型是各个 match 分支的[最小上界](coerce.least-upper-bound)。
 
 r[expr.match.empty]
-如果没有 match 分支，则 `match` 表达式会[发散](../divergence.md#r-divergence)，且类型为 [`!`](../types/never.md#r-type.never)。
+如果没有 match 分支，则 `match` 表达式是[发散的](divergence)，且类型为 [`!`](type.never)。
 
 > [!EXAMPLE]
 > ```rust
@@ -136,10 +136,10 @@ r[expr.match.guard]
 ## 匹配守卫
 
 r[expr.match.guard.intro]
-match 分支可以接受_匹配守卫_，以进一步细化匹配某个情况的条件。
+match 分支可以接受*匹配守卫*，以进一步细化匹配某个情况的条件。
 
 r[expr.match.guard.condition]
-模式守卫出现在模式之后，并以 `if` 关键字引入，由具有[布尔类型](../types/boolean.md#r-type.bool)的 [Expression](../expressions.md#grammar-Expression) 或条件式 `let` 匹配组成。
+模式守卫跟在模式后面、位于 `if` 关键字之后，由具有[布尔类型][type.bool]的 [Expression] 或条件式 `let` 匹配组成。
 
 r[expr.match.guard.behavior]
 当模式成功匹配时，会执行模式守卫。如果所有守卫条件操作数都求值为 `true`，并且所有 `let` 模式都成功匹配其[被匹配值](../glossary.md#scrutinee)，则该 match 分支匹配成功，并执行分支体。
@@ -178,7 +178,7 @@ r[expr.match.guard.shared-ref]
 在对守卫求值之前，会取得一个指向被匹配值中该变量所匹配部分的共享引用。在对守卫求值期间，访问该变量时会使用这个共享引用。
 
 r[expr.match.guard.value]
-只有当守卫成功求值时，才会将值从被匹配值移动或复制到该变量中。这样就可以在守卫内部使用共享借用，而在守卫匹配失败时不会从被匹配值中移出。
+只有当守卫求值并成功匹配时，才会将值从被匹配值移动或复制到该变量中。这样就可以在守卫内部使用共享借用，而在守卫匹配失败时不会从被匹配值中移出。
 
 r[expr.match.guard.no-mutation]
 此外，通过在对守卫求值期间持有共享引用，也会阻止守卫内部的修改。
@@ -199,7 +199,7 @@ r[expr.match.guard.let]
 >
 > match cmd {
 >     Command::Run(name) if let Some(first_char) = name.chars().next() => {
->         // Both `name` and `first_char` are available here
+>         // `name` 和 `first_char` 在这里都可用
 >         println!("Running: {name} (starts with '{first_char}')");
 >     }
 >     Command::Run(name) => {
@@ -226,13 +226,13 @@ r[expr.match.guard.chains.intro]
 > ```
 
 r[expr.match.guard.chains.order]
-类似于 `&&` [LazyBooleanExpression](operator-expr.md#grammar-LazyBooleanExpression)，每个操作数会从左到右求值，直到某个操作数求值为 `false` 或某个 `let` 匹配失败；在这种情况下，后续操作数不会被求值。
+类似于 `&&` [LazyBooleanExpression]，每个操作数会从左到右求值，直到某个操作数求值为 `false` 或某个 `let` 匹配失败；在这种情况下，后续操作数不会被求值。
 
 r[expr.match.guard.chains.bindings]
 每个 `let` 模式的绑定都会被放入作用域，以供下一个条件操作数和 match 分支主体使用。
 
 r[expr.match.guard.chains.or]
-如果任何守卫条件操作数是 `let` 模式，则由于与 `let` 被匹配值之间存在歧义和优先级问题，所有条件操作数都不能是 `||` [惰性布尔运算符表达式](operator-expr.md#r-expr.bool-logic)。
+如果任何守卫条件操作数是 `let` 模式，则由于与 `let` 被匹配值之间存在歧义和优先级问题，所有条件操作数都不能是 `||` [惰性布尔运算符表达式][expr.bool-logic]。
 
 > [!EXAMPLE]
 > 如果需要 `||` 表达式，则可以使用括号。例如：
@@ -241,7 +241,7 @@ r[expr.match.guard.chains.or]
 > # let foo = Some([123]);
 > match foo {
 >     Some(xs) if let [x] = xs
->         // Parentheses are required here.
+>         // 这里需要括号。
 >         && (x < -100 || x > 20) => {}
 >     _ => {}
 > }

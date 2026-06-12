@@ -2,7 +2,7 @@ r[paths]
 # 路径
 
 r[paths.intro]
-_路径_ 是由一个或多个路径段组成的序列，路径段之间由 `::` token 分隔。路径用于引用[项](items.md)、值、[类型](types.md)、[宏](macros.md)和[属性](attributes.md)。
+*路径* 是由一个或多个路径段组成的序列，路径段之间由 `::` token 分隔。路径用于引用[项](items.md)、值、[类型](types.md)、[宏](macros.md)和[属性](attributes.md)。
 
 两个仅由标识符段组成的简单路径示例：
 
@@ -92,7 +92,7 @@ r[paths.expr.argument-order]
 泛型实参的顺序限定为：先是生命周期实参，然后是类型实参，然后是 const 实参，最后是等式约束。
 
 r[paths.expr.complex-const-params]
-const 实参必须用花括号括起来，除非它们是[字面量](expressions/literal-expr.md)、[推断 const](items/generics.md#r-items.generics.const.inferred)或单段路径。[推断 const](items/generics.md#r-items.generics.const.inferred) 不能用花括号括起来。
+const 实参必须用花括号括起来，除非它们是[字面量](expressions/literal-expr.md)、[推断 const](items.generics.const.inferred)或单段路径。[推断 const](items.generics.const.inferred) 不能用花括号括起来。
 
 ```rust
 mod m {
@@ -101,11 +101,11 @@ mod m {
 const C: usize = m::C;
 fn f<const N: usize>() -> [u8; N] { [0; N] }
 
-let _ = f::<1>(); // Literal.
-let _: [_; 1] = f::<_>(); // Inferred const.
-let _: [_; 1] = f::<(((_)))>(); // Inferred const.
-let _ = f::<C>(); // Single segment path.
-let _ = f::<{ m::C }>(); // Multi-segment path must be braced.
+let _ = f::<1>(); // 字面量。
+let _: [_; 1] = f::<_>(); // 推断 const。
+let _: [_; 1] = f::<(((_)))>(); // 推断 const。
+let _ = f::<C>(); // 单段路径。
+let _ = f::<{ m::C }>(); // 多段路径必须用花括号括起。
 ```
 
 ```rust,compile_fail
@@ -115,7 +115,7 @@ let _: [_; 1] = f::<{ _ }>();
 ```
 
 > [!NOTE]
-> 在泛型实参列表中，[推断 const][inferred const] 会被解析为[推断类型][InferredType]，但随后在语义上被视为一种单独的 [const 泛型实参][const generic argument]。
+> 在泛型实参列表中，[推断 const](items.generics.const.inferred) 会被解析为[推断类型][InferredType]，但随后在语义上被视为一种单独的 [const 泛型实参](items.generics.const.argument)。
 
 r[paths.expr.impl-trait-params]
 与 `impl Trait` 类型对应的合成类型参数是隐式的，不能显式指定这些参数。
@@ -148,9 +148,9 @@ trait T2 {
     fn f() { println!("T2 f"); }
 }
 impl T2 for S {}
-S::f();  // Calls the inherent impl.
-<S as T1>::f();  // Calls the T1 trait function.
-<S as T2>::f();  // Calls the T2 trait function.
+S::f();  // 调用固有 impl。
+<S as T1>::f();  // 调用 T1 trait 函数。
+<S as T2>::f();  // 调用 T2 trait 函数。
 ```
 
 r[paths.type]
@@ -164,10 +164,10 @@ TypePathSegment -> PathIdentSegment (`::`? GenericArgs)?
 ```
 
 r[paths.type.intro]
-类型路径用于类型定义、trait 边界和限定路径。
+类型路径用于类型定义、trait 约束和限定路径。
 
 r[paths.type.turbofish]
-虽然允许在泛型实参前使用 `::` token，但这不是必需的，因为不存在像 [PathInExpression](paths.md#grammar-PathInExpression) 中那样的歧义。
+虽然允许在泛型实参前使用 `::` token，但这不是必需的，因为不存在像 [PathInExpression] 中那样的歧义。
 
 ```rust
 # mod ops {
@@ -197,7 +197,7 @@ r[paths.qualifiers.global-root]
 ### `::`
 
 r[paths.qualifiers.global-root.intro]
-以 `::` 开头的路径被视为_全局路径_，其中路径段开始解析的位置会因 edition 而异。路径中的每个标识符都必须解析为一个项。
+以 `::` 开头的路径被视为 *全局路径*，其中路径段开始解析的位置会因 edition 而异。路径中的每个标识符都必须解析为一个项。
 
 r[paths.qualifiers.global-root.edition2018]
 > [!EDITION-2018]
@@ -207,22 +207,22 @@ r[paths.qualifiers.global-root.edition2018]
 
 ```rust
 pub fn foo() {
-    // In the 2018 edition, this accesses `std` via the extern prelude.
-    // In the 2015 edition, this accesses `std` via the crate root.
+    // 在 2018 edition 中，这会通过 extern prelude 访问 `std`。
+    // 在 2015 edition 中，这会通过 crate root 访问 `std`。
     let now = ::std::time::Instant::now();
     println!("{:?}", now);
 }
 ```
 
 ```rust,edition2015
-// 2015 Edition
+// 2015 版
 mod a {
     pub fn foo() {}
 }
 mod b {
     pub fn foo() {
-        ::a::foo(); // call `a`'s foo function
-        // In Rust 2018, `::a` would be interpreted as the crate `a`.
+        ::a::foo(); // 调用 `a` 的 foo 函数
+        // 在 Rust 2018 中，`::a` 会被解释为 crate `a`。
     }
 }
 # fn main() {}
@@ -244,21 +244,21 @@ r[paths.qualifiers.mod-self.trailing]
 mod m {
     pub enum E { V1 }
     pub trait Tr {}
-    pub(in crate::m::self) fn g() {} // OK: Modules can be parents of `self`.
+    pub(in crate::m::self) fn g() {} // OK: 模块可以作为 `self` 的父项。
 }
 type Ty = m::E::self; // OK: Enumerations can be parents of `self`.
-fn f<T: m::Tr::self>() {} // OK: Traits can be parents of `self`.
+fn f<T: m::Tr::self>() {} // OK: trait 可以作为 `self` 的父项。
 # fn main() { let _: Ty = m::E::V1; }
 ```
 
 ```rust,compile_fail,E0223
 struct S;
-type Ty = S::self; // ERROR: Structs cannot be parents of `self`.
+type Ty = S::self; // ERROR: 结构体不能作为 `self` 的父项。
 # fn main() {}
 ```
 
 > [!NOTE]
-> 有关 `use` 声明中 `self` 的额外规则，参见 [items.use.self](items/use-declarations.md#r-items.use.self)。
+> 有关 `use` 声明中 `self` 的额外规则，参见 [items.use.self]。
 
 r[paths.qualifiers.self-pat]
 在方法体中，由单个 `self` 段组成的路径会解析为该方法的 self 参数。
@@ -305,36 +305,36 @@ r[paths.qualifiers.type-self.no-generics]
 trait T {
     type Item;
     const C: i32;
-    // `Self` will be whatever type that implements `T`.
+    // `Self` 将是实现 `T` 的任意类型。
     fn new() -> Self;
-    // `Self::Item` will be the type alias in the implementation.
+    // `Self::Item` 将是实现中的类型别名。
     fn f(&self) -> Self::Item;
 }
 struct S;
 impl T for S {
     type Item = i32;
     const C: i32 = 9;
-    fn new() -> Self {           // `Self` is the type `S`.
+    fn new() -> Self {           // `Self` 是类型 `S`。
         S
     }
-    fn f(&self) -> Self::Item {  // `Self::Item` is the type `i32`.
-        Self::C                  // `Self::C` is the constant value `9`.
+    fn f(&self) -> Self::Item {  // `Self::Item` 是类型 `i32`。
+        Self::C                  // `Self::C` 是常量值 `9`。
     }
 }
 
-// `Self` is in scope within the generics of a trait definition,
-// to refer to the type being defined.
+// `Self` 在 trait 定义的泛型中处于作用域内，
+// 用来指代正在定义的类型。
 trait Add<Rhs = Self> {
     type Output;
-    // `Self` can also reference associated items of the
-    // type being implemented.
+    // `Self` 也可以引用正在实现的
+    // 类型的关联项。
     fn add(self, rhs: Rhs) -> Self::Output;
 }
 
 struct NonEmptyList<T> {
     head: T,
-    // A struct can reference itself (as long as it is not
-    // infinitely recursive).
+    // struct 可以引用自身（只要它不是
+    // 无限递归的）。
     tail: Option<Box<Self>>,
 }
 ```
@@ -354,7 +354,7 @@ mod a {
 }
 mod b {
     pub fn foo() {
-        super::a::foo(); // call a's foo function
+        super::a::foo(); // 调用 a 的 foo 函数
     }
 }
 # fn main() {}
@@ -370,8 +370,8 @@ mod a {
     mod b {
         mod c {
             fn foo() {
-                super::super::foo(); // call a's foo function
-                self::super::super::foo(); // call a's foo function
+                super::super::foo(); // 调用 a 的 foo 函数
+                self::super::super::foo(); // 调用 a 的 foo 函数
             }
         }
     }
@@ -402,10 +402,10 @@ r[paths.qualifiers.macro-crate]
 ### `$crate`
 
 r[paths.qualifiers.macro-crate.allowed-positions]
-[`$crate`](macros-by-example.md#r-macro.decl.hygiene.crate) 只在[宏转录器](macros-by-example.md)中使用，并且只能作为第一段使用，前面不能有 `::`。
+[`$crate`](macro.decl.hygiene.crate) 只在[宏转录器](macros-by-example.md)中使用，并且只能作为第一段使用，前面不能有 `::`。
 
 r[paths.qualifiers.macro-crate.hygiene]
-[`$crate`](macros-by-example.md#r-macro.decl.hygiene.crate) 会展开为一条路径，用于访问定义该宏的 crate 顶层中的项，而不管该宏是在哪个 crate 中被调用的。
+[`$crate`](macro.decl.hygiene.crate) 会展开为一条路径，用于访问定义该宏的 crate 顶层中的项，而不管该宏是在哪个 crate 中被调用的。
 
 ```rust
 pub fn increment(x: u32) -> u32 {
@@ -423,16 +423,16 @@ r[paths.canonical]
 ## 规范路径
 
 r[paths.canonical.intro]
-模块或实现中定义的每个项都有一条_规范路径_，对应它在其 crate 内的定义位置。
+模块或实现中定义的每个项都有一条 *规范路径*，对应它在其 crate 内的定义位置。
 
 r[paths.canonical.alias]
 指向这些项的所有其他路径都是别名。
 
 r[paths.canonical.def]
-规范路径定义为：由_路径前缀_附加该项自身定义的路径段组成。
+规范路径定义为：由 *路径前缀* 附加该项自身定义的路径段组成。
 
 r[paths.canonical.non-canonical]
-[实现](items/implementations.md)和 [use 声明](items/use-declarations.md)没有规范路径，尽管实现所定义的项确实有规范路径。在块表达式中定义的项没有规范路径。在没有规范路径的模块中定义的项也没有规范路径。在实现中定义的关联项，如果该实现引用了一个没有规范路径的项，例如作为被实现类型、被实现的 trait、类型参数或类型参数上的边界，则这些关联项没有规范路径。
+[实现](items/implementations.md)和 [use 声明](items/use-declarations.md)没有规范路径，尽管实现所定义的项确实有规范路径。在块表达式中定义的项没有规范路径。在没有规范路径的模块中定义的项也没有规范路径。在实现中定义的关联项，如果该实现引用了一个没有规范路径的项，例如作为被实现类型、被实现的 trait、类型参数或类型参数上的约束，则这些关联项没有规范路径。
 
 r[paths.canonical.module-prefix]
 模块的路径前缀是指向该模块的规范路径。
@@ -447,7 +447,7 @@ r[paths.canonical.local-canonical-path]
 规范路径只在给定 crate 内有意义。跨 crate 不存在全局命名空间；项的规范路径仅在该 crate 内标识该项。
 
 ```rust
-// Comments show the canonical path of the item.
+// 注释显示该项的规范路径。
 
 mod a { // crate::a
     pub struct Struct; // crate::a::Struct

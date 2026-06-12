@@ -144,7 +144,7 @@ r[link.foreign-code.foreign-linkers]
 如果你将 Rust 与外部代码（例如 C、C++）混合使用，并希望生成包含这两类代码的单个二进制文件，那么最终的二进制链接有两种做法：
 
 * 使用 `rustc`。通过 `-L <directory>` 和 `-l<library>` rustc 参数传递任何非 Rust 库，和/或在 Rust 代码中使用 `#[link]` 指令。如果需要链接 `.o` 文件，可以使用 `-Clink-arg=file.o`。
-* 使用你的外部链接器。在这种情况下，你首先需要生成一个 Rust `staticlib` 目标，并将其传给你的外部链接器调用。如果需要链接多个 Rust 子系统，你需要生成_单个_ `staticlib`，也许要使用许多 `extern crate` 语句来包含多个 Rust `rlib`。多个 Rust `staticlib` 文件很可能发生冲突。
+* 使用你的外部链接器。在这种情况下，你首先需要生成一个 Rust `staticlib` 目标，并将其传给你的外部链接器调用。如果需要链接多个 Rust 子系统，你需要生成 *单个* `staticlib`，也许要使用许多 `extern crate` 语句来包含多个 Rust `rlib`。多个 Rust `staticlib` 文件很可能发生冲突。
 
 目前不支持将 `rlib` 直接传给外部链接器。
 
@@ -158,10 +158,10 @@ r[link.unwinding.intro]
 只有在二进制文件按以下规则一致地构建时，才能使用 panic 展开。
 
 r[link.unwinding.potential]
-如果满足以下任一条件，则称 Rust 构件为_可能展开_：
-- 该构件使用 [`unwind` panic 处理器](panic.md#r-panic.panic_handler)。
+如果满足以下任一条件，则称 Rust 构件为 *可能展开*：
+- 该构件使用 [`unwind` panic 处理器][panic.panic_handler]。
 - 该构件包含一个使用 `unwind` [panic 策略](panic.md#panic-strategy)构建的 crate，且该 crate 会调用使用 `-unwind` ABI 的函数。
-- 该构件对运行在另一个 Rust 构件中的代码进行 `"Rust"` ABI 调用，后者具有单独的 Rust 运行时副本，并且后者是可能展开的。
+- 该构件对运行在另一个 Rust 构件中的代码进行 `"Rust"` ABI 调用，而另一个 Rust 构件具有单独的 Rust 运行时副本，并且该构件是可能展开的。
 
 > [!NOTE]
 > 这个定义刻画的是 Rust 构件内部的 `"Rust"` ABI 调用是否可能展开。
@@ -170,7 +170,7 @@ r[link.unwinding.prohibited]
 如果某个 Rust 构件是可能展开的，则其所有 crate 都必须使用 `unwind` [panic 策略](panic.md#panic-strategy)构建。否则，展开可能导致未定义行为。
 
 > [!NOTE]
-> 如果你使用 `rustc` 进行链接，这些规则会自动强制执行。如果你_没有_使用 `rustc` 进行链接，则必须谨慎确保在整个二进制文件中一致地处理展开。不使用 `rustc` 的链接包括使用 `dlopen` 或类似设施，即由系统运行时在没有 `rustc` 参与的情况下完成链接。这只会在混合使用带有不同 [`-C panic`](../rustc/codegen-options/index.html#panic) 标志的代码时发生，因此大多数用户不必关心这一点。
+> 如果你使用 `rustc` 进行链接，这些规则会自动强制执行。如果你 *没有* 使用 `rustc` 进行链接，则必须谨慎确保在整个二进制文件中一致地处理展开。不使用 `rustc` 的链接包括使用 `dlopen` 或类似设施，即由系统运行时在没有 `rustc` 参与的情况下完成链接。这只会在混合使用带有不同 [`-C panic`](../rustc/codegen-options/index.html#panic) 标志的代码时发生，因此大多数用户不必关心这一点。
 
 > [!NOTE]
 > 为了保证无论链接时使用哪种 panic 运行时，库都是健全的（并且可用 `rustc` 链接），可以使用 [`ffi_unwind_calls` lint](../rustc/lints/listing/allowed-by-default.html#ffi-unwind-calls)。该 lint 会标记对 `-unwind` 外部函数或函数指针的任何调用。

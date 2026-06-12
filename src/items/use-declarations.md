@@ -12,7 +12,7 @@ UseTree ->
 ```
 
 r[items.use.intro]
-<em><code>use</code> 声明</em>会创建一个或多个局部名称绑定，它们与某个其他[路径](../paths.md)同义。通常，`use` 声明用于缩短引用模块项所需的路径。这些声明可以出现在[模块](modules.md)和[块](../expressions/block-expr.md)中，通常位于开头。`use` 声明有时也称为<em>导入</em>；如果它是公开的，则称为<em>重导出</em>。
+*use 声明* 会创建一个或多个与某个其他[路径](../paths.md)同义的局部名称绑定。通常，`use` 声明用于缩短引用模块项所需的路径。这些声明可以出现在[模块](modules.md)和[块](../expressions/block-expr.md)中，通常位于开头。`use` 声明有时也称为 *导入*；如果它是公开的，则称为 *重导出*。
 
 [path]: ../paths.md
 [modules]: modules.md
@@ -45,14 +45,14 @@ fn foo<T>(_: T){}
 fn bar(map1: HashMap<String, usize>, map2: hash_map::HashMap<String, usize>){}
 
 fn main() {
-    // use declarations can also exist inside of functions
+    // use 声明也可以存在于函数内部
     use std::option::Option::{Some, None};
 
-    // Equivalent to 'foo(vec![std::option::Option::Some(1.0f64),
+    // 等价于 'foo(vec![std::option::Option::Some(1.0f64),
     // std::option::Option::None]);'
     foo(vec![Some(1.0f64), None]);
 
-    // Both `hash_map` and `HashMap` are in scope.
+    // `hash_map` 和 `HashMap` 都在作用域内。
     let map1 = HashMap::new();
     let map2 = hash_map::HashMap::new();
     bar(map1, map2);
@@ -63,7 +63,7 @@ r[items.use.visibility]
 ## `use` 可见性
 
 r[items.use.visibility.intro]
-与项一样，`use` 声明默认对包含它的模块私有。同样与项一样，如果带有 `pub` 关键字限定，`use` 声明可以是公开的。这样的 `use` 声明用于<em>重导出</em>一个名称。因此，公开的 `use` 声明可以将某个公开名称<em>重定向</em>到不同的目标定义：甚至可以是另一个模块中、具有私有规范路径的定义。
+与项一样，`use` 声明默认对包含它的模块私有。同样与项一样，如果带有 `pub` 关键字限定，`use` 声明可以是公开的。这样的 `use` 声明用于 *重导出* 一个名称。因此，公开的 `use` 声明可以将某个公开名称 *重定向* 到不同的目标定义：甚至可以是另一个模块中、具有私有规范路径的定义。
 
 r[items.use.visibility.unambiguous]
 如果这样的一系列重定向形成循环，或者不能无歧义地解析，则它们表示一个编译时错误。
@@ -91,14 +91,14 @@ r[items.use.path]
 ## `use` 路径
 
 r[items.use.path.intro]
-`use` 项中允许的[路径](../paths.md)遵循 [SimplePath](../paths.md#grammar-SimplePath) 语法，并且类似于可以在表达式中使用的路径。它们可以为以下内容创建绑定：
+`use` 项中允许的[路径](../paths.md)遵循 [SimplePath] 语法，并且类似于可以在表达式中使用的路径。它们可以为以下内容创建绑定：
 
 * 可命名的[项](../items.md)
 * [枚举变体](enumerations.md)
 * [内置类型](../types.md)
 * [属性](../attributes.md)
-* [Derive 宏](../procedural-macros.md#r-macro.proc.derive)
-* [`macro_rules`](../macros-by-example.md)
+* [Derive 宏](macro.proc.derive)
+* [`macro_rules`]
 
 r[items.use.path.disallowed]
 它们不能导入[关联项](associated-items.md)、[泛型参数](generics.md)、[局部变量](../variables.md)、带有 [`Self`](../paths.md#self) 的路径，或[工具属性](../attributes.md#tool-attributes)。下面还会描述更多限制。
@@ -111,12 +111,12 @@ mod stuff {
     pub struct Foo(pub i32);
 }
 
-// Imports the `Foo` type and the `Foo` constructor.
+// 导入 `Foo` 类型和 `Foo` 构造器。
 use stuff::Foo;
 
 fn example() {
-    let ctor = Foo; // Uses `Foo` from the value namespace.
-    let x: Foo = ctor(123); // Uses `Foo` From the type namespace.
+    let ctor = Foo; // 使用值命名空间中的 `Foo`。
+    let x: Foo = ctor(123); // 使用类型命名空间中的 `Foo`。
 }
 ```
 
@@ -130,10 +130,10 @@ r[items.use.path.edition2018]
 >     pub mod baz { pub fn foobaz() {} }
 > }
 > mod bar {
->     // Resolves `foo` from the crate root.
+>     // 从 crate 根解析 `foo`。
 >     use foo::example::iter;
->     // The `::` prefix explicitly resolves `foo`
->     // from the crate root.
+>     // `::` 前缀会将 `foo` 显式地解析
+>     // 为 crate 根中的项。
 >     use ::foo::baz::foobaz;
 > }
 >
@@ -148,7 +148,7 @@ r[items.use.as]
 `as` 关键字可用于更改被导入实体的名称。例如：
 
 ```rust
-// Creates a non-public alias `bar` for the function `foo`.
+// 为函数 `foo` 创建非公开别名 `bar`。
 use inner::foo as bar;
 
 mod inner {
@@ -163,7 +163,7 @@ r[items.use.multiple-syntax.intro]
 花括号可以用在路径的最后一个段中，以从前一个段导入多个实体；如果没有前面的段，则从当前作用域导入。花括号可以嵌套，从而创建一个路径树，其中每组段都会在逻辑上与其父级组合，以创建完整路径。
 
 ```rust
-// Creates bindings to:
+// 为以下项创建绑定：
 // - `std::collections::BTreeSet`
 // - `std::collections::hash_map`
 // - `std::collections::hash_map::HashMap`
@@ -171,7 +171,8 @@ use std::collections::{BTreeSet, hash_map::{self, HashMap}};
 ```
 
 r[items.use.multiple-syntax.empty]
-空花括号不会导入任何内容，但会验证其前导路径是否可访问。 <!-- This is slightly wrong, see: https://github.com/rust-lang/rust/issues/61826 -->
+空花括号不会导入任何内容，但会验证前导路径是可访问的。
+<!-- This is slightly wrong, see: https://github.com/rust-lang/rust/issues/61826 -->
 
 r[items.use.multiple-syntax.edition2018]
 > [!EDITION-2018]
@@ -181,7 +182,7 @@ r[items.use.self]
 ## `self` 导入
 
 r[items.use.self.intro]
-关键字 `self` 可以在[花括号语法](use-declarations.md#r-items.use.multiple-syntax)中使用，以父实体自身的名称创建其绑定。
+关键字 `self` 可以在[花括号语法](items.use.multiple-syntax)中使用，以父实体自身的名称创建其绑定。
 
 ```rust
 mod stuff {
@@ -189,7 +190,7 @@ mod stuff {
     pub fn bar() {}
 }
 mod example {
-    // Creates a binding for `stuff` and `foo`.
+    // 为 `stuff` 和 `foo` 创建绑定。
     use crate::stuff::{self, foo};
     pub fn baz() {
         foo();
@@ -209,31 +210,31 @@ r[items.use.self.trailing]
 mod m {
     pub enum E { V1, V2 }
 }
-use m::self as _; // Equivalent to `use m::{self as _};`.
-use m::E::self; // Equivalent to `use m::E::{self};`.
+use m::self as _; // 等价于 `use m::{self as _};`。
+use m::E::self; // 等价于 `use m::E::{self};`。
 # fn main() {}
 ```
 
 > [!NOTE]
-> 关于前置路径的限制，参见 [paths.qualifiers.mod-self.trailing](../paths.md#r-paths.qualifiers.mod-self.trailing)。
+> 关于前置路径的限制，参见 [paths.qualifiers.mod-self.trailing]。
 
 r[items.use.self.module]
-当 `self` 在[花括号语法](use-declarations.md#r-items.use.multiple-syntax)中使用时，花括号组之前的路径必须解析为[模块](modules.md#r-items.mod)、[枚举](enumerations.md#r-items.enum)或 [trait](traits.md#r-items.traits)。
+当 `self` 在[花括号语法](items.use.multiple-syntax)中使用时，花括号组之前的路径必须解析为[模块](items.mod)、[枚举](items.enum)或 [trait](items.traits)。
 
 ```rust
 mod m {
     pub enum E { V1, V2 }
     pub trait Tr { fn f(&self); }
 }
-use m::{self as _}; // OK: Modules can be parents of `self`.
-use m::E::{self, V1}; // OK: Enums can be parents of `self`.
-use m::Tr::{self}; // OK: Traits can be parents of `self`.
+use m::{self as _}; // OK: 模块可以作为 `self` 的父项。
+use m::E::{self, V1}; // OK: 枚举可以作为 `self` 的父项。
+use m::Tr::{self}; // OK: trait 可以作为 `self` 的父项。
 # fn main() {}
 ```
 
 ```rust,compile_fail,E0432
 struct S {}
-use S::{self as _}; // ERROR: Structs cannot be parents of `self`.
+use S::{self as _}; // ERROR: 结构体不能作为 `self` 的父项。
 # fn main() {}
 ```
 
@@ -246,12 +247,12 @@ mod bar {
     pub fn foo() {}
 }
 
-// This only imports the module `foo`. The function `foo` lives in
-// the value namespace and is not imported.
+// 这只导入模块 `foo`。函数 `foo` 位于
+// 值命名空间中，因此未被导入。
 use bar::foo::{self};
 
 fn main() {
-    foo(); //~ ERROR `foo` is a module
+    foo(); //~ ERROR `foo` 是一个模块
 }
 ```
 
@@ -262,7 +263,7 @@ r[items.use.glob.intro]
 字符 `*` 可以用作 `use` 路径的最后一个段，以从前一个段所指的实体导入所有可导入实体。例如：
 
 ```rust
-// Creates a non-public alias to `bar`.
+// 创建一个指向 `bar` 的非公开别名。
 use foo::*;
 
 mod foo {
@@ -272,8 +273,8 @@ mod foo {
         V2,
     }
     pub fn bar() {
-        // Creates local aliases to `V1` and `V2`
-        // of the `Example` enum.
+        // 创建指向 `V1` 和 `V2` 的局部别名，
+        // 它们属于 `Example` 枚举。
         use Example::*;
         let x = V1;
     }
@@ -284,23 +285,23 @@ r[items.use.glob.shadowing]
 项和命名导入允许遮蔽同一[命名空间](../names/namespaces.md)中来自 glob 导入的名称。也就是说，如果同一命名空间中已有由另一个项定义的名称，则 glob 导入会被遮蔽。例如：
 
 ```rust
-// This creates a binding to the `clashing::Foo` tuple struct
-// constructor, but does not import its type because that would
-// conflict with the `Foo` struct defined here.
+// 这会创建一个指向 `clashing::Foo` 元组结构体
+// 构造器的绑定，但不会导入其类型，因为那会
+// 与这里定义的 `Foo` 结构体冲突。
 //
-// Note that the order of definition here is unimportant.
+// 注意，这里的定义顺序并不重要。
 use clashing::*;
 struct Foo {
     field: f32,
 }
 
 fn do_stuff() {
-    // Uses the constructor from `clashing::Foo`.
+    // 使用来自 `clashing::Foo` 的构造器。
     let f1 = Foo(123);
-    // The struct expression uses the type from
-    // the `Foo` struct defined above.
+    // 结构体表达式使用来自
+    // 上面定义的 `Foo` 结构体的类型。
     let f2 = Foo { field: 1.0 };
-    // `Bar` is also in scope due to the glob import.
+    // 由于 glob 导入，`Bar` 也在作用域内。
     let z = Bar {};
 }
 
@@ -311,7 +312,7 @@ mod clashing {
 ```
 
 > [!NOTE]
-> 对于不允许遮蔽的区域，见[名称解析歧义](names/name-resolution.md#r-names.resolution.expansion.imports.ambiguity)。
+> 对于不允许遮蔽的区域，见[名称解析歧义](names.resolution.expansion.imports.ambiguity)。
 
 r[items.use.glob.last-segment-only]
 `*` 不能用作第一个段或中间段。
@@ -342,7 +343,7 @@ mod foo {
 }
 
 use self::foo::Zoo as _;
-struct Zoo;  // Underscore import avoids name conflict with this item.
+struct Zoo;  // 下划线导入避免了与此项发生名称冲突。
 
 fn main() {
     let z = Zoo;
@@ -359,7 +360,7 @@ macro_rules! m {
 }
 
 m!(use std as _;);
-// This expands to:
+// 这会展开为：
 // use std as _;
 // use std as _;
 ```
@@ -377,13 +378,13 @@ r[items.use.restrictions.crate-alias]
 > use crate as root;
 > use crate::{self as root2};
 >
-> // Not allowed:
+> // 不允许：
 > // use crate;
 > // use crate::{self};
 > ```
 
 r[items.use.restrictions.macro-crate-alias]
-在宏转录器中使用 [`$crate`](../paths.md#r-paths.qualifiers.macro-crate) 导入当前 crate 时，必须使用 `as` 定义绑定名称。
+在宏转录器中使用 [`$crate`](paths.qualifiers.macro-crate) 导入当前 crate 时，必须使用 `as` 定义绑定名称。
 
 > [!EXAMPLE]
 > ```rust
@@ -404,7 +405,7 @@ r[items.use.restrictions.self-alias]
 > use self as this_module2;
 > use self::{self as this_module3};
 >
-> // Not allowed:
+> // 不允许：
 > // use {self};
 > // use self;
 > // use self::{self};
@@ -423,7 +424,7 @@ r[items.use.restrictions.super-alias]
 >         use super::super as grandparent;
 >         use super::super::{self as grandparent2};
 >
->         // Not allowed:
+>         // 不允许：
 >         // use super;
 >         // use super::{self};
 >         // use self::super;

@@ -7,10 +7,10 @@ r[attributes.limits.recursion_limit]
 ## `recursion_limit` 属性
 
 r[attributes.limits.recursion_limit.intro]
-_`recursion_limit` 属性_ 可以应用于 [crate](../crates-and-source-files.md) 级别，用于为宏展开或自动解引用等潜在无限递归的编译时操作设置最大深度。
+*`recursion_limit` 属性*可以应用于 [crate](../crates-and-source-files.md) 级别，用于为宏展开或自动解引用等潜在无限递归的编译时操作设置最大深度。
 
 r[attributes.limits.recursion_limit.syntax]
-它使用 [MetaNameValueStr](../attributes.md#grammar-MetaNameValueStr) 语法来指定递归深度。
+它使用 [MetaNameValueStr] 语法来指定递归深度。
 
 > [!NOTE]
 > `rustc` 中的默认值是 128。
@@ -26,14 +26,14 @@ macro_rules! a {
     (4) => { };
 }
 
-// This fails to expand because it requires a recursion depth greater than 4.
+// 这会展开失败，因为它需要大于 4 的递归深度。
 a!{}
 ```
 
 ```rust,compile_fail
 #![recursion_limit = "1"]
 
-// This fails because it requires two recursive steps to auto-dereference.
+// 这会失败，因为它需要两个递归步骤才能自动解引用。
 (|_: &u8| {})(&&&1);
 ```
 
@@ -42,7 +42,7 @@ r[attributes.limits.type_length_limit]
 ## `type_length_limit` 属性
 
 r[attributes.limits.type_length_limit.intro]
-_`type_length_limit` [属性](../attributes.md)_ 设置在单态化期间构造具体类型时允许的类型替换最大数量。
+*`type_length_limit` [属性](../attributes.md)* 设置在单态化期间构造具体类型时允许的类型替换最大数量。
 
 > [!NOTE]
 > 只有在 nightly `-Zenforce-type-length-limit` 标志启用时，`rustc` 才会强制执行该限制。
@@ -56,9 +56,9 @@ _`type_length_limit` [属性](../attributes.md)_ 设置在单态化期间构造�
 >
 > fn f<T>(x: T) {}
 >
-> // This fails to compile because monomorphizing to
-> // `f::<((((i32,), i32), i32), i32)>` requires more
-> // than 4 type elements.
+> // 这会编译失败，因为单态化为
+> // `f::<((((i32,), i32), i32), i32)>` 需要超过 4 个
+> // 类型元素。
 > f(((((1,), 2), 3), 4));
 > ```
 
@@ -66,7 +66,7 @@ _`type_length_limit` [属性](../attributes.md)_ 设置在单态化期间构造�
 > `rustc` 中的默认值是 `1048576`。
 
 r[attributes.limits.type_length_limit.syntax]
-`type_length_limit` 属性使用 [MetaNameValueStr](../attributes.md#grammar-MetaNameValueStr) 语法。字符串中的值必须是非负数。
+`type_length_limit` 属性使用 [MetaNameValueStr] 语法。字符串中的值必须是非负数。
 
 r[attributes.limits.type_length_limit.allowed-positions]
 `type_length_limit` 属性只能应用于 crate 根。

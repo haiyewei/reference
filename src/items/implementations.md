@@ -21,7 +21,7 @@ TraitImpl ->
 ```
 
 r[items.impl.intro]
-_实现_是将项与_实现类型_关联起来的项。实现使用关键字 `impl` 定义，并包含属于被实现类型的某个实例或静态属于该类型的函数。
+*实现*是将项与*实现类型*关联起来的项。实现使用关键字 `impl` 定义，并包含属于被实现类型的某个实例或静态属于该类型的函数。
 
 r[items.impl.kinds]
 实现分为两类：
@@ -36,7 +36,7 @@ r[items.impl.inherent.intro]
 固有实现被定义为依次由 `impl` 关键字、泛型类型声明、到名义类型的路径、where 子句以及一组用花括号括起的可关联项组成。
 
 r[items.impl.inherent.implementing-type]
-该名义类型称为_实现类型_，可关联项是该实现类型的_关联项_。
+该名义类型称为*实现类型*，可关联项是该实现类型的*关联项*。
 
 r[items.impl.inherent.associated-items]
 固有实现将所包含的项关联到实现类型。
@@ -82,7 +82,7 @@ fn main() {
     // 到实现类型的重导出路径也可用。
     Color::red();
 
-    // Does not work, because use in `values` is not pub.
+    // 无法工作，因为 `values` 中的 use 不是 pub。
     // values::Color::red();
 }
 ```
@@ -91,12 +91,12 @@ r[items.impl.trait]
 ## trait 实现
 
 r[items.impl.trait.intro]
-_trait 实现_的定义方式类似于固有实现，不同之处在于可选的泛型类型声明后面跟着一个 [trait](traits.md)，再跟关键字 `for`，再跟到名义类型的路径。
+*trait 实现*的定义方式类似于固有实现，不同之处在于可选的泛型类型声明后面跟着一个 [trait](traits.md)，再跟关键字 `for`，再跟到名义类型的路径。
 
 <!-- To understand this, you have to back-reference to the previous section. :( -->
 
 r[items.impl.trait.implemented-trait]
-该 trait 称为_被实现 trait_。实现类型实现该被实现 trait。
+该 trait 称为*被实现 trait*。实现类型实现该被实现 trait。
 
 r[items.impl.trait.def-requirement]
 trait 实现必须定义由被实现 trait 声明的所有非默认关联项，可以重新定义由被实现 trait 定义的默认关联项，并且不能定义任何其他项。
@@ -105,7 +105,7 @@ r[items.impl.trait.associated-item-path]
 到关联项的路径是 `<`，后跟到实现类型的路径，再跟 `as`，再跟到 trait 的路径，再跟作为路径组件的 `>`，最后跟关联项的路径组件。
 
 r[items.impl.trait.safety]
-[Unsafe traits](traits.md#unsafe-traits) 要求 trait 实现以 `unsafe` 关键字开头。
+[unsafe trait](traits.md#r-items.traits.safety) 要求 trait 实现以 `unsafe` 关键字开头。
 
 ```rust
 # #[derive(Copy, Clone)]
@@ -146,13 +146,13 @@ r[items.impl.trait.coherence.intro]
 如果孤儿规则检查失败，或者存在重叠的实现实例，则认为 trait 实现是不一致的。
 
 r[items.impl.trait.coherence.overlapping]
-当两个 trait 实现所针对的 trait 存在非空交集，并且这些实现可以用同一类型实例化时，这两个 trait 实现重叠。 <!-- This is probably wrong? Source: No two implementations can be instantiable with the same set of types for the input type parameters. -->
+当两个 trait 实现所针对的 trait 存在非空交集，并且这些实现可以用同一类型实例化时，这两个 trait 实现重叠。 <!-- 这可能是错的？来源：对于输入类型参数的同一组类型，不能实例化两个实现。 -->
 
 r[items.impl.trait.orphan-rule]
 #### 孤儿规则
 
 r[items.impl.trait.orphan-rule.intro]
-_孤儿规则_规定，只有当 trait 或实现中的至少一个类型在当前 crate 中定义时，才允许 trait 实现。它可以防止不同 crate 之间发生冲突的 trait 实现，是确保一致性的关键。
+*孤儿规则*规定，只有当 trait 或实现中的至少一个类型在当前 crate 中定义时，才允许 trait 实现。它可以防止不同 crate 之间发生冲突的 trait 实现，是确保一致性的关键。
 
 孤儿实现是指为外部类型实现外部 trait 的实现。如果自由允许这些实现，两个 crate 就可以用不兼容的方式为同一类型实现同一 trait，从而造成这样一种情况：添加或更新依赖可能因实现冲突而破坏编译。
 
@@ -167,7 +167,7 @@ r[items.impl.trait.orphan-rule.def]
   - 不得有[未覆盖类型](../glossary.md#uncovered-type)参数 `P1..=Pn` 出现在 `T0..Ti` 中（不包括 `Ti`）
 
 r[items.impl.trait.uncovered-param]
-只限制_未覆盖_类型参数的出现。
+只限制 *未覆盖* 类型参数的出现。
 
 r[items.impl.trait.fundamental]
 注意，出于一致性的目的，[基本类型](../glossary.md#fundamental-type-constructors)是特殊的。`Box<T>` 中的 `T` 不被视为已覆盖，而 `Box<LocalType>` 被视为本地的。
@@ -189,7 +189,7 @@ impl Seq<bool> for u32 {
 ```
 
 r[items.impl.generics.use]
-如果参数至少在以下任一位置出现一次，则泛型参数_约束_一个实现：
+如果参数至少在以下任一位置出现一次，则泛型参数 *约束* 一个实现：
 
 * 被实现的 trait（如果有）
 * 实现类型
@@ -216,20 +216,20 @@ impl<T> Trait for GenericStruct<T> { /* ... */ }
 // 同样，N 通过作为 ConstGenericStruct 的实参来形成约束
 impl<const N: usize> Trait for ConstGenericStruct<N> { /* ... */ }
 
-// T constrains by being in an associated type in a bound for type `U` which is
-// itself a generic parameter constraining the trait.
+// T 通过位于类型 `U` 的约束中的关联类型内来形成约束，而 `U`
+// 本身是约束该 trait 的泛型参数。
 impl<T, U> GenericTrait<U> for u32 where U: HasAssocType<Ty = T> { /* ... */ }
 
-// Like previous, except the type is `(U, isize)`. `U` appears inside the type
-// that includes `T`, and is not the type itself.
+// 与前例类似，但该类型是 `(U, isize)`。`U` 出现在包含 `T` 的类型内部，
+// 而不是该类型本身。
 impl<T, U> GenericStruct<U> where (U, isize): HasAssocType<Ty = T> { /* ... */ }
 ```
 
 非约束情况示例：
 
 ```rust,compile_fail
-// The rest of these are errors, since they have type or const parameters that
-// do not constrain.
+// 其余这些都是错误，因为它们有未形成约束的类型参数或
+// const 参数。
 
 // T 不形成约束，因为它完全没有出现。
 impl<T> Struct { /* ... */ }

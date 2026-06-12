@@ -17,10 +17,10 @@ AttrInput ->
 ```
 
 r[attributes.intro]
-一个 _属性_ 是一种通用的、自由形式的元数据，会根据名称、约定、语言和编译器版本来解释。属性借鉴了 [ECMA-335](https://www.ecma-international.org/publications-and-standards/standards/ecma-335/) 中的 Attributes，其语法来自 [ECMA-334](https://www.ecma-international.org/publications-and-standards/standards/ecma-334/) (C#)。
+*属性*是一种通用的、自由形式的元数据，会根据名称、约定、语言和编译器版本来解释。属性借鉴了 [ECMA-335](https://www.ecma-international.org/publications-and-standards/standards/ecma-335/) 中的 Attributes，其语法来自 [ECMA-334](https://www.ecma-international.org/publications-and-standards/standards/ecma-334/) (C#)。
 
 r[attributes.inner]
-_内部属性_ 写作在井号 (`#`) 之后带一个感叹号 (`!`)，应用于声明该属性所在的形式。
+*内部属性*写作在井号 (`#`) 之后带一个感叹号 (`!`)，应用于声明该属性所在的形式。
 
 > [!EXAMPLE]
 > ```rust
@@ -38,7 +38,7 @@ _内部属性_ 写作在井号 (`#`) 之后带一个感叹号 (`!`)，应用于�
 > ```
 
 r[attributes.outer]
-_外部属性_ 写作时不在井号之后带感叹号，应用于该属性后面的形式。
+*外部属性*写作时不在井号之后带感叹号，应用于该属性后面的形式。
 
 > [!EXAMPLE]
 > ```rust
@@ -60,25 +60,25 @@ _外部属性_ 写作时不在井号之后带感叹号，应用于该属性后�
 > ```
 
 r[attributes.input]
-属性由指向该属性的路径组成，后面可以跟一个可选的带定界符的 token 树，其解释由该属性定义。除宏属性以外的属性还允许输入为等号 (`=`) 后跟一个表达式。更多细节见下方的[元项语法](#meta-item-attribute-syntax)。
+属性由指向该属性的路径组成，后面可以跟一个可选的带定界符的 token 树，其解释由该属性定义。除宏属性以外的属性还允许输入为等号 (`=`) 后跟一个表达式。更多细节见下方的[元项语法](#r-attributes.meta)。
 
 r[attributes.safety]
 属性在应用时可能是不安全的。为避免在使用这些属性时产生未定义行为，必须满足某些编译器无法检查的义务。为断言这些义务已经满足，需要将属性包裹在 `unsafe(..)` 中，例如 `#[unsafe(no_mangle)]`。
 
 以下属性是不安全的：
 
-* [`export_name`](abi.md#the-export_name-attribute)
-* [`link_section`](abi.md#the-link_section-attribute)
-* [`naked`](attributes/codegen.md#the-naked-attribute)
-* [`no_mangle`](abi.md#the-no_mangle-attribute)
+* [`export_name`]
+* [`link_section`]
+* [`naked`]
+* [`no_mangle`]
 
 r[attributes.kind]
 属性可以分为以下几类：
 
-* [内置属性](#built-in-attributes-index)
+* [内置属性](#r-attributes.builtin)
 * [过程宏属性](procedural-macros.md#the-proc_macro_attribute-attribute)
 * [派生宏辅助属性](procedural-macros.md#derive-macro-helper-attributes)
-* [工具属性](#tool-attributes)
+* [工具属性](#r-attributes.tool)
 
 r[attributes.allowed-position]
 属性可以应用于语言中的许多形式：
@@ -91,13 +91,13 @@ r[attributes.allowed-position]
 * [泛型生命周期或类型形参](items/generics.md)接受外部属性。
 * 表达式在有限情形下接受外部属性，详情见[表达式属性](expressions.md#expression-attributes)。
 * [函数](items/functions.md)、[闭包](expressions/closure-expr.md)和[函数指针](types/function-pointer.md)形参接受外部属性。这包括函数指针和[外部块](items/external-blocks.html#variadic-functions)中用 `...` 表示的变参形参上的属性。
-* [内联汇编](inline-assembly.md)模板字符串和操作数接受外部属性。语义上只接受某些属性；详情见 [asm.attributes.supported-attributes](inline-assembly.md#r-asm.attributes.supported-attributes)。
+* [内联汇编](inline-assembly.md)模板字符串和操作数接受外部属性。语义上只接受某些属性；详情见 [asm.attributes.supported-attributes]。
 
 r[attributes.meta]
 ## 元项属性语法
 
 r[attributes.meta.intro]
-“元项”是大多数[内置属性](#built-in-attributes-index)用于 [Attr](attributes.md#grammar-Attr) 规则的语法。其语法如下：
+“元项”是大多数[内置属性](#r-attributes.builtin)用于 [Attr] 规则的语法。其语法如下：
 
 r[attributes.meta.syntax]
 ```grammar,attributes
@@ -162,19 +162,19 @@ MetaNameValueStr ->
 
 元项的一些示例如下：
 
- 样式 | 示例
+样式 | 示例
 ------|--------
- [MetaWord] | `no_std`
- [MetaNameValueStr](attributes.md#grammar-MetaNameValueStr) | `doc = "example"`
- [MetaListPaths](attributes.md#grammar-MetaListPaths) | `allow(unused, clippy::inline_always)`
- [MetaListIdents](attributes.md#grammar-MetaListIdents) | `macro_use(foo, bar)`
- [MetaListNameValueStr](attributes.md#grammar-MetaListNameValueStr) | `link(name = "CoreFoundation", kind = "framework")`
+[MetaWord] | `no_std`
+[MetaNameValueStr] | `doc = "example"`
+[MetaListPaths] | `allow(unused, clippy::inline_always)`
+[MetaListIdents] | `macro_use(foo, bar)`
+[MetaListNameValueStr] | `link(name = "CoreFoundation", kind = "framework")`
 
 r[attributes.activity]
 ## 活跃属性和惰性属性
 
 r[attributes.activity.intro]
-属性要么是活跃的，要么是惰性的。在属性处理过程中，_活跃属性_ 会从其所在的形式上移除自身，而 _惰性属性_ 会保留下来。
+属性要么是活跃的，要么是惰性的。在属性处理过程中，*活跃属性*会从其所在的形式上移除自身，而 *惰性属性*会保留下来。
 
 [`cfg`](conditional-compilation.md#the-cfg-attribute) 和 [`cfg_attr`](conditional-compilation.md#the-cfg_attr-attribute) 属性是活跃的。[属性宏](procedural-macros.md#the-proc_macro_attribute-attribute)是活跃的。所有其他属性都是惰性的。
 
@@ -226,7 +226,7 @@ r[attributes.builtin]
   - [`macro_export`](macros-by-example.md#the-macro_export-attribute) --- 导出 `macro_rules` 宏，以供跨 crate 使用。
   - [`macro_use`](macros-by-example.md#the-macro_use-attribute) --- 扩展宏可见性，或从其他 crate 导入宏。
   - [`proc_macro`](procedural-macros.md#the-proc_macro-attribute) --- 定义类函数宏。
-  - [`proc_macro_derive`](procedural-macros.md#r-macro.proc.derive) --- 定义派生宏。
+  - [`proc_macro_derive`](macro.proc.derive) --- 定义派生宏。
   - [`proc_macro_attribute`](procedural-macros.md#the-proc_macro_attribute-attribute) --- 定义属性宏。
 
 - 诊断
@@ -285,7 +285,7 @@ r[attributes.builtin]
   - [`non_exhaustive`](attributes/type_system.md#the-non_exhaustive-attribute) --- 指示未来会为类型添加更多字段/变体。
 
 - 调试器
-  - [`debugger_visualizer`](attributes/debugger.md#the-debugger_visualizer-attribute) --- 嵌入一个指定类型调试器输出的文件。
+  - [`debugger_visualizer`](attributes/debugger.md#the-debugger_visualizer-attribute) --- 嵌入一个指定某个类型的调试器输出的文件。
   - [`collapse_debuginfo`](attributes/debugger.md#the-collapse_debuginfo-attribute) --- 控制宏调用如何编码到 debuginfo 中。
 
 [Doc comments]: comments.md#doc-comments

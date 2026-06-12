@@ -42,7 +42,7 @@ MacroTranscriber -> DelimTokenTree
 r[macro.decl.intro]
 `macro_rules` 允许用户以声明式方式定义语法扩展。我们称这类扩展为“示例宏”或简称“宏”。
 
-每个示例宏都有一个名称，以及一条或多条<em>规则</em>。每条规则有两部分：<em>匹配器</em>，描述它所匹配的语法；以及<em>转录器</em>，描述将替换成功匹配的调用的语法。匹配器和转录器都必须由定界符包围。宏可以展开为表达式、语句、项（包括 trait、impl 和外部项）、类型或模式。
+每个示例宏都有一个名称，以及一条或多条*规则*。每条规则有两部分：*匹配器*，描述它所匹配的语法；以及*转录器*，描述将替换成功匹配的调用的语法。匹配器和转录器都必须由定界符包围。宏可以展开为表达式、语句、项（包括 trait、impl 和外部项）、类型或模式。
 
 r[macro.decl.transcription]
 ## 转录
@@ -58,7 +58,7 @@ macro_rules! ambiguity {
     ($($i:ident)* $j:ident) => { };
 }
 
-ambiguity!(error); // Error: local ambiguity
+ambiguity!(error); // Error: 局部歧义
 ```
 
 r[macro.decl.transcription.syntax]
@@ -67,12 +67,12 @@ r[macro.decl.transcription.syntax]
 r[macro.decl.transcription.fragment]
 ### 转发已匹配的片段
 
-将已匹配的片段转发给另一个示例宏时，第二个宏中的匹配器会看到该片段类型的不透明 AST。第二个宏不能用字面 token 来匹配匹配器中的这些片段，只能使用相同类型的片段说明符。`ident`、`lifetime` 和 `tt` 片段类型是例外，<em>可以</em>由字面 token 匹配。下面展示了这一限制：
+将已匹配的片段转发给另一个示例宏时，第二个宏中的匹配器会看到该片段类型的不透明 AST。第二个宏不能用字面 token 来匹配匹配器中的这些片段，只能使用相同类型的片段说明符。`ident`、`lifetime` 和 `tt` 片段类型是例外，*可以*由字面 token 匹配。下面展示了这一限制：
 
 ```rust,compile_fail
 macro_rules! foo {
     ($l:expr) => { bar!($l); }
-// ERROR:               ^^ no rules expected this token in macro call
+// ERROR:               ^^ 宏调用中没有规则预期此记号
 }
 
 macro_rules! bar {
@@ -85,7 +85,7 @@ foo!(3);
 下面展示了在匹配 `tt` 片段之后，token 如何可以被直接匹配：
 
 ```rust
-// compiles OK
+// 编译通过
 macro_rules! foo {
     ($l:tt) => { bar!($l); }
 }
@@ -101,44 +101,44 @@ r[macro.decl.meta]
 ## 元变量
 
 r[macro.decl.meta.intro]
-在匹配器中，`$`<em>name</em>`:`<em>fragment-specifier</em> 会匹配指定种类的 Rust 语法片段，并将其绑定到元变量 `$`<em>name</em>。
+在匹配器中，`$` _name_ `:` _fragment-specifier_ 会匹配指定种类的 Rust 语法片段，并将其绑定到元变量 `$`_name_。
 
 r[macro.decl.meta.specifier]
 有效的片段说明符包括：
 
-  * `block`：一个 [BlockExpressionNoInnerAttributes](expressions/block-expr.md#grammar-BlockExpressionNoInnerAttributes)
-  * `expr`：一个 [Expression](expressions.md#grammar-Expression)
-  * `expr_2021`：一个 [Expression](expressions.md#grammar-Expression)，但不包括 [UnderscoreExpression](expressions/underscore-expr.md#grammar-UnderscoreExpression) 和 [ConstBlockExpression](expressions/block-expr.md#grammar-ConstBlockExpression)（见 [macro.decl.meta.edition2024](macros-by-example.md#r-macro.decl.meta.edition2024)）
-  * `ident`：一个 [IDENTIFIER_OR_KEYWORD](identifiers.md#grammar-IDENTIFIER_OR_KEYWORD)，但不包括 `_`、[RAW_IDENTIFIER](identifiers.md#grammar-RAW_IDENTIFIER) 或 [`$crate`](macros-by-example.md#r-macro.decl.hygiene.crate)
-  * `item`：一个 [Item](items.md#grammar-Item)
-  * `lifetime`：一个 [LIFETIME_TOKEN](tokens.md#grammar-LIFETIME_TOKEN)
-  * `literal`：匹配 `-`<sup>?</sup>[LiteralExpression](expressions/literal-expr.md#grammar-LiteralExpression)
-  * `meta`：一个 [Attr](attributes.md#grammar-Attr)，即属性的内容
-  * `pat`：一个 [Pattern](patterns.md#grammar-Pattern)（见 [macro.decl.meta.edition2021](macros-by-example.md#r-macro.decl.meta.edition2021)）
-  * `pat_param`：一个 [PatternNoTopAlt](patterns.md#grammar-PatternNoTopAlt)
-  * `path`：一个 [TypePath](paths.md#grammar-TypePath)
-  * `stmt`：一个不带尾随分号的 [Statement](statements.md#grammar-Statement)（需要分号的项语句除外）
-  * `tt`: a [TokenTree]&nbsp;(a single [token] or tokens in matching delimiters `()`, `[]`, or `{}`)
-  * `ty`：一个 [Type](types.md#grammar-Type)
-  * `vis`：一个可能为空的 [Visibility](visibility-and-privacy.md#grammar-Visibility) 限定符
+  * `block`：一个 [BlockExpressionNoInnerAttributes]
+  * `expr`：一个 [Expression]
+  * `expr_2021`：一个 [Expression]，但不包括 [UnderscoreExpression] 和 [ConstBlockExpression]（见 [macro.decl.meta.edition2024]）
+  * `ident`：一个 [IDENTIFIER_OR_KEYWORD]，但不包括 `_`、[RAW_IDENTIFIER] 或 [`$crate`](macro.decl.hygiene.crate)
+  * `item`：一个 [Item]
+  * `lifetime`：一个 [LIFETIME_TOKEN]
+  * `literal`：匹配 `-`<sup>?</sup>[LiteralExpression]
+  * `meta`：一个 [Attr]，即属性的内容
+  * `pat`：一个 [Pattern]（见 [macro.decl.meta.edition2021]）
+  * `pat_param`：一个 [PatternNoTopAlt]
+  * `path`：一个 [TypePath]
+  * `stmt`：一个不带尾随分号的 [Statement][grammar-Statement]（需要分号的项语句除外）
+  * `tt`：一个 [TokenTree]（单个 [token](tokens.md)，或匹配定界符 `()`、`[]` 或 `{}` 中的 token）
+  * `ty`：一个 [Type][grammar-Type]
+  * `vis`：一个可能为空的 [Visibility] 限定符
 
 r[macro.decl.meta.transcription]
-在转录器中，元变量只需用 `$`<em>name</em> 引用，因为片段种类已在匹配器中指定。元变量会被替换为与之匹配的语法元素。元变量可以被转录多次，也可以完全不被转录。
+在转录器中，元变量只需用 `$`_name_ 引用，因为片段种类已在匹配器中指定。元变量会被替换为与之匹配的语法元素。元变量可以被转录多次，也可以完全不被转录。
 
 r[macro.decl.meta.dollar-crate]
-关键字元变量 [`$crate`](macros-by-example.md#r-macro.decl.hygiene.crate) 可用于指代当前 crate。
+关键字元变量 [`$crate`](macro.decl.hygiene.crate) 可用于指代当前 crate。
 
 r[macro.decl.meta.edition2021]
 > [!EDITION-2021]
-> 从 2021 edition 开始，`pat` 片段说明符会匹配顶层 or-pattern（也就是说，它们接受 [Pattern](patterns.md#grammar-Pattern)）。
+> 从 2021 edition 开始，`pat` 片段说明符会匹配顶层 or-pattern（也就是说，它们接受 [Pattern]）。
 >
-> 在 2021 edition 之前，它们匹配的片段与 `pat_param` 完全相同（也就是说，它们接受 [PatternNoTopAlt](patterns.md#grammar-PatternNoTopAlt)）。
+> 在 2021 edition 之前，它们匹配的片段与 `pat_param` 完全相同（也就是说，它们接受 [PatternNoTopAlt]）。
 >
 > 相关 edition 是 `macro_rules!` 定义所处的 edition。
 
 r[macro.decl.meta.edition2024]
 > [!EDITION-2024]
-> 在 2024 edition 之前，`expr` 片段说明符在顶层不匹配 [UnderscoreExpression](expressions/underscore-expr.md#grammar-UnderscoreExpression) 或 [ConstBlockExpression](expressions/block-expr.md#grammar-ConstBlockExpression)。它们允许出现在子表达式内部。
+> 在 2024 edition 之前，`expr` 片段说明符在顶层不匹配 [UnderscoreExpression] 或 [ConstBlockExpression]。它们允许出现在子表达式内部。
 >
 > `expr_2021` 片段说明符的存在是为了维持与 2024 之前 edition 的向后兼容性。
 
@@ -180,14 +180,14 @@ r[macro.decl.scope.unqualified]
 
 <!-- ignore: requires external crates -->
 ```rust,ignore
-use lazy_static::lazy_static; // Path-based import.
+use lazy_static::lazy_static; // 基于路径的导入。
 
-macro_rules! lazy_static { // Textual definition.
+macro_rules! lazy_static { // 文本定义。
     (lazy) => {};
 }
 
-lazy_static!{lazy} // Textual lookup finds our macro first.
-self::lazy_static!{} // Path-based lookup ignores our macro, finds imported one.
+lazy_static!{lazy} // 文本查找首先找到我们的宏。
+self::lazy_static!{} // 基于路径的查找会忽略我们的宏，找到导入的宏。
 ```
 
 r[macro.decl.scope.textual]
@@ -200,21 +200,21 @@ r[macro.decl.scope.textual.intro]
 ```rust,ignore
 //// src/lib.rs
 mod has_macro {
-    // m!{} // Error: m is not in scope.
+    // m!{} // 错误：m 不在作用域内。
 
     macro_rules! m {
         () => {};
     }
-    m!{} // OK: appears after declaration of m.
+    m!{} // OK：出现在 m 的声明之后。
 
     mod uses_macro;
 }
 
-// m!{} // Error: m is not in scope.
+// m!{} // 错误：m 不在作用域内。
 
 //// src/has_macro/uses_macro.rs
 
-m!{} // OK: appears after declaration of m in src/lib.rs
+m!{} // OK：出现在 src/lib.rs 中 m 的声明之后
 ```
 
 r[macro.decl.scope.textual.shadow]
@@ -233,7 +233,7 @@ mod inner {
     macro_rules! m {
         (2) => {};
     }
-    // m!(1); // Error: no rule matches '1'
+    // m!(1); // 错误：没有规则匹配 '1'
     m!(2);
 
     macro_rules! m {
@@ -249,14 +249,14 @@ m!(1);
 
 ```rust
 fn foo() {
-    // m!(); // Error: m is not in scope.
+    // m!(); // 错误：m 不在作用域内。
     macro_rules! m {
         () => {};
     }
     m!();
 }
 
-// m!(); // Error: m is not in scope.
+// m!(); // 错误：m 不在作用域内。
 ```
 
 r[macro.decl.scope.textual.shadow.path-based]
@@ -269,28 +269,28 @@ macro_rules! m2 {
     };
 }
 
-// Resolves to path-based candidate from use declaration below.
-m!(); // prints "m2\n"
+// 解析为来自下方 use 声明的基于路径的候选项。
+m!(); // 打印 "m2\n"
 
-// Introduce second candidate for `m` with textual scope.
+// 引入具有文本作用域的 `m` 的第二个候选项。
 //
-// This shadows path-based candidate from below for the rest of this
-// example.
+// 这会在本示例余下部分中遮蔽来自下方的
+// 基于路径的候选项。
 macro_rules! m {
     () => {
         println!("m");
     };
 }
 
-// Introduce `m2` macro as path-based candidate.
+// 引入 `m2` 宏作为基于路径的候选项。
 //
-// This item is in scope for this entire example, not just below the
-// use declaration.
+// 此项在整个示例中都在作用域内，不仅仅是在
+// use 声明下方。
 use m2 as m;
 
-// Resolves to the textual macro candidate from above the use
-// declaration.
-m!(); // prints "m\n"
+// 解析为来自 use 声明
+// 上方的文本宏候选项。
+m!(); // 打印 "m\n"
 ```
 
 > [!NOTE]
@@ -303,21 +303,21 @@ r[macro.decl.scope.path-based.intro]
 默认情况下，宏没有基于路径的作用域。宏可以通过两种方式获得基于路径的作用域：
 
 - [use 声明重导出](items/use-declarations.md#use-visibility)
-- [`macro_export`](#the-macro_export-attribute)
+- [`macro_export`]
 
 r[macro.decl.scope.path.reexport]
 宏可以被重导出，从而让它们从 crate 根以外的模块获得基于路径的作用域。
 
 ```rust
-mac::m!(); // OK: Path-based lookup finds `m` in the mac module.
+mac::m!(); // OK：基于路径的查找会在 mac 模块中找到 `m`。
 
 mod mac {
-    // Introduce macro `m` with textual scope.
+    // 引入具有文本作用域的宏 `m`。
     macro_rules! m {
         () => {};
     }
 
-    // Reexport with path-based scope from within `m`'s textual scope.
+    // 从 `m` 的文本作用域内以基于路径的作用域重新导出。
     pub(crate) use m;
 }
 ```
@@ -326,38 +326,38 @@ r[macro.decl.scope.path-based.visibility]
 宏具有隐式的 `pub(crate)` 可见性。`#[macro_export]` 会将隐式可见性改为 `pub`。
 
 ```rust
-// Implicit visibility is `pub(crate)`.
+// 隐式可见性为 `pub(crate)`。
 macro_rules! private_m {
     () => {};
 }
 
-// Implicit visibility is `pub`.
+// 隐式可见性为 `pub`。
 #[macro_export]
 macro_rules! pub_m {
     () => {};
 }
 
-pub(crate) use private_m as private_macro; // OK.
-pub use pub_m as pub_macro; // OK.
+pub(crate) use private_m as private_macro; // 正确。
+pub use pub_m as pub_macro; // 正确。
 ```
 
 ```rust,compile_fail,E0364
-# // Implicit visibility is `pub(crate)`.
+# // 隐式可见性为 `pub(crate)`。
 # macro_rules! private_m {
 #     () => {};
 # }
 #
-# // Implicit visibility is `pub`.
+# // 隐式可见性为 `pub`。
 # #[macro_export]
 # macro_rules! pub_m {
 #     () => {};
 # }
 #
-# pub(crate) use private_m as private_macro; // OK.
-# pub use pub_m as pub_macro; // OK.
+# pub(crate) use private_m as private_macro; // 正确。
+# pub use pub_m as pub_macro; // 正确。
 #
-pub use private_m; // ERROR: `private_m` is only public within
-                   // the crate and cannot be re-exported outside.
+pub use private_m; // 错误：`private_m` 仅在
+                   // crate 内是公开的，不能重新导出到外部。
 ```
 
 <!-- template:attributes -->
@@ -365,7 +365,7 @@ r[macro.decl.scope.macro_use]
 ### `macro_use` 属性
 
 r[macro.decl.scope.macro_use.intro]
-<em>`macro_use` [属性](attributes.md#r-attributes)</em>有两个用途：它可以用在模块上，以扩展其中定义的宏的作用域；也可以用在 [`extern crate`](items/extern-crates.md#r-items.extern-crate) 上，以将另一个 crate 中的宏导入 [`macro_use` prelude](names/preludes.md#macro_use-prelude)。
+*`macro_use` [属性][attributes]* 有两个用途：它可以用在模块上，以扩展其中定义的宏的作用域；也可以用在 [`extern crate`][items.extern-crate] 上，以将另一个 crate 中的宏导入 [`macro_use` prelude](names/preludes.md#macro_use-prelude)。
 
 > [!EXAMPLE]
 > ```rust
@@ -384,9 +384,9 @@ r[macro.decl.scope.macro_use.intro]
 > ```
 
 r[macro.decl.scope.macro_use.syntax]
-用在模块上时，`macro_use` 属性使用 [MetaWord](attributes.md#grammar-MetaWord) 语法。
+用在模块上时，`macro_use` 属性使用 [MetaWord] 语法。
 
-用在 `extern crate` 上时，它使用 [MetaWord](attributes.md#grammar-MetaWord) 和 [MetaListIdents](attributes.md#grammar-MetaListIdents) 语法。关于这些语法可如何使用的更多信息，见 [macro.decl.scope.macro_use.prelude](macros-by-example.md#r-macro.decl.scope.macro_use.prelude)。
+用在 `extern crate` 上时，它使用 [MetaWord] 和 [MetaListIdents] 语法。关于这些语法可如何使用的更多信息，见 [macro.decl.scope.macro_use.prelude]。
 
 r[macro.decl.scope.macro_use.allowed-positions]
 `macro_use` 属性可以应用于模块或 `extern crate`。
@@ -395,17 +395,17 @@ r[macro.decl.scope.macro_use.allowed-positions]
 > `rustc` 会忽略在其他位置的使用，但会对此发出 lint。将来这可能会变成错误。
 
 r[macro.decl.scope.macro_use.extern-crate-self]
-`macro_use` 属性不能用于 [`extern crate self`](items/extern-crates.md#r-items.extern-crate.self)。
+`macro_use` 属性不能用于 [`extern crate self`](items.extern-crate.self)。
 
 r[macro.decl.scope.macro_use.duplicates]
-`macro_use` 属性可以在一个形式上使用任意多次。
+`macro_use` 属性可以在一种形式上使用任意多次。
 
-可以指定多个使用 [MetaListIdents](attributes.md#grammar-MetaListIdents) 语法的 `macro_use` 实例。所有指定宏的并集将被导入。
+可以指定多个使用 [MetaListIdents] 语法的 `macro_use` 实例。所有指定宏的并集将被导入。
 
 > [!NOTE]
-> 在模块上，`rustc` 会对第一个之后的任何 [MetaWord](attributes.md#grammar-MetaWord) `macro_use` 属性发出 lint。
+> 在模块上，`rustc` 会对第一个之后的任何 [MetaWord] `macro_use` 属性发出 lint。
 >
-> 在 `extern crate` 上，`rustc` 会对任何无效果的 `macro_use` 属性发出 lint；这些属性之所以无效果，是因为它们没有导入任何尚未由另一个 `macro_use` 属性导入的宏。如果两个或更多 [MetaListIdents](attributes.md#grammar-MetaListIdents) `macro_use` 属性导入同一个宏，则会对第一个发出 lint。如果存在任何 [MetaWord](attributes.md#grammar-MetaWord) `macro_use` 属性，则会对所有 [MetaListIdents](attributes.md#grammar-MetaListIdents) `macro_use` 属性发出 lint。如果存在两个或更多 [MetaWord](attributes.md#grammar-MetaWord) `macro_use` 属性，则会对第一个之后的那些发出 lint。
+> 在 `extern crate` 上，`rustc` 会对任何无效果的 `macro_use` 属性发出 lint；这些属性之所以无效果，是因为它们没有导入任何尚未由另一个 `macro_use` 属性导入的宏。如果两个或更多 [MetaListIdents] `macro_use` 属性导入同一个宏，则会对第一个发出 lint。如果存在任何 [MetaWord] `macro_use` 属性，则会对所有 [MetaListIdents] `macro_use` 属性发出 lint。如果存在两个或更多 [MetaWord] `macro_use` 属性，则会对第一个之后的那些发出 lint。
 
 r[macro.decl.scope.macro_use.mod-decl]
 当 `macro_use` 用在模块上时，该模块的宏作用域会延伸到模块的词法作用域之外。
@@ -418,7 +418,7 @@ r[macro.decl.scope.macro_use.mod-decl]
 >         () => {};
 >     }
 > }
-> m!(); // OK
+> m!(); // 可以
 > ```
 
 r[macro.decl.scope.macro_use.prelude]
@@ -431,33 +431,33 @@ r[macro.decl.scope.macro_use.prelude]
 >
 > 详情见 [Rust issue #148025](https://github.com/rust-lang/rust/issues/148025)。
 
-使用 [MetaWord](attributes.md#grammar-MetaWord) 语法时，会导入所有已导出的宏。使用 [MetaListIdents](attributes.md#grammar-MetaListIdents) 语法时，只会导入指定的宏。
+使用 [MetaWord] 语法时，会导入所有已导出的宏。使用 [MetaListIdents] 语法时，只会导入指定的宏。
 
 > [!EXAMPLE]
 > <!-- ignore: requires external crates -->
 > ```rust,ignore
-> #[macro_use(lazy_static)] // Or `#[macro_use]` to import all macros.
+> #[macro_use(lazy_static)] // 或使用 `#[macro_use]` 导入所有宏。
 > extern crate lazy_static;
 >
 > lazy_static!{}
-> // self::lazy_static!{} // ERROR: lazy_static is not defined in `self`.
+> // self::lazy_static!{} // 错误：lazy_static 未在 `self` 中定义。
 > ```
 
 r[macro.decl.scope.macro_use.export]
-要用 `macro_use` 导入的宏必须用 [`macro_export`](macros-by-example.md#r-macro.decl.scope.macro_export) 导出。
+要用 `macro_use` 导入的宏必须用 [`macro_export`][macro.decl.scope.macro_export] 导出。
 
 <!-- template:attributes -->
 r[macro.decl.scope.macro_export]
 ### `macro_export` 属性
 
 r[macro.decl.scope.macro_export.intro]
-<em>`macro_export` [属性](attributes.md#r-attributes)</em>会从 crate 中导出宏，并使其可在 crate 根中用于基于路径的解析。
+*`macro_export` [属性][attributes]* 会从 crate 中导出宏，并使其可在 crate 根中用于基于路径的解析。
 
 > [!EXAMPLE]
 > ```rust
 > self::m!();
-> //  ^^^^ OK: Path-based lookup finds `m` in the current module.
-> m!(); // As above.
+> //  ^^^^ OK：基于路径的查找会在当前模块中找到 `m`。
+> m!(); // 同上。
 >
 > mod inner {
 >     super::m!();
@@ -473,7 +473,7 @@ r[macro.decl.scope.macro_export.intro]
 > ```
 
 r[macro.decl.scope.macro_export.syntax]
-`macro_export` 属性使用 [MetaWord](attributes.md#grammar-MetaWord) 和 [MetaListIdents](attributes.md#grammar-MetaListIdents) 语法。使用 [MetaListIdents](attributes.md#grammar-MetaListIdents) 语法时，它接受单个 [`local_inner_macros`](macros-by-example.md#r-macro.decl.scope.macro_export.local_inner_macros) 值。
+`macro_export` 属性使用 [MetaWord] 和 [MetaListIdents] 语法。使用 [MetaListIdents] 语法时，它接受单个 [`local_inner_macros`][macro.decl.scope.macro_export.local_inner_macros] 值。
 
 r[macro.decl.scope.macro_export.allowed-positions]
 `macro_export` 属性可以应用于 `macro_rules` 定义。
@@ -488,7 +488,7 @@ r[macro.decl.scope.macro_export.duplicates]
 > `rustc` 会对第一次之后的任何使用发出 lint。
 
 r[macro.decl.scope.macro_export.path-based]
-默认情况下，宏只有[文本作用域](macros-by-example.md#r-macro.decl.scope.textual)，不能通过路径解析。使用 `macro_export` 属性时，宏会在 crate 根中可用，并且可以通过它的路径引用。
+默认情况下，宏只有[文本作用域][macro.decl.scope.textual]，不能通过路径解析。使用 `macro_export` 属性时，宏会在 crate 根中可用，并且可以通过它的路径引用。
 
 > [!EXAMPLE]
 > 没有 `macro_export` 时，宏只有文本作用域，因此该宏的基于路径的解析会失败。
@@ -497,8 +497,8 @@ r[macro.decl.scope.macro_export.path-based]
 > macro_rules! m {
 >     () => {};
 > }
-> self::m!(); // ERROR
-> crate::m!(); // ERROR
+> self::m!(); // 错误
+> crate::m!(); // 错误
 > # fn main() {}
 > ```
 >
@@ -509,8 +509,8 @@ r[macro.decl.scope.macro_export.path-based]
 > macro_rules! m {
 >     () => {};
 > }
-> self::m!(); // OK
-> crate::m!(); // OK
+> self::m!(); // 可以
+> crate::m!(); // 可以
 > # fn main() {}
 > ```
 
@@ -537,7 +537,7 @@ r[macro.decl.scope.macro_export.export]
 > ```
 
 r[macro.decl.scope.macro_export.macro_use]
-`macro_export` 允许在 `extern crate` 上使用 [`macro_use`](macros-by-example.md#r-macro.decl.scope.macro_use)，以将该宏导入 [`macro_use` prelude](names/preludes.md#macro_use-prelude)。
+`macro_export` 允许在 `extern crate` 上使用 [`macro_use`][macro.decl.scope.macro_use]，以将该宏导入 [`macro_use` prelude](names/preludes.md#macro_use-prelude)。
 
 > [!EXAMPLE]
 > 给定 `log` crate 中的以下内容：
@@ -558,7 +558,7 @@ r[macro.decl.scope.macro_export.macro_use]
 >
 > pub mod util {
 >     pub fn do_thing() {
->         // Resolved via macro prelude.
+>         // 通过宏 prelude 解析。
 >         warn!("example warning");
 >     }
 > }
@@ -568,13 +568,13 @@ r[macro.decl.scope.macro_export.local_inner_macros]
 向 `macro_export` 属性添加 `local_inner_macros`，会使宏定义中的所有单段宏调用都带有隐式的 `$crate::` 前缀。
 
 > [!NOTE]
-> 这主要是作为一种迁移工具，用于迁移在 [`$crate`](macros-by-example.md#r-macro.decl.hygiene.crate) 加入语言之前编写的代码，使其能够与 Rust 2018 的基于路径的宏导入配合工作。不鼓励在新代码中使用它。
+> 这主要是作为一种迁移工具，用于迁移在 [`$crate`](macro.decl.hygiene.crate) 加入语言之前编写的代码，使其能够与 Rust 2018 的基于路径的宏导入配合工作。不鼓励在新代码中使用它。
 
 > [!EXAMPLE]
 > ```rust
 > #[macro_export(local_inner_macros)]
 > macro_rules! helped {
->     () => { helper!() } // Automatically converted to $crate::helper!().
+>     () => { helper!() } // 自动转换为 $crate::helper!()。
 > }
 >
 > #[macro_export]
@@ -587,7 +587,7 @@ r[macro.decl.hygiene]
 ## 卫生性
 
 r[macro.decl.hygiene.intro]
-示例宏具有<em>混合位置卫生性</em>。这意味着[循环标签](expressions/loop-expr.md#loop-labels)、[块标签](expressions/loop-expr.md#r-expr.loop.block-labels) 和局部变量会在宏定义位置查找，而其他符号会在宏调用位置查找。例如：
+示例宏具有*混合位置卫生性*。这意味着[循环标签](expressions/loop-expr.md#loop-labels)、[块标签](expr.loop.block-labels)和局部变量会在宏定义位置查找，而其他符号会在宏调用位置查找。例如：
 
 ```rust
 let x = 1;
@@ -597,8 +597,8 @@ fn func() {
 
 macro_rules! check {
     () => {
-        assert_eq!(x, 1); // Uses `x` from the definition site.
-        func();           // Uses `func` from the invocation site.
+        assert_eq!(x, 1); // 使用定义位置的 `x`。
+        func();           // 使用调用位置的 `func`。
     };
 }
 
@@ -630,10 +630,10 @@ r[macro.decl.hygiene.crate]
 
 <!-- ignore: requires external crates -->
 ```rust,ignore
-//// Definitions in the `helper_macro` crate.
+//// `helper_macro` crate 中的定义。
 #[macro_export]
 macro_rules! helped {
-    // () => { helper!() } // This might lead to an error due to 'helper' not being in scope.
+    // () => { helper!() } // 这可能因 'helper' 不在作用域内而导致错误。
     () => { $crate::helper!() }
 }
 
@@ -642,8 +642,8 @@ macro_rules! helper {
     () => { () }
 }
 
-//// Usage in another crate.
-// Note that `helper_macro::helper` is not imported!
+//// 在另一个 crate 中的用法。
+// 注意，未导入 `helper_macro::helper`！
 use helper_macro::helped;
 
 fn unit() {
@@ -677,7 +677,7 @@ fn foo() {}
 ```
 
 > [!NOTE]
-> 在 Rust 1.30 之前，`$crate` 和 [`local_inner_macros`](macros-by-example.md#r-macro.decl.scope.macro_export.local_inner_macros) 尚不受支持。它们是与[宏的基于路径的导入](macros-by-example.md#r-macro.decl.scope.macro_export)一同加入的，以确保导出宏的 crate 的用户不需要手动导入辅助宏。为较早 Rust 版本编写且使用辅助宏的 crate，需要修改为使用 `$crate` 或 `local_inner_macros`，才能与基于路径的导入良好配合。
+> 在 Rust 1.30 之前，`$crate` 和 [`local_inner_macros`][macro.decl.scope.macro_export.local_inner_macros] 尚不受支持。它们是与[宏的基于路径的导入][macro.decl.scope.macro_export]一同加入的，以确保导出宏的 crate 的用户不需要手动导入辅助宏。为较早 Rust 版本编写且使用辅助宏的 crate，需要修改为使用 `$crate` 或 `local_inner_macros`，才能与基于路径的导入良好配合。
 
 r[macro.decl.follow-set]
 ## Follow 集歧义限制

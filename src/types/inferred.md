@@ -19,4 +19,8 @@ r[type.inferred.intro]
 r[type.inferred.constraint]
 推断类型不能用于项签名。
 
-<!-- What else should be said here? The only documentation I am aware of is https://rustc-dev-guide.rust-lang.org/type-inference.html There should be a broader discussion of type inference somewhere. -->
+<!--
+  What else should be said here?
+  The only documentation I am aware of is https://rustc-dev-guide.rust-lang.org/type-inference.html
+  There should be a broader discussion of type inference somewhere.
+-->

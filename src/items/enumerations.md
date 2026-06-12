@@ -20,7 +20,7 @@ EnumVariantDiscriminant -> `=` Expression
 ```
 
 r[items.enum.intro]
-<em>枚举</em>（也称为 <em>enum</em>）是对一种名义[枚举类型](../types/enum.md)以及一组<em>构造器</em>的同时定义，这些构造器可用于创建或模式匹配相应枚举类型的值。
+*枚举*（也称为 _enum_）是对一种名义[枚举类型](../types/enum.md)以及一组*构造器*的同时定义，这些构造器可用于创建或模式匹配相应枚举类型的值。
 
 r[items.enum.decl]
 枚举使用关键字 `enum` 声明。
@@ -53,10 +53,10 @@ let mut a: Animal = Animal::Dog("Cocoa".to_string(), 37.2);
 a = Animal::Cat { name: "Spotty".to_string(), weight: 2.7 };
 ```
 
-在这个示例中，`Cat` 是<em>类结构体枚举变体</em>，而 `Dog` 只是称为枚举变体。
+在这个示例中，`Cat` 是*类结构体枚举变体*，而 `Dog` 只是称为枚举变体。
 
 r[items.enum.fieldless]
-没有构造器包含字段的枚举称为 _<span id="field-less-enum">无字段枚举</span>_。例如，这是一个无字段枚举：
+没有构造器包含字段的枚举称为 *<span id="field-less-enum">无字段枚举</span>*。例如，这是一个无字段枚举：
 
 ```rust
 enum Fieldless {
@@ -67,7 +67,7 @@ enum Fieldless {
 ```
 
 r[items.enum.unit-only]
-如果无字段枚举只包含单元变体，则该枚举称为 _<span id="unit-only-enum">仅单元枚举</span>_。例如：
+如果无字段枚举只包含单元变体，则该枚举称为 *<span id="unit-only-enum">仅单元枚举</span>*。例如：
 
 ```rust
 enum Enum {
@@ -99,12 +99,12 @@ enum Examples {
     StructLike { value: i32 },
 }
 
-use Examples::*; // Creates aliases to all variants.
-let x = UnitLike; // Path expression of the const item.
-let x = UnitLike {}; // Struct expression.
-let y = TupleLike(123); // Call expression.
-let y = TupleLike { 0: 123 }; // Struct expression using integer field names.
-let z = StructLike { value: 123 }; // Struct expression.
+use Examples::*; // 为所有变体创建别名。
+let x = UnitLike; // const 项的路径表达式。
+let x = UnitLike {}; // 结构体表达式。
+let y = TupleLike(123); // 调用表达式。
+let y = TupleLike { 0: 123 }; // 使用整数字段名的结构体表达式。
+let z = StructLike { value: 123 }; // 结构体表达式。
 ```
 
 <span id="custom-discriminant-values-for-fieldless-enumerations"></span>
@@ -112,7 +112,7 @@ r[items.enum.discriminant]
 ## 判别值
 
 r[items.enum.discriminant.intro]
-每个枚举实例都有一个<em>判别值</em>：它是在逻辑上与该实例关联的整数，用于确定该实例持有哪个变体。
+每个枚举实例都有一个*判别值*：它是在逻辑上与该实例关联的整数，用于确定该实例持有哪个变体。
 
 r[items.enum.discriminant.repr-rust]
 在 [`Rust` 表示](../type-layout.md#the-rust-representation)下，判别值被解释为 `isize` 值。不过，编译器允许在实际内存布局中使用更小的类型（或用另一种方式区分变体）。
@@ -174,7 +174,7 @@ enum SharedDiscriminantError {
 enum SharedDiscriminantError2 {
     Zero,       // 0
     One,        // 1
-    OneToo = 1, // 1 (collision with previous!)
+    OneToo = 1, // 1（与前一个冲突！）
 }
 ```
 
@@ -185,19 +185,19 @@ r[items.enum.discriminant.restrictions.above-max-discriminant]
 #[repr(u8)]
 enum OverflowingDiscriminantError {
     Max = 255,
-    MaxPlusOne, // Would be 256, but that overflows the enum.
+    MaxPlusOne, // 本来会是 256，但这会使该枚举溢出。
 }
 
 #[repr(u8)]
 enum OverflowingDiscriminantError2 {
     MaxMinusOne = 254, // 254
     Max,               // 255
-    MaxPlusOne,        // Would be 256, but that overflows the enum.
+    MaxPlusOne,        // 本来会是 256，但这会使该枚举溢出。
 }
 ```
 
 r[items.enum.discriminant.restrictions.generics]
-显式 enum 判别值初始化式不能使用外围 enum 的泛型参数。
+显式 enum 判别值初始化式不得使用外围 enum 的泛型参数。
 
 ```rust,compile_fail
 #[repr(u32)]
@@ -220,7 +220,7 @@ enum E<'a, T, const N: u32> {
 
 r[items.enum.discriminant.access-opaque]
 
-[`std::mem::discriminant`](../../core/mem/fn.discriminant.html) 返回一个对 enum 值判别值的不透明引用，可用于比较。它不能用于取得判别值的值。
+[`std::mem::discriminant`] 返回一个对 enum 值判别值的不透明引用，可用于比较。它不能用于取得判别值的值。
 
 r[items.enum.discriminant.coercion]
 #### 转换
@@ -303,7 +303,7 @@ r[items.enum.empty]
 ## 零变体枚举
 
 r[items.enum.empty.intro]
-具有零个变体的枚举称为<em>零变体枚举</em>。由于它们没有有效值，因此不能被实例化。
+具有零个变体的枚举称为*零变体枚举*。由于它们没有有效值，因此不能被实例化。
 
 ```rust
 enum ZeroVariants {}
@@ -315,13 +315,13 @@ r[items.enum.empty.uninhabited]
 ```rust,compile_fail
 # enum ZeroVariants {}
 let x: ZeroVariants = panic!();
-let y: u32 = x; // mismatched type error
+let y: u32 = x; // 类型不匹配错误
 ```
 
 r[items.enum.variant-visibility]
 ## 变体可见性
 
-枚举变体在语法上允许 [Visibility](../visibility-and-privacy.md#grammar-Visibility) 标注，但这会在验证 enum 时被拒绝。这使得项在其使用的不同上下文中可以用统一语法解析。
+枚举变体在语法上允许 [Visibility] 标注，但这会在验证 enum 时被拒绝。这使得项在其使用的不同上下文中可以用统一语法解析。
 
 ```rust
 macro_rules! mac_variant {
@@ -336,10 +336,10 @@ macro_rules! mac_variant {
     }
 }
 
-// Empty `vis` is allowed.
+// 允许空的 `vis`。
 mac_variant! { E }
 
-// This is allowed, since it is removed before being validated.
+// 这是允许的，因为它在验证前会被移除。
 #[cfg(false)]
 enum E {
     pub U,

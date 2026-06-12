@@ -11,7 +11,7 @@ AssociatedItem ->
 ```
 
 r[items.associated.intro]
-*Associated Items* are the items declared in [traits] or defined in [implementations]. They are called this because they are defined on an associate type &mdash; the type in the implementation.
+*关联项* 是在 [trait](traits.md) 中声明或在[实现](implementations.md)中定义的项。之所以这样称呼，是因为它们定义在一个所关联的类型上，即该实现中的类型。
 
 r[items.associated.kinds]
 它们是可以在模块中声明的项种类的一个子集。具体来说，有[关联函数](#associated-functions-and-methods)（包括方法）、[关联类型](#associated-types)和[关联常量](#associated-constants)。
@@ -33,10 +33,10 @@ r[items.associated.fn]
 ## 关联函数和方法
 
 r[items.associated.fn.intro]
-<em>关联函数</em>是与某个类型关联的[函数](functions.md)。
+*关联函数* 是与某个类型关联的[函数](functions.md)。
 
 r[items.associated.fn.decl]
-<em>关联函数声明</em>为关联函数定义声明签名。它的写法与函数项相同，只是函数体替换为 `;`。
+*关联函数声明* 为关联函数定义声明签名。它的写法与函数项相同，只是函数体替换为 `;`。
 
 r[items.associated.name]
 该标识符是函数的名称。
@@ -45,7 +45,7 @@ r[items.associated.same-signature]
 关联函数的泛型、参数列表、返回类型和 where 子句必须与关联函数声明中的对应部分相同。
 
 r[items.associated.fn.def]
-<em>关联函数定义</em>定义一个与另一类型关联的函数。它的写法与[函数项](../types/function-item.md)相同。
+*关联函数定义* 定义一个与另一类型关联的函数。它的写法与[函数项](../types/function-item.md)相同。
 
 > [!NOTE]
 > 一个常见示例是名为 `new` 的关联函数，它返回与其关联的类型的值。
@@ -91,7 +91,7 @@ r[items.associated.fn.method]
 ### 方法
 
 r[items.associated.fn.method.intro]
-第一个参数名为 `self` 的关联函数称为<em>方法</em>，可以使用[方法调用运算符](../expressions/method-call-expr.md)来调用，例如 `x.foo()`；也可以使用通常的函数调用记法。
+第一个参数名为 `self` 的关联函数称为 *方法*，可以使用[方法调用运算符](../expressions/method-call-expr.md)来调用，例如 `x.foo()`；也可以使用通常的函数调用记法。
 
 r[items.associated.fn.method.self-ty]
 如果指定了 `self` 参数的类型，则该类型限于能解析为由以下语法生成的某种类型（其中 `'lt` 表示某个任意生命周期）：
@@ -130,11 +130,11 @@ impl Example {
 r[associated.fn.method.self-pat-shorthands]
 可以使用不指定类型的简写语法，其等价形式如下：
 
- 简写 | 等价形式
+简写             | 等价形式
 ----------------------|-----------
- `self` | `self: Self`
- `&'lifetime self` | `self: &'lifetime Self`
- `&'lifetime mut self` | `self: &'lifetime mut Self`
+`self`                | `self: Self`
+`&'lifetime self`     | `self: &'lifetime Self`
+`&'lifetime mut self` | `self: &'lifetime mut Self`
 
 > [!NOTE]
 > 使用这种简写时，生命周期可以省略，而且通常会省略。
@@ -190,7 +190,7 @@ let bounding_box = circle_shape.bounding_box();
 
 r[items.associated.fn.params.edition2018]
 > [!EDITION-2018]
-> 在 2015 edition 中，可以使用匿名参数声明 trait 方法（例如 `fn foo(u8)`）。这已被弃用，并且从 2018 edition 起是错误。所有参数都必须具有实参名称。
+> 在 2015 edition 中，可以使用匿名参数声明 trait 方法（例如 `fn foo(u8)`）。这已被弃用，并且从 2018 edition 起是错误。所有参数都必须具有参数名。
 
 r[items.associated.fn.param-attributes]
 #### 方法参数上的属性
@@ -201,13 +201,13 @@ r[items.associated.type]
 ## 关联类型
 
 r[items.associated.type.intro]
-<em>关联类型</em>是与另一类型关联的[类型别名](type-aliases.md)。
+*关联类型* 是与另一类型关联的[类型别名](type-aliases.md)。
 
 r[items.associated.type.restrictions]
 关联类型不能在[固有实现](implementations.md#inherent-implementations)中定义，也不能在 trait 中给出默认实现。
 
 r[items.associated.type.decl]
-<em>关联类型声明</em>为关联类型定义声明签名。它写成以下形式之一，其中 `Assoc` 是关联类型的名称，`Params` 是以逗号分隔的类型、生命周期或 const 参数列表，`Bounds` 是以加号分隔的、关联类型必须满足的 trait 约束列表，`WhereBounds` 是以逗号分隔的、参数必须满足的约束列表：
+*关联类型声明* 为关联类型定义声明签名。它写成以下形式之一，其中 `Assoc` 是关联类型的名称，`Params` 是以逗号分隔的类型、生命周期或 const 参数列表，`Bounds` 是以加号分隔的、关联类型必须满足的 trait 约束列表，`WhereBounds` 是以逗号分隔的、参数必须满足的约束列表：
 
 <!-- ignore: illustrative example forms -->
 ```rust,ignore
@@ -229,17 +229,17 @@ r[items.associated.type.sized]
 关联类型上有一个隐式的 [`Sized`](../special-types-and-traits.md#sized) 约束，可以使用特殊的 `?Sized` 约束放宽它。
 
 r[items.associated.type.def]
-<em>关联类型定义</em>为某个类型上的 trait 实现定义类型别名。
+*关联类型定义* 为某个类型上的 trait 实现定义类型别名。
 
 r[items.associated.type.def.restriction]
-它们的写法类似于<em>关联类型声明</em>，但不能包含 `Bounds`，而是必须包含 `Type`：
+它们的写法类似于 *关联类型声明*，但不能包含 `Bounds`，而是必须包含 `Type`：
 
 <!-- ignore: illustrative example forms -->
 ```rust,ignore
 type Assoc = Type;
-type Assoc<Params> = Type; // the type `Type` here may reference `Params`
+type Assoc<Params> = Type; // 这里的类型 `Type` 可以引用 `Params`
 type Assoc<Params> = Type where WhereBounds;
-type Assoc<Params> where WhereBounds = Type; // deprecated, prefer the form above
+type Assoc<Params> where WhereBounds = Type; // 已弃用，优先使用上面的形式
 ```
 
 r[items.associated.type.alias]
@@ -249,7 +249,7 @@ r[items.associated.type.param]
 此外，如果 `Item` 是类型参数，那么 `Item::Assoc` 可以用于类型参数中。
 
 r[items.associated.type.generic]
-关联类型可以包含[泛型参数](generics.md)和 [where 子句](generics.md#where-clauses)；这些通常称为<em>泛型关联类型</em>，或 <em>GAT</em>。如果类型 `Thing` 拥有来自 trait `Trait`、带有泛型 `<'a>` 的关联类型 `Item`，则该类型可以命名为类似 `<Thing as Trait>::Item<'x>` 的形式，其中 `'x` 是作用域内的某个生命周期。在这种情况下，impl 上的关联类型定义中凡是出现 `'a` 的位置都会使用 `'x`。
+关联类型可以包含[泛型参数](generics.md)和 [where 子句](generics.md#where-clauses)；这些通常称为 *泛型关联类型*，或 _GAT_。如果类型 `Thing` 拥有来自 trait `Trait`、带有泛型 `<'a>` 的关联类型 `Item`，则该类型可以命名为类似 `<Thing as Trait>::Item<'x>` 的形式，其中 `'x` 是作用域内的某个生命周期。在这种情况下，impl 上的关联类型定义中凡是出现 `'a` 的位置都会使用 `'x`。
 
 ```rust
 trait AssociatedType {
@@ -355,7 +355,7 @@ r[items.associated.type.generic-where-clause.intro]
 trait 上的泛型关联类型声明目前可能需要一个 where 子句列表，这取决于 trait 中的函数以及 GAT 的使用方式。这些规则未来可能会放宽；更新可见于[泛型关联类型倡议仓库](https://rust-lang.github.io/generic-associated-types-initiative/explainer/required_bounds.html)。
 
 r[items.associated.type.generic-where-clause.valid-fn]
-简言之，需要这些 where 子句，是为了最大化 impl 中允许的关联类型定义。为此，在 GAT 作为输入或输出出现的函数上，任何（使用函数或 trait 的参数）<em>可以证明成立</em>的子句，也必须写在 GAT 本身上。
+简言之，需要这些 where 子句，是为了最大化 impl 中允许的关联类型定义。为此，在 GAT 作为输入或输出出现的函数上，任何（使用函数或 trait 的参数）*可以证明成立* 的子句，也必须写在 GAT 本身上。
 
 ```rust
 trait LendingIterator {
@@ -367,7 +367,7 @@ trait LendingIterator {
 在上面的例子中，对于 `next` 函数，由于 `&'a mut self` 所产生的隐含约束，我们可以证明 `Self: 'a`；因此，必须在 GAT 本身上写出等价约束：`where Self: 'x`。
 
 r[items.associated.type.generic-where-clause.intersection]
-当 trait 中有多个函数使用该 GAT 时，会使用来自不同函数的约束的<em>交集</em>，而不是并集。
+当 trait 中有多个函数使用该 GAT 时，会使用来自不同函数的约束的 *交集*，而不是并集。
 
 ```rust
 trait Check<T> {
@@ -406,16 +406,16 @@ r[items.associated.const]
 ## 关联常量
 
 r[items.associated.const.intro]
-<em>关联常量</em>是与某个类型关联的[常量](constant-items.md)。
+*关联常量* 是与某个类型关联的[常量](constant-items.md)。
 
 r[items.associated.const.decl]
-<em>关联常量声明</em>为关联常量定义声明签名。它写作 `const`，后接标识符，再接 `:`，再接一个类型，并以 `;` 结束。
+*关联常量声明* 为关联常量定义声明签名。它写作 `const`，后接标识符，再接 `:`，再接一个类型，并以 `;` 结束。
 
 r[items.associated.const.name]
 该标识符是路径中使用的常量名称。该类型是定义必须实现的类型。
 
 r[items.associated.const.def]
-<em>关联常量定义</em>定义一个与某个类型关联的常量。它的写法与[常量项](constant-items.md)相同。
+*关联常量定义* 定义一个与某个类型关联的常量。它的写法与[常量项](constant-items.md)相同。
 
 r[items.associated.const.eval]
 关联常量定义只有在被引用时才会进行[常量求值](../const_eval.md)。此外，包含[泛型参数](generics.md)的定义会在单态化之后求值。

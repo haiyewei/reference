@@ -17,13 +17,13 @@ ExternalItem ->
     )
 ```
 
-[^unsafe-2024]: Starting with the 2024 Edition, the `unsafe` keyword is required semantically.
+[^unsafe-2024]: 从 2024 Edition 开始，语义上要求使用 `unsafe` 关键字。
 
 r[items.extern.intro]
-外部块提供当前 crate 中未_定义_的项的_声明_，并且是 Rust 外部函数接口（FFI）的基础。它们类似于未经检查的导入。
+外部块提供当前 crate 中未 *定义* 的项的 *声明*，并且是 Rust 外部函数接口（FFI）的基础。它们类似于未经检查的导入。
 
 r[items.extern.allowed-kinds]
-外部块中允许两种项_声明_：[函数](functions.md)和[静态项](static-items.md)。
+外部块中允许两种项 *声明*：[函数](functions.md)和[静态项](static-items.md)。
 
 r[items.extern.safety]
 调用外部块中声明的 unsafe 函数，或访问其中声明的 unsafe 静态项，只允许在 [`unsafe` 上下文](../unsafe-keyword.md)中进行。
@@ -45,7 +45,7 @@ r[items.extern.fn.body]
 外部块中的函数以与其他 Rust 函数相同的方式声明，区别在于它们不得有函数体，而是以分号结束。
 
 r[items.extern.fn.param-patterns]
-参数中不允许使用模式，只可以使用 [IDENTIFIER](../identifiers.md#grammar-IDENTIFIER) 或 `_`。
+参数中不允许使用模式，只可以使用 [IDENTIFIER] 或 `_`。
 
 r[items.extern.fn.qualifiers]
 允许使用 `safe` 和 `unsafe` 函数限定符，但不允许使用其他函数限定符（例如 `const`、`async`、`extern`）。
@@ -72,17 +72,17 @@ r[items.extern.static.mut]
 extern 静态项可以是不可变的，也可以是可变的，就像外部块之外的[静态项](static-items.md)一样。
 
 r[items.extern.static.read-only]
-不可变静态项_必须_在任何 Rust 代码执行之前初始化。仅在 Rust 代码从该静态项读取之前完成初始化是不够的。一旦 Rust 代码运行，修改不可变静态项（无论从 Rust 内部还是外部修改）都是 UB，除非修改发生在 `UnsafeCell` 内部的字节上。
+不可变静态项 *必须* 在任何 Rust 代码执行之前初始化。仅在 Rust 代码从该静态项读取之前完成初始化是不够的。一旦 Rust 代码运行，修改不可变静态项（无论从 Rust 内部还是外部修改）都是 UB，除非修改发生在 `UnsafeCell` 内部的字节上。
 
 r[items.extern.abi]
 ## ABI
 
 r[items.extern.abi.intro]
-`extern` 关键字后可以跟一个可选的 [ABI](../glossary.md#r-glossary.abi) 字符串。ABI 指定块中函数的调用约定。调用约定为函数定义低层接口，例如参数如何放入寄存器或栈中、返回值如何传递，以及由谁负责清理栈。
+`extern` 关键字后可以跟一个可选的 [ABI](glossary.abi) 字符串。ABI 指定块中函数的调用约定。调用约定为函数定义低层接口，例如参数如何放入寄存器或栈中、返回值如何传递，以及由谁负责清理栈。
 
 > [!EXAMPLE]
 > ```rust
-> // Windows API 的接口。
+> // Windows API 接口。
 > unsafe extern "system" { /* ... */ }
 > ```
 
@@ -98,7 +98,7 @@ r[items.extern.abi.standard]
 以下 ABI 字符串在所有平台上都受支持：
 
 r[items.extern.abi.rust]
-* `unsafe extern "Rust"` --- Rust 函数和闭包的原生调用约定。当函数声明未使用 [`extern fn`](functions.md#r-items.fn.extern) 时，这是默认值。Rust ABI 不提供稳定性保证。
+* `unsafe extern "Rust"` --- Rust 函数和闭包的原生调用约定。当函数声明未使用 [`extern fn`](items.fn.extern) 时，这是默认值。Rust ABI 不提供稳定性保证。
 
 r[items.extern.abi.c]
 * `unsafe extern "C"` --- "C" ABI 与目标平台上主流 C 编译器所选择的默认 ABI 匹配。
@@ -123,7 +123,8 @@ r[items.extern.abi.cdecl]
   > [!NOTE]
   > 详情见：
   >
-  > - <https://learn.microsoft.com/en-us/cpp/cpp/cdecl> - <https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl>
+  > - <https://learn.microsoft.com/en-us/cpp/cpp/cdecl>
+  > - <https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl>
 
 r[items.extern.abi.stdcall]
 * `unsafe extern "stdcall"` --- [Win32 API](https://learn.microsoft.com/en-us/windows/win32/api/) 在 x86_32 上通常使用的调用约定。
@@ -133,7 +134,8 @@ r[items.extern.abi.stdcall]
   > [!NOTE]
   > 详情见：
   >
-  > - <https://learn.microsoft.com/en-us/cpp/cpp/stdcall> - <https://en.wikipedia.org/wiki/X86_calling_conventions#stdcall>
+  > - <https://learn.microsoft.com/en-us/cpp/cpp/stdcall>
+  > - <https://en.wikipedia.org/wiki/X86_calling_conventions#stdcall>
 
 r[items.extern.abi.win64]
 * `unsafe extern "win64"` --- Windows x64 ABI。
@@ -144,7 +146,8 @@ r[items.extern.abi.win64]
   > [!NOTE]
   > 详情见：
   >
-  > - <https://learn.microsoft.com/en-us/cpp/build/x64-software-conventions> - <https://en.wikipedia.org/wiki/X86_calling_conventions#Microsoft_x64_calling_convention>
+  > - <https://learn.microsoft.com/en-us/cpp/build/x64-software-conventions>
+  > - <https://en.wikipedia.org/wiki/X86_calling_conventions#Microsoft_x64_calling_convention>
 
 r[items.extern.abi.sysv64]
 * `unsafe extern "sysv64"` --- System V ABI。
@@ -155,7 +158,8 @@ r[items.extern.abi.sysv64]
   > [!NOTE]
   > 详情见：
   >
-  > - <https://wiki.osdev.org/System_V_ABI> - <https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI>
+  > - <https://wiki.osdev.org/System_V_ABI>
+  > - <https://en.wikipedia.org/wiki/X86_calling_conventions#System_V_AMD64_ABI>
 
 r[items.extern.abi.aapcs]
 * `unsafe extern "aapcs"` --- ARM 的软浮点 ABI。
@@ -176,7 +180,8 @@ r[items.extern.abi.fastcall]
   > [!NOTE]
   > 详情见：
   >
-  > - <https://learn.microsoft.com/en-us/cpp/cpp/fastcall> - <https://en.wikipedia.org/wiki/X86_calling_conventions#Microsoft_fastcall>
+  > - <https://learn.microsoft.com/en-us/cpp/cpp/fastcall>
+  > - <https://en.wikipedia.org/wiki/X86_calling_conventions#Microsoft_fastcall>
 
 r[items.extern.abi.thiscall]
 * `unsafe extern "thiscall"` --- x86_32 MSVC 上 C++ 类成员函数通常使用的调用约定。
@@ -186,7 +191,8 @@ r[items.extern.abi.thiscall]
   > [!NOTE]
   > 详情见：
   >
-  > - <https://en.wikipedia.org/wiki/X86_calling_conventions#thiscall> - <https://learn.microsoft.com/en-us/cpp/cpp/thiscall>
+  > - <https://en.wikipedia.org/wiki/X86_calling_conventions#thiscall>
+  > - <https://learn.microsoft.com/en-us/cpp/cpp/thiscall>
 
 r[items.extern.abi.efiapi]
 * `unsafe extern "efiapi"` --- [UEFI](https://uefi.org/specifications) 函数使用的 ABI。
@@ -206,24 +212,24 @@ r[items.extern.abi.platform-unwind-variants]
 r[items.extern.variadic]
 ## 变参函数
 
-外部块中的函数可以通过将 `...` 指定为最后一个实参来成为变参函数。变参参数可以选择性地用标识符指定。
+外部块中的函数可以通过将 `...` 指定为最后一个参数来成为变参函数。变参参数可以选择性地用标识符指定。
 
 ```rust
 unsafe extern "C" {
     unsafe fn foo(...);
     unsafe fn bar(x: i32, ...);
     unsafe fn with_name(format: *const u8, args: ...);
-    // SAFETY: This function guarantees it will not access
-    // variadic arguments.
+    // SAFETY: 此函数保证不会访问
+    // 变长参数。
     safe fn ignores_variadic_arguments(x: i32, ...);
 }
 ```
 
 > [!WARNING]
-> 除非 `extern` 块中的函数保证它完全不会访问变参实参，否则不应在该函数上使用 `safe` 限定符。向变参函数传递意外数量的实参或意外类型的实参可能导致[未定义行为](../behavior-considered-undefined.md#r-undefined)。
+> 除非 `extern` 块中的函数保证它完全不会访问变参实参，否则不应在该函数上使用 `safe` 限定符。向变参函数传递意外数量的实参或意外类型的实参可能导致[未定义行为][undefined]。
 
 r[items.extern.variadic.conventions]
-变参参数只能在带有以下 ABI 字符串或其对应 [`-unwind` 变体](functions.md#r-items.fn.extern.unwind)的 `extern` 块中指定：
+变参参数只能在带有以下 ABI 字符串或其对应 [`-unwind` 变体][items.fn.extern.unwind] 的 `extern` 块中指定：
 
 - `"aapcs"`
 - `"C"`
@@ -237,16 +243,16 @@ r[items.extern.attributes]
 ## extern 块上的属性
 
 r[items.extern.attributes.intro]
-以下[属性](../attributes.md)控制外部块的行为。
+以下[属性](../attributes.md)控制 extern 块的行为。
 
 r[items.extern.attributes.link]
 ### `link` 属性
 
 r[items.extern.attributes.link.intro]
-_`link` 属性_指定编译器应为 `extern` 块中的项链接的原生库名称。
+*`link` 属性*指定编译器应为 `extern` 块中的项链接的原生库名称。
 
 r[items.extern.attributes.link.syntax]
-它使用 [MetaListNameValueStr](../attributes.md#grammar-MetaListNameValueStr) 语法来指定其输入。`name` 键是要链接的原生库名称。`kind` 键是一个可选值，用于指定库的种类，可能的值如下：
+它使用 [MetaListNameValueStr] 语法来指定其输入。`name` 键是要链接的原生库名称。`kind` 键是一个可选值，用于指定库的种类，可能的值如下：
 
 r[items.extern.attributes.link.dylib]
 - `dylib` --- 表示动态库。如果未指定 `kind`，这是默认值。
@@ -354,7 +360,7 @@ r[items.extern.attributes.link.kind-raw-dylib.intro]
 在 Windows 上，链接动态库要求向链接器提供导入库：这是一种特殊的静态库，它以某种方式声明动态库导出的所有符号，使链接器知道这些符号必须在运行时动态加载。
 
 r[items.extern.attributes.link.kind-raw-dylib.import]
-指定 `kind = "dylib"` 会指示 Rust 编译器基于 `name` 键链接一个导入库。随后链接器会使用其正常的库解析逻辑来查找该导入库。或者，指定 `kind = "raw-dylib"` 会指示编译器在编译期间生成一个导入库，并将其提供给链接器。
+指定 `kind = "dylib"` 会指示 Rust 编译器基于 `name` 键链接一个导入库。随后链接器会使用其正常的库解析逻辑来查找该导入库。或者，指定 `kind = "raw-dylib"` 会指示编译器在编译期间生成一个导入库，并改为将其提供给链接器。
 
 r[items.extern.attributes.link.kind-raw-dylib.platform-specific]
 `raw-dylib` 仅在 Windows 上受支持。以其他平台为目标时使用它会导致编译器错误。
@@ -386,7 +392,7 @@ r[items.extern.attributes.link_name]
 ### `link_name` 属性
 
 r[items.extern.attributes.link_name.intro]
-_`link_name` [属性](../attributes.md)_可以应用于 `extern` 块内的声明，以指定要为给定函数或静态项导入的符号。
+*`link_name` [属性](../attributes.md)*可以应用于 `extern` 块内的声明，以指定要为给定函数或静态项导入的符号。
 
 > [!EXAMPLE]
 > ```rust
@@ -397,7 +403,7 @@ _`link_name` [属性](../attributes.md)_可以应用于 `extern` 块内的声明
 > ```
 
 r[items.extern.attributes.link_name.syntax]
-`link_name` 属性使用 [MetaNameValueStr](../attributes.md#grammar-MetaNameValueStr) 语法。
+`link_name` 属性使用 [MetaNameValueStr] 语法。
 
 r[items.extern.attributes.link_name.invalid-names]
 符号名称不得为空字符串，也不得包含任何 `U+0000`（NUL）字节。
@@ -415,13 +421,13 @@ r[items.extern.attributes.link_name.duplicates]
 > `rustc` 会对第一次之后的任何使用发出未来兼容性警告。将来这可能会变成错误。
 
 r[items.extern.attributes.link_name.link_ordinal]
-`link_name` 属性不能与 [`link_ordinal`](external-blocks.md#r-items.extern.attributes.link_ordinal) 属性一起使用。
+`link_name` 属性不得与 [`link_ordinal`](items.extern.attributes.link_ordinal) 属性一起使用。
 
 r[items.extern.attributes.link_ordinal]
 ### `link_ordinal` 属性
 
 r[items.extern.attributes.link_ordinal.intro]
-_`link_ordinal` 属性_可以应用于 `extern` 块内的声明，以表示生成要链接的导入库时使用的数字序号。在 Windows 上，序号是动态库导出的每个符号对应的唯一数字；加载该库时，可以使用它来查找该符号，而不必按名称查找。
+*`link_ordinal` 属性*可以应用于 `extern` 块内的声明，以表示生成要链接的导入库时使用的数字序号。在 Windows 上，序号是动态库导出的每个符号对应的唯一数字；加载该库时，可以使用它来查找该符号，而不必按名称查找。
 
 > [!WARNING]
 > `link_ordinal` 只应在已知符号序号稳定的情况下使用：如果构建包含该符号的二进制文件时没有显式设置该符号的序号，则会自动为它分配一个序号，而该分配的序号可能会在该二进制文件的不同构建之间变化。

@@ -2,7 +2,7 @@ r[names.scopes]
 # 作用域
 
 r[names.scopes.intro]
-_作用域_ 是源文本中的一个区域，在该区域内，具名[实体](../names.md)可以通过该名称被引用。以下各节详细说明作用域规则和行为，这些规则和行为取决于实体的种类及其声明位置。名称如何解析为实体的过程在[名称解析](name-resolution.md)一章中描述。关于用于运行析构器的 "drop scopes" 的更多信息，可以在[析构器](../destructors.md)一章中找到。
+*作用域* 是源文本中的一个区域，在该区域内，具名[实体](../names.md)可以通过该名称被引用。以下各节详细说明作用域规则和行为，这些规则和行为取决于实体的种类及其声明位置。名称如何解析为实体的过程在[名称解析](name-resolution.md)一章中描述。关于用于运行析构器的 "drop 作用域" 的更多信息，可以在[析构器](../destructors.md)一章中找到。
 
 r[names.scopes.items]
 ## 项作用域
@@ -49,10 +49,11 @@ r[names.scopes.pattern-bindings.let-chains]
 r[names.scopes.pattern-bindings.match-arm]
 * [`match` 分支](../expressions/match-expr.md)绑定位于 [match 守卫](../expressions/match-expr.md#match-guards)和 match 分支表达式内。
 r[names.scopes.pattern-bindings.match-guard-let]
-* [`match` 守卫 `let`](../expressions/match-expr.md#r-expr.match.guard.let) 绑定在后续守卫条件和 match 分支表达式中有效。
+* [`match` 守卫 `let`](expr.match.guard.let) 绑定在后续守卫条件和 match 分支表达式中有效。
 
 r[names.scopes.pattern-bindings.items]
-局部变量作用域不会延伸到项声明中。 <!-- Not entirely, see https://github.com/rust-lang/rust/issues/33118 -->
+局部变量作用域不会延伸到项声明中。
+<!-- Not entirely, see https://github.com/rust-lang/rust/issues/33118 -->
 
 ### 模式绑定遮蔽
 
@@ -69,11 +70,11 @@ r[names.scopes.pattern-bindings.shadow]
 ```rust
 fn shadow_example() {
     // 由于作用域中尚无局部变量，因此这里解析为函数。
-    foo(); // prints `function`
+    foo(); // 打印 `function`
     let foo = || println!("closure");
     fn foo() { println!("function"); }
     // 这里解析为局部闭包，因为它遮蔽了该项。
-    foo(); // prints `closure`
+    foo(); // 打印 `closure`
 }
 ```
 
@@ -81,7 +82,7 @@ r[names.scopes.generic-parameters]
 ## 泛型参数作用域
 
 r[names.scopes.generic-parameters.param-list]
-泛型参数在 [GenericParams](../items/generics.md#grammar-GenericParams) 列表中声明。泛型参数的作用域位于声明它的项内。
+泛型参数在 [GenericParams] 列表中声明。泛型参数的作用域位于声明它的项内。
 
 r[names.scopes.generic-parameters.order-independent]
 无论声明顺序如何，所有参数都在泛型参数列表内的作用域中。以下展示一些参数可以在声明前被引用的示例：
@@ -113,7 +114,7 @@ r[names.scopes.generic-parameters.inner-items]
 
 ```rust,compile_fail
 fn example<T>() {
-    fn inner(x: T) {} // ERROR: can't use generic parameters from outer function
+    fn inner(x: T) {} // ERROR: 不能使用外层函数的泛型参数
 }
 ```
 
@@ -125,25 +126,25 @@ r[names.scopes.generic-parameters.shadow]
 ```rust
 fn example<'a, T, const N: usize>() {
     // 函数内的项允许遮蔽作用域中的泛型参数。
-    fn inner_lifetime<'a>() {} // OK
-    fn inner_type<T>() {} // OK
-    fn inner_const<const N: usize>() {} // OK
+    fn inner_lifetime<'a>() {} // 可以
+    fn inner_type<T>() {} // 可以
+    fn inner_const<const N: usize>() {} // 可以
 }
 ```
 
 ```rust,compile_fail
 trait SomeTrait<'a, T, const N: usize> {
-    fn example_lifetime<'a>() {} // ERROR: 'a is already in use
-    fn example_type<T>() {} // ERROR: T is already in use
-    fn example_const<const N: usize>() {} // ERROR: N is already in use
-    fn example_mixed<const T: usize>() {} // ERROR: T is already in use
+    fn example_lifetime<'a>() {} // ERROR: 'a 已被使用
+    fn example_type<T>() {} // ERROR: T 已被使用
+    fn example_const<const N: usize>() {} // ERROR: N 已被使用
+    fn example_mixed<const T: usize>() {} // ERROR: T 已被使用
 }
 ```
 
 r[names.scopes.lifetimes]
 ### 生命周期作用域
 
-生命周期参数在 [GenericParams](../items/generics.md#grammar-GenericParams) 列表和[高阶 trait 约束](../trait-bounds.md#higher-ranked-trait-bounds)中声明。
+生命周期参数在 [GenericParams] 列表和[高阶 trait 约束](../trait-bounds.md#higher-ranked-trait-bounds)中声明。
 
 r[names.scopes.lifetimes.special]
 `'static` 生命周期和[占位生命周期](../lifetime-elision.md) `'_` 具有特殊含义，不能声明为参数。
@@ -151,16 +152,16 @@ r[names.scopes.lifetimes.special]
 #### 生命周期泛型参数作用域
 
 r[names.scopes.lifetimes.generic]
-[常量](../items/constant-items.md)项、[静态](../items/static-items.md)项以及 [const 上下文](../const_eval.md#const-context)始终只允许 `'static` 生命周期引用，因此其中不能有其他生命周期在作用域中。[关联常量](../items/associated-items.md#associated-constants)确实允许引用在其 trait 或实现中声明的生命周期。
+[常量](../items/constant-items.md)项、[static](../items/static-items.md)项以及 [const 上下文](../const_eval.md#const-context)始终只允许 `'static` 生命周期引用，因此其中不能有其他生命周期在作用域中。[关联常量](../items/associated-items.md#associated-constants)确实允许引用在其 trait 或实现中声明的生命周期。
 
 #### 高阶 trait 约束作用域
 
 r[names.scopes.lifetimes.higher-ranked]
 声明为[高阶 trait 约束](../trait-bounds.md#higher-ranked-trait-bounds)的生命周期参数，其作用域取决于它的使用场景。
 
-* 作为 [TypeBoundWhereClauseItem](../items/generics.md#grammar-TypeBoundWhereClauseItem) 时，声明的生命周期在类型和类型约束中处于作用域内。
-* 作为 [TraitBound](../trait-bounds.md#grammar-TraitBound) 时，声明的生命周期在约束类型路径内处于作用域内。
-* 作为 [BareFunctionType](../types/function-pointer.md#grammar-BareFunctionType) 时，声明的生命周期在函数参数和返回类型内处于作用域内。
+* 作为 [TypeBoundWhereClauseItem] 时，声明的生命周期在类型和类型约束中处于作用域内。
+* 作为 [TraitBound] 时，声明的生命周期在约束类型路径内处于作用域内。
+* 作为 [BareFunctionType] 时，声明的生命周期在函数参数和返回类型内处于作用域内。
 
 ```rust
 # trait Trait<'a>{}
@@ -183,12 +184,14 @@ fn bound<T>()
 type FnExample = for<'a> fn(x: Example<'a>) -> Example<'a>;
 ```
 
-#### Impl trait 限制
+#### impl Trait 限制
 
 r[names.scopes.lifetimes.impl-trait]
-[Impl trait](../types/impl-trait.md) 类型只能引用在函数或实现上声明的生命周期。
+[impl Trait](../types/impl-trait.md) 类型只能引用在函数或实现上声明的生命周期。
 
-<!-- not able to demonstrate the scope error because the compiler panics https://github.com/rust-lang/rust/issues/67830 -->
+<!-- not able to demonstrate the scope error because the compiler panics
+     https://github.com/rust-lang/rust/issues/67830
+-->
 ```rust
 # trait Trait1 {
 #     type Item;
@@ -204,8 +207,8 @@ r[names.scopes.lifetimes.impl-trait]
 # struct Element;
 # impl<'a> Trait2<'a> for Element {}
 #
-// The `impl Trait2` here is not allowed to refer to 'b but it is allowed to
-// refer to 'a.
+// 这里的 `impl Trait2` 不允许引用 'b，但允许
+// 引用 'a。
 fn foo<'a>() -> impl for<'b> Trait1<Item = impl Trait2<'a> + use<'a>> {
     // ...
 #    Example
@@ -216,7 +219,7 @@ r[names.scopes.loop-label]
 ## 循环标签作用域
 
 r[names.scopes.loop-label.scope]
-[循环标签](../expressions/loop-expr.md#loop-labels)可以由[循环表达式](../expressions/loop-expr.md)声明。循环标签的作用域从其声明点开始，直到循环表达式的末尾。该作用域不会延伸到[项](../items.md)、[闭包](../expressions/closure-expr.md)、[async 块](../expressions/block-expr.md#async-blocks)、[const 参数](../items/generics.md#const-generics)、[const 上下文](../const_eval.md#const-context)，以及定义该标签的 [`for` 循环](../expressions/loop-expr.md#iterator-loops)的迭代表达式中。
+[循环标签](../expressions/loop-expr.md#loop-labels)可以由[循环表达式](../expressions/loop-expr.md)声明。循环标签的作用域从其声明点开始，直到循环表达式的末尾。该作用域不会延伸到[项](../items.md)、[闭包](../expressions/closure-expr.md)、[async 块](../expressions/block-expr.md#async-blocks)、[const 实参](../items/generics.md#const-generics)、[const 上下文](../const_eval.md#const-context)，以及定义该标签的 [`for` 循环](../expressions/loop-expr.md#iterator-loops)的迭代表达式中。
 
 ```rust
 'a: for n in 0..3 {
@@ -224,23 +227,23 @@ r[names.scopes.loop-label.scope]
         break 'a;
     }
     fn inner() {
-        // Using 'a here would be an error.
+        // 在这里使用 'a 会是错误。
         // break 'a;
     }
 }
 
 // 该标签在 `while` 循环的表达式中处于作用域内。
-'a: while break 'a {}         // Loop does not run.
-'a: while let _ = break 'a {} // Loop does not run.
+'a: while break 'a {}         // 循环不会运行。
+'a: while let _ = break 'a {} // 循环不会运行。
 
 // 该标签在定义它的 `for` 循环中不在作用域内：
 'a: for outer in 0..5 {
-    // This will break the outer loop, skipping the inner loop and stopping
-    // the outer loop.
+    // 这会跳出外层循环，跳过内层循环并停止
+    // 外层循环。
     'a: for inner in { break 'a; 0..1 } {
-        println!("{}", inner); // This does not run.
+        println!("{}", inner); // 这里不会运行。
     }
-    println!("{}", outer); // This does not run, either.
+    println!("{}", outer); // 这里也不会运行。
 }
 
 ```
@@ -270,9 +273,9 @@ prelude 名称可以被模块中的声明遮蔽。
 r[names.scopes.prelude.layers]
 prelude 是分层的，因此如果它们包含同名实体，一个 prelude 会遮蔽另一个 prelude。prelude 可以遮蔽其他 prelude 的顺序如下，其中较早的条目可以遮蔽较后的条目：
 
-1. [Extern prelude](preludes.md#extern-prelude)
-2. [Tool prelude](preludes.md#tool-prelude)
-3. [`macro_use` prelude](preludes.md#macro_use-prelude)
+1. [Extern prelude]
+2. [Tool prelude]
+3. [`macro_use` prelude]
 4. [标准库 prelude](preludes.md#standard-library-prelude)
 5. [语言 prelude](preludes.md#language-prelude)
 
@@ -285,7 +288,7 @@ r[names.scopes.derive]
 ## 派生宏辅助属性
 
 r[names.scopes.derive.scope]
-[派生宏辅助属性](../procedural-macros.md#derive-macro-helper-attributes)在指定其对应 [`derive` 属性](../attributes/derive.md)的项中处于作用域内。该作用域从 `derive` 属性之后开始，延伸到该项的末尾。<!-- Note: Not strictly true, see https://github.com/rust-lang/rust/issues/79202, but this is the intention. -->
+[派生宏辅助属性](../procedural-macros.md#derive-macro-helper-attributes)在指定其对应 [`derive` 属性](../attributes/derive.md)的项中处于作用域内。该作用域从 `derive` 属性之后开始，延伸到该项的末尾。<!-- 注：并非严格如此，见 https://github.com/rust-lang/rust/issues/79202，但这是预期行为。 -->
 
 r[names.scopes.derive.shadow]
 辅助属性会遮蔽作用域中同名的其他属性。
@@ -314,8 +317,8 @@ struct SelfGeneric<T: Into<Self>>(T);
 // 实现内的 Self 值构造器。
 struct ImplExample();
 impl ImplExample {
-    fn example() -> Self { // Self type
-        Self() // Self value constructor
+    fn example() -> Self { // Self 类型
+        Self() // Self 值构造器
     }
 }
 ```

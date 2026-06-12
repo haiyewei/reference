@@ -13,7 +13,7 @@ EOF -> !CHAR  // End of file or input
 ```
 
 r[input.intro]
-本章描述如何将源文件解释为一系列词法单元。
+本章描述如何将源文件解释为一系列 token。
 
 关于程序如何组织成文件，参见 [crate 和源文件](crates-and-source-files.md)。
 
@@ -50,11 +50,13 @@ r[input.tokenization]
 然后，得到的字符序列会按照本章其余部分的描述转换为词法单元。
 
 > [!NOTE]
-> 标准库 [`include!`](../core/macro.include.html) 宏会对其读取的文件应用以下转换：
+> 标准库 [`include!`] 宏会对其读取的文件应用以下转换：
 >
-> - Byte order mark removal. - CRLF normalization. - Shebang removal when invoked in an item context (as opposed to expression or statement contexts).
+> - 字节顺序标记移除。
+> - CRLF 规范化。
+> - 在项上下文中调用时移除 shebang（区别于表达式或语句上下文）。
 >
-> [`include_str!`](../core/macro.include_str.html) 和 [`include_bytes!`](../core/macro.include_bytes.html) 宏不会应用这些转换。
+> [`include_str!`] 和 [`include_bytes!`] 宏不会应用这些转换。
 
 [BYTE ORDER MARK]: https://en.wikipedia.org/wiki/Byte_order_mark#UTF-8
 [Crates and source files]: crates-and-source-files.md

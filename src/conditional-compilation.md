@@ -28,7 +28,7 @@ ConfigurationPredicateList ->
 ```
 
 r[cfg.intro]
-_条件编译的源代码_ 是只在特定条件下才编译的源代码。
+*条件编译的源代码* 是只在特定条件下才编译的源代码。
 
 r[cfg.attributes-macro]
 可以使用 [`cfg`](#the-cfg-attribute) 和 [`cfg_attr`](#the-cfg_attr-attribute) [属性](attributes.md)，以及内置的 [`cfg!`](#the-cfg-macro) 和 [`cfg_select!`](#the-cfg_select-macro) [宏](macros.md)，使源代码进行条件编译。
@@ -37,7 +37,7 @@ r[cfg.conditional]
 是否编译可以取决于被编译 crate 的目标架构、传递给编译器的任意值，以及下文进一步描述的其他因素。
 
 r[cfg.predicate]
-每种条件编译形式都接受一个求值为 true 或 false 的_配置谓词_。该谓词是以下之一：
+每种条件编译形式都接受一个求值为 true 或 false 的 *配置谓词*。该谓词是以下之一：
 
 r[cfg.predicate.option]
 * 配置选项。如果该选项已设置，则谓词为 true；如果未设置，则为 false。
@@ -55,7 +55,7 @@ r[cfg.predicate.literal]
 * `true` 或 `false` 字面量，分别始终为 true 或 false。
 
 r[cfg.option-spec]
-_配置选项_ 要么是名称，要么是键值对，并且要么已设置，要么未设置。
+*配置选项* 要么是名称，要么是键值对，并且要么已设置，要么未设置。
 
 r[cfg.option-name]
 名称写作单个标识符，例如 `unix`。
@@ -76,10 +76,10 @@ r[cfg.options.intro]
 哪些配置选项被设置，是在 crate 编译期间静态确定的。
 
 r[cfg.options.target]
-某些选项会基于编译相关数据而_由编译器设置_。
+某些选项会基于编译相关数据而 *由编译器设置*。
 
 r[cfg.options.other]
-其他选项会基于代码之外传递给编译器的输入而_任意设置_。
+其他选项会基于代码之外传递给编译器的输入而 *任意设置*。
 
 r[cfg.options.crate]
 无法从正在编译的 crate 的源代码内部设置配置选项。
@@ -244,7 +244,7 @@ r[cfg.target_has_atomic.def]
 键值选项，会为目标支持原子加载、存储和比较并交换操作的每个位宽分别设置。
 
 r[cfg.target_has_atomic.stdlib]
-当存在此 cfg 时，所有与相关原子宽度对应的稳定 [`core::sync::atomic`](../core/sync/atomic/index.html) API 都可用。
+当存在此 cfg 时，所有与相关原子宽度对应的稳定 [`core::sync::atomic`] API 都可用。
 
 r[cfg.target_has_atomic.values]
 可能的值：
@@ -260,10 +260,10 @@ r[cfg.target_has_atomic_primitive_alignment]
 ### `target_has_atomic_primitive_alignment`
 
 r[cfg.target_has_atomic_primitive_alignment.def]
-键值选项，会为 [atomic](../core/sync/atomic/index.html) 类型与对应整数类型具有相同对齐的每个位宽分别设置。
+键值选项，会为 [atomic][core::sync::atomic] 类型与对应整数类型具有相同对齐的每个位宽分别设置。
 
 > [!NOTE]
-> 对于给定位宽，对齐通常相同。但是，在某些目标（例如 32 位 x86）上，诸如 [`AtomicI64`](../core/sync/atomic/type.AtomicI64.html) 的 64 位原子类型具有 8 字节对齐，而 `i64` 只对齐到 4 字节。在这种情况下，不会设置 `target_has_atomic_primitive_alignment = "64"`。
+> 对于给定位宽，对齐通常相同。但是，在某些目标（例如 32 位 x86）上，诸如 [`AtomicI64`][core::sync::atomic::AtomicI64] 的 64 位原子类型具有 8 字节对齐，而 `i64` 只对齐到 4 字节。在这种情况下，不会设置 `target_has_atomic_primitive_alignment = "64"`。
 
 r[cfg.target_has_atomic_primitive_alignment.values]
 可能的值：
@@ -283,7 +283,7 @@ r[cfg.test]
 r[cfg.debug_assertions]
 ### `debug_assertions`
 
-默认在不启用优化进行编译时启用。可用于在开发中启用额外调试代码，而不在生产中启用。例如，它控制标准库 [`debug_assert!`](../core/macro.debug_assert.html) 宏的行为。
+默认在不启用优化进行编译时启用。可用于在开发中启用额外调试代码，而不在生产中启用。例如，它控制标准库的 [`debug_assert!`] 宏的行为。
 
 r[cfg.proc_macro]
 ### `proc_macro`
@@ -311,36 +311,36 @@ r[cfg.attr]
 ### `cfg` 属性
 
 r[cfg.attr.intro]
-_`cfg` [属性](attributes.md)_ 会基于配置谓词有条件地包含它所附加到的形式。
+*`cfg` [属性](attributes.md)* 会基于配置谓词有条件地包含它所附加到的形式。
 
 > [!EXAMPLE]
 > ```rust
-> // The function is only included in the build when compiling for macOS
+> // 该函数只在为 macOS 编译时包含在构建中
 > #[cfg(target_os = "macos")]
 > fn macos_only() {
 >   // ...
 > }
 >
-> // This function is only included when either foo or bar is defined
+> // 该函数只在定义了 foo 或 bar 时包含
 > #[cfg(any(foo, bar))]
 > fn needs_foo_or_bar() {
 >   // ...
 > }
 >
-> // This function is only included when compiling for a unixish OS with a 32-bit
-> // architecture
+> // 该函数只在为具有 32 位
+> // 架构的类 unix OS 编译时包含
 > #[cfg(all(unix, target_pointer_width = "32"))]
 > fn on_32bit_unix() {
 >   // ...
 > }
 >
-> // This function is only included when foo is not defined
+> // 该函数只在未定义 foo 时包含
 > #[cfg(not(foo))]
 > fn needs_not_foo() {
 >   // ...
 > }
 >
-> // This function is only included when the panic strategy is set to unwind
+> // 该函数只在 panic 策略设置为 unwind 时包含
 > #[cfg(panic = "unwind")]
 > fn when_unwinding() {
 >   // ...
@@ -358,7 +358,7 @@ r[cfg.attr.allowed-positions]
 `cfg` 属性可以用在任何允许属性的位置。
 
 r[cfg.attr.duplicates]
-`cfg` 属性可以在一个形式上使用任意多次。如果任意一个 `cfg` 谓词为 false，则这些属性所附加到的形式不会被包含，但 [cfg.attr.crate-level-attrs](conditional-compilation.md#r-cfg.attr.crate-level-attrs) 中所述情形除外。
+`cfg` 属性可以在一个形式上使用任意多次。如果任意一个 `cfg` 谓词为 false，则这些属性所附加到的形式不会被包含，但 [cfg.attr.crate-level-attrs] 中所述情形除外。
 
 r[cfg.attr.effect]
 如果谓词为 true，该形式会被重写为不带有这些 `cfg` 属性。如果任意谓词为 false，该形式会从源代码中移除。
@@ -371,12 +371,12 @@ r[cfg.attr.crate-level-attrs]
 >
 > <!-- ignore: test infrastructure can't handle no_std -->
 > ```rust,ignore
-> // This `no_std` attribute is kept even though the crate-level `cfg`
-> // attribute is false.
+> // 即使 crate 级别的 `cfg`
+> // 属性为 false，也会保留这个 `no_std` 属性。
 > #![no_std]
 > #![cfg(false)]
 >
-> // This function is not included.
+> // 不包含该函数。
 > pub fn example() {}
 > ```
 
@@ -385,7 +385,7 @@ r[cfg.cfg_attr]
 ### `cfg_attr` 属性
 
 r[cfg.cfg_attr.intro]
-_`cfg_attr` [属性](attributes.md)_ 会基于配置谓词有条件地包含属性。
+*`cfg_attr` [属性](attributes.md)* 会基于配置谓词有条件地包含属性。
 
 > [!EXAMPLE]
 > 以下模块会基于目标在 `linux.rs` 或 `windows.rs` 中被找到。
@@ -427,7 +427,7 @@ r[cfg.cfg_attr.attribute-list]
 > #[cfg_attr(feature = "magic", sparkles, crackles)]
 > fn bewitched() {}
 >
-> // When the `magic` feature flag is enabled, the above will expand to:
+> // 当启用 `magic` feature 标志时，上面的内容会展开为：
 > #[sparkles]
 > #[crackles]
 > fn bewitched() {}
@@ -459,7 +459,7 @@ r[cfg.cfg_select]
 ### `cfg_select` 宏
 
 r[cfg.cfg_select.intro]
-内置的 [`cfg_select!`](../core/macros/macro.cfg_select.html) 宏可用于基于多个配置谓词在编译时选择代码。
+内置的 [`cfg_select!`][std::cfg_select] 宏可用于基于多个配置谓词在编译时选择代码。
 
 > [!EXAMPLE]
 > ```rust

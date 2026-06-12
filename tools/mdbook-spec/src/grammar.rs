@@ -54,6 +54,8 @@ pub fn insert_grammar(grammar: &Grammar, chapter: &Chapter, diag: &mut Diagnosti
 
     // Make all production names easily linkable.
     let is_summary = is_summary(chapter);
+    content = content.trim_end().to_string();
+    content.push_str("\n\n");
     for (name, path) in &link_map {
         let id = render_markdown::markdown_id(name, is_summary);
         if is_summary {
@@ -187,9 +189,9 @@ fn render_names(
     output.push_str(
         "\n\
          <button class=\"grammar-toggle-railroad\" type=\"button\" \
-            title=\"Toggle railroad display\" \
+            title=\"切换语法图显示\" \
             onclick=\"toggle_railroad()\">\
-            Show Railroad\
+            显示语法图\
          </button>\n\
          </div>\n\
          <div class=\"grammar-railroad grammar-hidden\">\n\

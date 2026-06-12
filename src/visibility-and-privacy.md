@@ -21,7 +21,7 @@ r[vis.privacy]
 为了控制接口是否可以跨模块使用，Rust 会检查项的每次使用，以判断是否应该允许。这就是生成私有性警告的地方，换句话说，也就是“你使用了另一个模块的私有项，而这是不被允许的”。
 
 r[vis.default]
-默认情况下，所有内容都是 _私有_ 的，但有两个例外：`pub` Trait 中的关联项默认是公开的；`pub` enum 中的枚举变体也默认是公开的。当某个项被声明为 `pub` 时，可以认为它可被外部世界访问。例如：
+默认情况下，所有内容都是 *私有* 的，但有两个例外：`pub` Trait 中的关联项默认是公开的；`pub` enum 中的枚举变体也默认是公开的。当某个项被声明为 `pub` 时，可以认为它可被外部世界访问。例如：
 
 ```rust
 # fn main() {}
@@ -62,37 +62,37 @@ r[vis.use]
 下面是一个程序示例，它展示了上文概述的三种情况：
 
 ```rust
-// This module is private, meaning that no external crate can access this
-// module. Because it is private at the root of this current crate, however, any
-// module in the crate may access any publicly visible item in this module.
+// 这个模块是私有的，这意味着没有外部 crate 可以访问此
+// 模块。不过，因为它在当前 crate 的根处是私有的，crate 中的任何
+// 模块都可以访问此模块中任何公开可见的项。
 mod crate_helper_module {
 
     // 这个函数可以被当前 crate 中的任何内容使用
     pub fn crate_helper() {}
 
-    // This function *cannot* be used by anything else in the crate. It is not
-    // publicly visible outside of the `crate_helper_module`, so only this
-    // current module and its descendants may access it.
+    // 这个函数*不能*被 crate 中的其他任何内容使用。它在
+    // `crate_helper_module` 外部不是公开可见的，所以只有这个
+    // 当前模块及其后代可以访问它。
     fn implementation_detail() {}
 }
 
-// This function is "public to the root" meaning that it's available to external
-// crates linking against this one.
+// 这个函数“对根公开”，这意味着它可供链接到此 crate 的
+// 外部 crate 使用。
 pub fn public_api() {}
 
-// Similarly to 'public_api', this module is public so external crates may look
-// inside of it.
+// 与 'public_api' 类似，这个模块是公开的，因此外部 crate 可以查看
+// 其内部。
 pub mod submodule {
     use crate::crate_helper_module;
 
     pub fn my_method() {
-        // Any item in the local crate may invoke the helper module's public
-        // interface through a combination of the two rules above.
+        // 本地 crate 中的任何项都可以通过上述两条规则的组合
+        // 调用辅助模块的公开接口。
         crate_helper_module::crate_helper();
     }
 
-    // This function is hidden to any module which is not a descendant of
-    // `submodule`
+    // 对于任何不是 `submodule` 后代的模块，
+    // 这个函数都是隐藏的
     fn my_implementation() {}
 
     #[cfg(test)]
@@ -100,9 +100,9 @@ pub mod submodule {
 
         #[test]
         fn test_my_implementation() {
-            // Because this module is a descendant of `submodule`, it's allowed
-            // to access private items inside of `submodule` without a privacy
-            // violation.
+            // 因为这个模块是 `submodule` 的后代，所以它被允许
+            // 访问 `submodule` 内部的私有项，而不会造成私有性
+            // 违规。
             super::my_implementation();
         }
     }
@@ -133,7 +133,7 @@ r[vis.scoped.self]
 
 r[vis.scoped.edition2018]
 > [!EDITION-2018]
-> 从 2018 版次开始，`pub(in path)` 的路径必须以 `crate`、`self` 或 `super` 开头。2015 版次还可以使用以 `::` 开头的路径，或从 crate 根开始的模块。
+> 从 2018 edition 开始，`pub(in path)` 的路径必须以 `crate`、`self` 或 `super` 开头。2015 edition 还可以使用以 `::` 开头的路径，或从 crate 根开始的模块。
 
 下面是一个示例：
 
@@ -154,8 +154,8 @@ pub mod outer_mod {
             inner_mod_visible_fn();
         }
 
-        // This function is visible only within `inner_mod`,
-        // which is the same as leaving it private.
+        // 这个函数仅在 `inner_mod` 内可见，
+        // 这与让它保持私有相同。
         pub(self) fn inner_mod_visible_fn() {}
     }
     pub fn foo() {
@@ -163,8 +163,8 @@ pub mod outer_mod {
         inner_mod::crate_visible_fn();
         inner_mod::super_mod_visible_fn();
 
-        // This function is no longer visible since we're outside of `inner_mod`
-        // Error! `inner_mod_visible_fn` is private
+        // 这个函数不再可见，因为我们在 `inner_mod` 外部
+        // 错误！`inner_mod_visible_fn` 是私有的
         //inner_mod::inner_mod_visible_fn();
     }
 }
@@ -173,12 +173,12 @@ fn bar() {
     // 这个函数仍然可见，因为我们在同一个 crate 中
     outer_mod::inner_mod::crate_visible_fn();
 
-    // This function is no longer visible since we're outside of `outer_mod`
-    // Error! `super_mod_visible_fn` is private
+    // 这个函数不再可见，因为我们在 `outer_mod` 外部
+    // 错误！`super_mod_visible_fn` 是私有的
     //outer_mod::inner_mod::super_mod_visible_fn();
 
-    // This function is no longer visible since we're outside of `outer_mod`
-    // Error! `outer_mod_visible_fn` is private
+    // 这个函数不再可见，因为我们在 `outer_mod` 外部
+    // 错误！`outer_mod_visible_fn` 是私有的
     //outer_mod::inner_mod::outer_mod_visible_fn();
 
     outer_mod::foo();

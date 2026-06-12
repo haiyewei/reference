@@ -29,12 +29,12 @@ r[expr.range.behavior]
 
 | 产生式 | 语法 | 类型 | 范围 |
 |------------------------|---------------|------------------------------|-----------------------|
-| [RangeExpr](range-expr.md#grammar-RangeExpr) | start`..`end | [std::ops::Range](../../core/ops/range/struct.Range.html) | start &le; x &lt; end |
-| [RangeFromExpr](range-expr.md#grammar-RangeFromExpr) | start`..` | [std::ops::RangeFrom](../../core/ops/range/struct.RangeFrom.html) | start &le; x |
-| [RangeToExpr](range-expr.md#grammar-RangeToExpr) | `..`end | [std::ops::RangeTo](../../core/ops/range/struct.RangeTo.html) | x &lt; end |
-| [RangeFullExpr](range-expr.md#grammar-RangeFullExpr) | `..` | [std::ops::RangeFull](../../core/ops/range/struct.RangeFull.html) | - |
-| [RangeInclusiveExpr](range-expr.md#grammar-RangeInclusiveExpr) | start`..=`end | [std::ops::RangeInclusive](../../core/ops/range/struct.RangeInclusive.html) | start &le; x &le; end |
-| [RangeToInclusiveExpr](range-expr.md#grammar-RangeToInclusiveExpr) | `..=`end | [std::ops::RangeToInclusive](../../core/ops/range/struct.RangeToInclusive.html) | x &le; end |
+| [RangeExpr]            | start`..`end  | [std::ops::Range]            | start &le; x &lt; end |
+| [RangeFromExpr]        | start`..`     | [std::ops::RangeFrom]        | start &le; x          |
+| [RangeToExpr]          | `..`end       | [std::ops::RangeTo]          |            x &lt; end |
+| [RangeFullExpr]        | `..`          | [std::ops::RangeFull]        |            -          |
+| [RangeInclusiveExpr]   | start`..=`end | [std::ops::RangeInclusive]   | start &le; x &le; end |
+| [RangeToInclusiveExpr] | `..=`end      | [std::ops::RangeToInclusive] |            x &le; end |
 
 示例：
 
